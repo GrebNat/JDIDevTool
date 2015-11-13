@@ -1,0 +1,17 @@
+.leftButton{
+    float: left;
+}
+.rightButton{
+    float: right;
+}
+.leftDiv{
+    float: left;
+}
+.rightDiv{
+    float: right;
+    background-color: darkorange;
+}
+.textArea{
+    float: left;
+    margin-top: 10%;
+}
