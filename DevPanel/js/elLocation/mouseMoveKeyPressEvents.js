@@ -1,8 +1,10 @@
-var $actualBachgroundColore;
+var $actualBachgroundColore = "";
 var $actualElementFromPoint = "";
 
 $(document).on("mouseout", function(e){
     $actualElementFromPoint.style.backgroundColor = $actualBachgroundColore;
+    $actualBachgroundColore = "";
+    $actualElementFromPoint = "";
 });
 
 $(document).on("mouseover", function(e){
