@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(
             case requestName.releaseElementLocationState:
                 executeContextScript(request);
                 break;
-            case requestName.addMoseMoveKeyPressEvent:
+            case requestName.addMouseMoveKeyPressEvent:
                 addMouseMoveKeyPressToPage(request);
                 break;
             case requestName.jdiFromContent:
@@ -43,15 +43,3 @@ function addMouseMoveKeyPressToPage(data) {
 function executeContextScript(data) {
     chrome.tabs.executeScript(data.tabId, {file: data.scriptToExecute});
 }
-
-
-
-//sending request to content_loaded
-
-/*chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
- alert("sending msg to content_script:::2")
-
- chrome.tabs.sendMessage(request.tabId, "hello", function (response) {
- alert ("responce from content to background: "+response);
- });
- });*/

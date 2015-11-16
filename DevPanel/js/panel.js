@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', function () {
+var treeElementCount = 0;
 
-    $('#btn-all').click(function(e){ })
+document.addEventListener('DOMContentLoaded', function (e) {
+
+    $('#btn-all').on('click', function(){addNewJDIToTree();} )
 
     function displayElementTree(elementsTree) {
         //TO DO
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#cb-light').on("change", function (e){
         if ( $('#cb-light').is(':checked')){
             chrome.runtime.sendMessage(
-                {   name:requestName.addMoseMoveKeyPressEvent,
+                {   name:requestName.addMouseMoveKeyPressEvent,
                     scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents.js",
                     tabId: chrome.devtools.inspectedWindow.tabId},
                 function(response){})
@@ -32,8 +34,44 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function updateJDIObjectViewOnPanel(e){
-    jdi = $('#textArea').val();
-    if (jdi != e.jdi_object.asString){
-        $('#textArea').text(e.jdi_object.asString);
-    }
+
+    $('#jdi-name0').text(e.jdi_object.name);
+    $('#jdi-type0').text(e.jdi_object.type);
+
+    $('#PO-name0').val(e.jdi_object.name);
+    $('#PO-type0').val(e.jdi_object.type);
+
+    $('#jdi-name-col0').text(e.jdi_object.name);
+}
+
+function addNewJDIToTree(){
+    treeElementCount = treeElementCount;
+    var template = $("#template").html().replace(/{i}/g,treeElementCount);
+    $("#tree").append(template);
+
+    $('#btn-col'+treeElementCount).on('click', function(){
+
+        var ind = this.getAttribute("id")[this.getAttribute("id").length-1];
+
+        if ($(this).text() == "V") {
+            $(this).text(">");
+            $("#div-col"+ind).css("display", "none");
+            $("#div-col-none"+ind).css("display", "block");
+        }
+        else {
+            $(this).text("V");
+            $("#div-col"+ind).css("display", "block");
+            $("#div-col-none"+ind).css("display", "none");
+        }
+    });
+
+    $('#PO-name'+treeElementCount).on('input', function(){
+
+        var ind = this.getAttribute("id")[this.getAttribute("id").length-1];
+
+        var txt = $('#PO-name'+ind).val();
+        $('#jdi-name-col'+ind).text(txt);
+    });
+
+    treeElementCount++;
 }

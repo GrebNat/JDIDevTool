@@ -19,8 +19,7 @@
   "content_scripts": [
     {
       "matches": [ "http://*/*", "https://*/*", "file:///D:/vol2/page/generator.html", "*://*/*"],
-      "js": ["DevPanel/libs/jquery-2.1.4.js" ,
-        "DevPanel/js/content_script.js",
+      "js": ["DevPanel/libs/jquery-2.1.4.js",
         "DevPanel/js/dictionary/requestsName.js",
         "DevPanel/js/dictionary/jdiObject.js"]
     }
