@@ -14,11 +14,28 @@ chrome.runtime.onMessage.addListener(
             case requestName.jdiFromContent:
                 saveJDIObjectToStorage(request.data);
                 break;
+            case requestName.savePageJSONByJDIElementsToStorage:
+                savePageJSONByJDIElementsToStorage(request.pageId);
+                break;
             default :
-                alert("no request")
+                alert("request "+request.name+" not supported in background")
         }
 
     });
+
+function savePageJSONByJDIElementsToStorage(pageId){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(pageId, requestName.getPageJSONByJDIElements, function(response) {
+            saveToLocalStorage(response, storageSegment.jdi_page);
+        });
+    });
+}
+
+function saveToLocalStorage(obj, segmentName){
+
+    chrome.storage.local.set({jdi_page: obj});
+}
+
 function saveJDIObjectToStorage(data) {
     chrome.storage.local.set({'jdi_object': data});
 }

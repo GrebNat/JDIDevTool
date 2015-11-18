@@ -1,77 +1,140 @@
 var treeElementCount = 0;
+var jdi_page_json = undefined;
+var done = false;
 
 document.addEventListener('DOMContentLoaded', function (e) {
 
-    $('#btn-all').on('click', function(){addNewJDIToTree();} )
+    chrome.storage.local.clear();
 
-    function displayElementTree(elementsTree) {
-        //TO DO
-        alert("panel responce from content_script via background scr '"+elementsTree+"'");
-    }
+    $('#btn-all').on('click', function () {
+        chrome.runtime.sendMessage({
+            name: requestName.savePageJSONByJDIElementsToStorage,
+            pageId: chrome.devtools.inspectedWindow.tabId});
+    })
 
-    chrome.storage.onChanged.addListener(function (e1) {
-        chrome.storage.local.get('jdi_object', function (e) {
-            updateJDIObjectViewOnPanel(e);
-        })
+    chrome.storage.onChanged.addListener(function (changed, e1) {
+        jdi_page_json = changed.jdi_page.newValue;
+        drawJDITree($.parseJSON(jdi_page_json), "tree");
+        jdi_page_json = undefined;
     });
 
-    $('#cb-light').on("change", function (e){
-        if ( $('#cb-light').is(':checked')){
+    $('#cb-light').on("change", function (e) {
+        if ($('#cb-light').is(':checked')) {
             chrome.runtime.sendMessage(
-                {   name:requestName.addMouseMoveKeyPressEvent,
+                {
+                    name: requestName.addMouseMoveKeyPressEvent,
                     scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents.js",
-                    tabId: chrome.devtools.inspectedWindow.tabId},
-                function(response){})
+                    tabId: chrome.devtools.inspectedWindow.tabId
+                },
+                function (response) {
+                })
         }
-        else{
+        else {
             chrome.runtime.sendMessage(
-                {   name:requestName.releaseElementLocationState,
+                {
+                    name: requestName.releaseElementLocationState,
                     scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents_Release.js",
-                    tabId: chrome.devtools.inspectedWindow.tabId},
-                function(response){})
+                    tabId: chrome.devtools.inspectedWindow.tabId
+                },
+                function (response) {
+                })
         }
     })
 });
 
-function updateJDIObjectViewOnPanel(e){
-
-    $('#jdi-name0').text(e.jdi_object.name);
-    $('#jdi-type0').text(e.jdi_object.type);
-
-    $('#PO-name0').val(e.jdi_object.name);
-    $('#PO-type0').val(e.jdi_object.type);
-
-    $('#jdi-name-col0').text(e.jdi_object.name);
+function drawJDITree(jsonElements, parentID) {
+    $.each(jsonElements.elements, function (ind, el) {
+        if (el.elements.length === 0)
+            addNewJDIBeanToTree(parentID, el);
+        else {
+            var drawnEl = addNewJDIBeanToTree(parentID, el);
+            var ind = drawnEl.getAttribute("id").split("-").pop();
+            drawJDITree(el, 'main-div-' + ind);
+        }
+    });
 }
 
-function addNewJDIToTree(){
-    treeElementCount = treeElementCount;
-    var template = $("#template").html().replace(/{i}/g,treeElementCount);
-    $("#tree").append(template);
+function fillJDIBean(index, jdiObject) {
 
-    $('#btn-col'+treeElementCount).on('click', function(){
+    $('#jdi-name-' + index).text(jdiObject.name);
+    $('#jdi-type-' + index).text(jdiObject.type);
 
-        var ind = this.getAttribute("id")[this.getAttribute("id").length-1];
+    $('#PO-type-' + index).val(jdiObject.type);
+
+    if (jdiObject.poName === "" | jdiObject.poName === null | jdiObject.poName === undefined) {
+        $('#PO-name-' + index).val("no name").addClass("warningText");
+        $('#jdi-name-col-' + index).text("no name").addClass("warningText");
+    }
+    else {
+        $('#PO-name-' + index).val(jdiObject.poName).removeClass("warningText");
+        $('#jdi-name-col-' + index).text(jdiObject.poName).removeClass("warningText");
+    }
+}
+
+function addNewJDIBeanToTree(parentID, jdiElement) {
+
+    var template = $("#template").html().replace(/{i}/g, treeElementCount);
+    $("#" + parentID).append("<ul>" + template + "</ul>");
+
+    addJDIBeanEvents(treeElementCount);
+    fillJDIBean(treeElementCount, jdiElement)
+
+    treeElementCount++;
+
+    return $(template)[0];
+}
+
+function addJDIBeanEvents(index) {
+
+    $('#btn-col-' + index).on('click', function () {
+
+        var ind = this.getAttribute("id").split("-").pop();
 
         if ($(this).text() == "V") {
             $(this).text(">");
-            $("#div-col"+ind).css("display", "none");
-            $("#div-col-none"+ind).css("display", "block");
+            $("#div-col-" + ind).css("display", "none");
+            $("#div-col-none-" + ind).css("display", "block");
         }
         else {
             $(this).text("V");
-            $("#div-col"+ind).css("display", "block");
-            $("#div-col-none"+ind).css("display", "none");
+            $("#div-col-" + ind).css("display", "block");
+            $("#div-col-none-" + ind).css("display", "none");
         }
     });
 
-    $('#PO-name'+treeElementCount).on('input', function(){
+    $('#PO-name-' + index).on('input', function () {
 
-        var ind = this.getAttribute("id")[this.getAttribute("id").length-1];
+        var ind = this.getAttribute("id").split("-").pop();
 
-        var txt = $('#PO-name'+ind).val();
-        $('#jdi-name-col'+ind).text(txt);
+        var txt = $('#PO-name-' + ind).val();
+
+        $('#PO-name-' + ind).removeClass("warningText");
+        $('#jdi-name-col-' + ind).removeClass("warningText")
+        $('#jdi-name-col-' + ind).text(txt);
     });
 
-    treeElementCount++;
+    $('#btn-remove-' + index).on('click', function () {
+        var ind = this.getAttribute("id").split("-").pop();
+        $('#main-div-' + ind).remove();
+    })
+
+    $('#btn-add-' + index).on('click', function () {
+        var ind = this.getAttribute("id").split("-").pop();
+        addNewJDIBeanToTree('main-div-' + ind);
+    })
+
+    $('#div-col-' + index).on("mouseover", function () {
+        $(this).addClass("highlight");
+    });
+    $('#div-col-' + index).on("mouseout", function () {
+        $(this).removeClass("highlight");
+    })
+    $('#div-col-none-' + index).on("mouseover", function () {
+        $(this).addClass("highlight");
+    });
+    $('#div-col-none-' + index).on("mouseout", function () {
+        $(this).removeClass("highlight");
+    })
+
 }
+

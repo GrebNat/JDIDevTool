@@ -1,8 +1,15 @@
 var requestName = {
-    getFormElement: "001",
-    getContentElements: "001",
-    executeContentScript: "002",
-    addMouseMoveKeyPressEvent: "003",
-    releaseElementLocationState: "004",
-    jdiFromContent: "005"
+    getFormElement: 0,
+    getContentElements: 1,
+    executeContentScript: 2,
+    addMouseMoveKeyPressEvent: 3,
+    releaseElementLocationState: 4,
+    jdiFromContent: 5,
+    getPageJSONByJDIElements: 6,
+    savePageJSONByJDIElementsToStorage: 7
+}
+
+var storageSegment = {
+    jdi_page: "jdi_page",
+    idi_element: "jdi_element"
 }
