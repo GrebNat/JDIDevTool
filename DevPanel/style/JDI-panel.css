@@ -19,8 +19,6 @@
 .leftButton{
     float: left;
     position: relative;
-    margin-top: 1%;
-    margin-left: 1%;
 }
 .collapseButton{
     float: left;
@@ -32,6 +30,7 @@
 }
 .rightButton{
     float: right;
+    position: relative;
 }
 .textArea{
     float: left;
