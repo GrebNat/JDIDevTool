@@ -36,7 +36,8 @@ function formatAllJDIElementsArray(elements) {
                 value.getAttribute(jdiTags.jdi_type),
                 (value.hasAttribute(jdiTags.jdi_parent)) ? value.getAttribute(jdiTags.jdi_parent) : undefined,
                 (value.hasAttribute(jdiTags.jdi_get)) ? value.getAttribute(jdiTags.jdi_get) : undefined,
-                []));
+                [],
+                (jdiTags.jdi_name+"="+value.getAttribute(jdiTags.jdi_name))));
     });
 
     children = separateJDIChildrenParent(result);

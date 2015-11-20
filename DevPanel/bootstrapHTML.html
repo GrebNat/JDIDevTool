@@ -15,9 +15,10 @@
     <link rel="stylesheet" href="style/tabbedPanel.css">
     <link rel="stylesheet" href="style/divComponents.css">
     <link rel="stylesheet" href="style/JDI-panel.css">
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+    <link href="libs/bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
 </head>
 <body>
-
 <div id="template" style="display: none">
     <li class="collapsedDiv" id="main-div-{i}">
         <div>
@@ -43,15 +44,9 @@
                             <input id="PO-type-{i}" type="text" class="POTextArea">
                         </td>
                     </tr>
-                    <tr>
-                        <td class="borderRight">locator</td>
-                        <td colspan="2">
-                            <input id="PO-locator-{i}" type="text" class="POTextArea">
-                        </td>
-                    </tr>
                 </table>
-                <button id="btn-add-{i}" class="jDIButtons treeButtons" title="add new element">+</button>
-                <button id="btn-remove-{i}" class="jDIButtons treeButtons" title="delete this element">-</button>
+                <button id="btn-add-{i}" class="jDIButtons leftButton" title="add new element">+</button>
+                <button id="btn-remove-{i}" class="jDIButtons leftButton" title="delete this element">-</button>
             </div>
             <div class="collapsedDiv" style="display: block" id="div-col-none-{i}">
                 <table>
@@ -63,6 +58,7 @@
         </div>
     </li>
 </div>
+
 
 <div id="template_tab" style="display: none">
     <li><a href="#tab-{i}" id="a-{i}" style="overflow: hidden">NoName</a></li>
@@ -78,7 +74,6 @@
 
 <div class="topDiv">
     <button id="btn-all" class="leftButton">ShowAll</button>
-    <button id="btn-new-json" class="leftButton">GetJSON</button>
     <label class="rightButton">
         <input type="checkbox" id="cb-light">locate element
     </label>
@@ -90,13 +85,25 @@
         </div>
         <div class="rightDiv">
             <div class="tab-panel">
-                <ul class="tab-link"></ul>
-                <div class="content-area"></div>
+                 <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">Active</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">Another link</a>
+                    </li>
+                    <li class="nav-item disabled">
+                        <a href="#" class="nav-link">Disabled</a>
+                    </li>
+                </ul>
+               <!-- <div class="content-area"></div>-->
             </div>
         </div>
     </div>
     <div class="bottomDiv"></div>
 </div>
-
 </body>
 </html>

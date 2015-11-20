@@ -1,3 +1,4 @@
+
 .topDiv{
     margin: 1%;
     top: 0;
@@ -30,7 +31,7 @@
     top: 0%;
     left: 0%;
     float: left;
-    width: 49%;
+    width: 40%;
     min-height: 80%;
 }
 .rightDiv{
@@ -38,7 +39,7 @@
     top: 0%;
     right: 0%;
     float: right;
-    width: 49%;
+    width: 60%;
     min-height: 80%;
 }
 .bottomDiv{

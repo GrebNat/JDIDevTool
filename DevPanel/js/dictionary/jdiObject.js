@@ -1,4 +1,4 @@
-function jdiObject(_name, _type, _parent, _gen, _elements)
+function jdiObject(_name, _type, _parent, _gen, _elements, _locator)
 {
     return {
         name:   _name,
@@ -7,7 +7,8 @@ function jdiObject(_name, _type, _parent, _gen, _elements)
         gen: _gen,
         elements: _elements,
         poName: _name,
-        poType: _type
+        poType: _type,
+        cssPath: _locator
     };
 }
 
