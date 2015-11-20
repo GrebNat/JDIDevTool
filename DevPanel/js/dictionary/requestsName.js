@@ -4,7 +4,7 @@ var requestName = {
     executeContentScript: 2,
     addMouseMoveKeyPressEvent: 3,
     releaseElementLocationState: 4,
-    jdiFromContent: 5,
+    jdiFromContentSaveClicked: 5,
     getPageJSONByJDIElements: 6,
     savePageJSONByJDIElementsToStorage: 7
 }

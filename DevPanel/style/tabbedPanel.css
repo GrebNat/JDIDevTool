@@ -1,5 +1,7 @@
 .tab-panel {
-    width: 100%;
+    position: relative;
+    margin-top: 12%;
+    width: 98%;
     display: inline-block;
     min-width: 50px;
     overflow: hidden;

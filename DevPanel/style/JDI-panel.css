@@ -59,6 +59,9 @@ li {
 .highlight{
     background-color: #93DBD5;
 }
+.staticHighlight{
+    background-color: #39db88;
+}
 .collapsedDiv{
     border: 1px solid transparent;
     height: auto;
@@ -85,4 +88,10 @@ li {
     color: #eff1f2;
     width: 15px;
     height: 15px;
+}
+.textEditor{
+    position: relative;
+    float: right;
+    margin-right: 8%;
+    width: 60%;
 }

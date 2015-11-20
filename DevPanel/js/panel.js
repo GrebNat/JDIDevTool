@@ -1,6 +1,6 @@
 var treeElementCount = 0;
 var jdi_page_json = undefined;
-var tree_json = undefined;
+var tree_json = [];
 var done = false;
 
 document.addEventListener('DOMContentLoaded', function (e) {
@@ -8,24 +8,49 @@ document.addEventListener('DOMContentLoaded', function (e) {
     chrome.storage.local.clear();
 
     $('#btn-all').on('click', function () {
+        cleanTreeAndTabs();
+
         chrome.runtime.sendMessage({
             name: requestName.savePageJSONByJDIElementsToStorage,
-            pageId: chrome.devtools.inspectedWindow.tabId});
+            pageId: chrome.devtools.inspectedWindow.tabId
+        });
     })
-    $('#btn-new-json').on('click', function(){
-        getJSONFromTree();
+
+    $('#btn-new-json').on('click', function () {
+        tree_json = undefined;
+        tree_json = getJSONFromTree("tree", tree_json);
+
+        $('.tab-link').empty();
+        $('.content-area').empty();
+
+        $.each(translateToJava2(tree_json), function (ind, val) {
+            addPageObjectPreviewTab(getJavaStr([val]), val.name)
+        })
+    })
+
+    $('#btn-empty-tree').on('click', function () {
+        cleanTreeAndTabs();
     })
 
     chrome.storage.onChanged.addListener(function (changed, e1) {
-        jdi_page_json = changed.jdi_page.newValue;
-        drawJDITree($.parseJSON(jdi_page_json), "tree");
+        if ('jdi_page' in changed) {
+            jdi_page_json = changed.jdi_page.newValue;
 
-        $.each(translateToJava2($.parseJSON(jdi_page_json)), function(ind, val){
-            addPageObjectPreviewTab(getJavaStr([val]), val.name)
-        })
+            drawJDITree($.parseJSON(jdi_page_json), "tree");
+            populatePageInfo($.parseJSON(jdi_page_json));
 
-        jdi_page_json = undefined;
-        chrome.storage.local.remove('jdi_page');
+            $.each(translateToJava2($.parseJSON(jdi_page_json)), function (ind, val) {
+                addPageObjectPreviewTab(getJavaStr([val]), val.name)
+            })
+
+            jdi_page_json = undefined;
+            chrome.storage.local.remove('jdi_page');
+        }
+        if ('jdi_object' in changed){
+            ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
+
+            fillJDIBean(ind, changed.jdi_object.newValue);
+        }
     });
 
     $('#cb-light').on("change", function (e) {
@@ -52,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     })
 });
 
+//draw JDI Tree
 function drawJDITree(jsonElements, parentID) {
     $.each(jsonElements.elements, function (ind, el) {
         if (el.elements.length === 0)
@@ -66,39 +92,42 @@ function drawJDITree(jsonElements, parentID) {
 
 function fillJDIBean(index, jdiObject) {
 
-    $('#jdi-name-' + index).text(jdiObject === undefined ? "no jdi-name":jdiObject.name);
-    $('#jdi-type-' + index).text(jdiObject === undefined ? "no jdi-type":jdiObject.type);
+    $('#jdi-name-' + index).text(jdiObject === undefined ? "no jdi-name" : jdiObject.name);
+    $('#jdi-type-' + index).text(jdiObject === undefined ? "no jdi-type" : jdiObject.type);
 
-    $('#PO-type-' + index).val(jdiObject === undefined ? "no type":jdiObject.type);
+    $('#PO-type-' + index).val(jdiObject === undefined ? "no type" : jdiObject.type);
 
-    if (jdiObject === undefined){
+    if (jdiObject === undefined) {
         $('#PO-name-' + index).val("no name").addClass("warningText");
         $('#jdi-name-col-' + index).text("no name").addClass("warningText");
     }
-    else
-    {
-        if (jdiObject.poName === "" | jdiObject.poName === null | jdiObject.poName === undefined) {
+    else {
+        if (jdiObject.name === "" | jdiObject.name === null | jdiObject.name === undefined) {
             $('#PO-name-' + index).val("no name").addClass("warningText");
             $('#jdi-name-col-' + index).text("no name").addClass("warningText");
         }
         else {
-            $('#PO-name-' + index).val(jdiObject.poName).removeClass("warningText");
-            $('#jdi-name-col-' + index).text(jdiObject.poName).removeClass("warningText");
+            $('#PO-name-' + index).val(jdiObject.name).removeClass("warningText");
+            $('#jdi-name-col-' + index).text(jdiObject.name).removeClass("warningText");
         }
 
-        if (jdiObject.cssPath === "" | jdiObject.cssPath === null | jdiObject.cssPath === undefined) {
+        if (jdiObject.locator === "" | jdiObject.locator === null | jdiObject.locator === undefined) {
             $('#PO-locator-' + index).val("no locator").addClass("warningText");
         }
         else {
-            $('#PO-locator-' + index).val(jdiObject.cssPath).removeClass("warningText");
+            $('#PO-locator-' + index).val(jdiObject.locator).removeClass("warningText");
         }
     }
 }
 
 function addNewJDIBeanToTree(parentID, jdiElement) {
 
-  var template = $("#template").html().replace(/{i}/g, treeElementCount);
-     $("#" + parentID).append("<ul>" + template + "</ul>");
+    var template = $("#template").html().replace(/{i}/g, treeElementCount);
+
+    if ($("#" + parentID).children('ul').length === 0)
+        $("#" + parentID).append("<ul>" + template + "</ul>")
+    else
+        $("#" + parentID).children('ul').append(template)
 
     addJDIBeanEvents(treeElementCount);
     fillJDIBean(treeElementCount, jdiElement)
@@ -158,11 +187,48 @@ function addJDIBeanEvents(index) {
     });
     $('#div-col-none-' + index).on("mouseout", function () {
         $(this).removeClass("highlight");
+    });
+
+    $('#cb-locate-' + index).on('change', function () {
+        var ind = this.getAttribute("id").split("-").pop();
+        addEventToBeansCheckBox(ind);
     })
 
 }
 
-function addPageObjectPreviewTab(javaCode, tabName){
+function cleanTreeAndTabs() {
+    $('#tree').empty();
+
+    $('.tab-link').empty();
+    $('.content-area').empty();
+}
+
+function addEventToBeansCheckBox(ind){
+
+    if ($('#cb-locate-'+ind).is(':checked')){
+        $('#div-col-none-' + ind).addClass("staticHighlight");
+        $('#div-col-' + ind).addClass("staticHighlight");
+        chrome.runtime.sendMessage(
+            {
+                name: requestName.addMouseMoveKeyPressEvent,
+                scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents.js",
+                tabId: chrome.devtools.inspectedWindow.tabId
+            })
+    }
+    else{
+        $('#div-col-none-' + ind).removeClass("staticHighlight");
+        $('#div-col-' + ind).removeClass("staticHighlight");
+        chrome.runtime.sendMessage(
+            {
+                name: requestName.addMouseMoveKeyPressEvent,
+                scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents_Release.js",
+                tabId: chrome.devtools.inspectedWindow.tabId
+            })
+    }
+}
+
+//Page Object`s tabs
+function addPageObjectPreviewTab(javaCode, tabName) {
 
     var index = $('.tab-link').children().length;
 
@@ -172,13 +238,13 @@ function addPageObjectPreviewTab(javaCode, tabName){
     template = $("#template_tab_content").html().replace(/{i}/g, index);
     $('.content-area').append(template);
 
-    $('#code-'+index).text(javaCode);
-    $('#code-'+index).each(function (i, block) {
+    $('#code-' + index).text(javaCode);
+    $('#code-' + index).each(function (i, block) {
         hljs.highlightBlock(block);
     });
 
     if (tabName !== undefined)
-        $('#a-'+index).text(tabName)
+        $('#a-' + index).text(tabName)
 
     $($('.tab-link').children()[0]).addClass('active');
     $($('.content-area').children()[0]).addClass('active');
@@ -186,7 +252,7 @@ function addPageObjectPreviewTab(javaCode, tabName){
     $('.tab-panel .tab-link a').on('click', function (e) {
         var currentAttrValue = $(this).attr('href');
 
-       $('.tab-panel ' + currentAttrValue).slideDown(0).siblings().slideUp(0);
+        $('.tab-panel ' + currentAttrValue).slideDown(0).siblings().slideUp(0);
 
         $(this).parent('li').addClass('active').siblings().removeClass('active');
 
@@ -194,7 +260,47 @@ function addPageObjectPreviewTab(javaCode, tabName){
     });
 }
 
-function getJSONFromTree(){
-    $("#tree").children();
+//getting jdi from tree
+function getBeanAsJDIObject(beanID) {
+    obj = new jdiObject();
+    var ind = beanID.split("-").pop();
+
+    obj.name = $('#PO-name-' + ind).val();
+    obj.type = $('#PO-type-' + ind).val();
+    obj.locator = $('#PO-locator-' + ind).val();
+
+    return obj;
+}
+
+function getJSONFromTree(parentID, json) {
+
+    if (json === undefined)
+        json = [];
+
+    $.each($('#' + parentID).children('ul').children('li'), function (ind, val) {
+        id = val.getAttribute("id");
+        json.push(getBeanAsJDIObject(id))
+        if ($(val).children('ul').length !== 0)
+            json[ind].elements = getJSONFromTree(id, json[ind].elements)
+    });
+
+    if (parentID === 'tree')
+        return {
+            name: $('#txt-name').val(),
+            title: $('#txt-title').val(),
+            type: $('#txt-type').val(),
+            url: $('#txt-URL').val(),
+            elements: json
+        };
+
+    return json;
+}
+
+//Page info
+function populatePageInfo(jsonElements) {
+    $('#txt-name').val(jsonElements.name);
+    $('#txt-title').val(jsonElements.title);
+    $('#txt-type').val(jsonElements.type);
+    $('#txt-URL').val(jsonElements.url);
 }
 

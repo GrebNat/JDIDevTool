@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener(
             case requestName.addMouseMoveKeyPressEvent:
                 addMouseMoveKeyPressToPage(request);
                 break;
-            case requestName.jdiFromContent:
+            case requestName.jdiFromContentSaveClicked:
                 saveJDIObjectToStorage(request.data);
                 break;
             case requestName.savePageJSONByJDIElementsToStorage:

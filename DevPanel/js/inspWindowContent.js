@@ -31,7 +31,7 @@ function formatAllJDIElementsArray(elements) {
 
     $.each(elements, function (index, value) {
         result.push(
-            jdiObject(
+            new jdiObject(
                 value.getAttribute(jdiTags.jdi_name),
                 value.getAttribute(jdiTags.jdi_type),
                 (value.hasAttribute(jdiTags.jdi_parent)) ? value.getAttribute(jdiTags.jdi_parent) : undefined,

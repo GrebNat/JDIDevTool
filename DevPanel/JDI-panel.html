@@ -52,6 +52,7 @@
                 </table>
                 <button id="btn-add-{i}" class="jDIButtons treeButtons" title="add new element">+</button>
                 <button id="btn-remove-{i}" class="jDIButtons treeButtons" title="delete this element">-</button>
+                <input type="checkbox" id="cb-locate-{i}" title="locate this element">
             </div>
             <div class="collapsedDiv" style="display: block" id="div-col-none-{i}">
                 <table>
@@ -79,6 +80,7 @@
 <div class="topDiv">
     <button id="btn-all" class="leftButton">ShowAll</button>
     <button id="btn-new-json" class="leftButton">GetJSON</button>
+    <button id="btn-empty-tree" class="leftButton">Clear All</button>
     <label class="rightButton">
         <input type="checkbox" id="cb-light">locate element
     </label>
@@ -86,6 +88,22 @@
 <div class="mainDiv">
     <div class="centralDiv">
         <div class="leftDiv">
+            <div class="textEditorDiv">
+                <label for="txt-name">Page name:</label>
+                <input class="textEditor" type="text" id="txt-name"><br>
+            </div><br>
+            <div class="textEditorDiv">
+                <label for="txt-title">Page title:</label>
+                <input class="textEditor" type="text" id="txt-title"><br>
+            </div><br>
+            <div class="textEditorDiv">
+                <label for="txt-type">Page type:</label>
+                <input class="textEditor" type="text" id="txt-type"><br>
+            </div><br>
+            <div class="textEditorDiv">
+                <label for="txt-URL">Page URL:</label>
+                <input class="textEditor" type="text" id="txt-URL">
+            </div>
             <div id="tree" class="treeDiv"></div>
         </div>
         <div class="rightDiv">
