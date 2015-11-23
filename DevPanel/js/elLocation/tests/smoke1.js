@@ -9,6 +9,7 @@ var resetValues = function (data) {
 
 var init = function () {
     $.each($("h3"), function (i, e) {
+        $(e).parent().children("pre, main").css("display", "none");
         e.onclick = function () {
             if ($(this).attr("hide") !== undefined) {
                 $($(this).parent()).children("pre, main").css("display", "block")
@@ -35,6 +36,7 @@ $(document).ready(function () {
     var c = $("[id=testData]").children();
     $.each(c, function (i, e) {
         QUnit.test("test " + e.getElementsByTagName("h3")[0].innerHTML, function (assert) {
+            console.log("test " + e.getElementsByTagName("h3")[0].innerHTML)
             jsonGen = new jsonPageGenerator(jdiTags, opt, e.getElementsByTagName("main")[0]);
             resetValues(jsonGen.getPageStruct());
             assert.ok(jsonGen.getJSON() === e.getElementsByTagName("pre")[0].innerHTML.replace(/(\s|\n|\r)/g, ""), "Passed!");

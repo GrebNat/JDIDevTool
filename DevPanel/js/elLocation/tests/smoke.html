@@ -13,9 +13,9 @@
 </head>
 <body>
 <div id="testData" style="display: block">
+    <!--test 1-->
     <div>
-        <!--test 1-->
-        <h3>main1</h3>
+        <h3>page with 3 elements</h3>
         <main>
             <div>
                 <div>
@@ -34,6 +34,7 @@
             "name": "name",
             "url": "url",
             "type": "IPage",
+            "packageName": "com.my.test",
             "elements": [
                 {
                     "type": "ITextField",
@@ -55,9 +56,9 @@
         }
         </pre>
     </div>
+    <!--test 2-->
     <div>
-        <!--test 2-->
-        <h3>main2</h3>
+        <h3>form</h3>
         <main>
             <div>
                 <form jdi-type="Form" jdi-name="form3" jdi-gen="fomr3Content">
@@ -78,6 +79,7 @@
             "name": "name",
             "url": "url",
             "type": "IPage",
+            "packageName": "com.my.test",
             "elements": [
                 {
                     "type": "Form",
@@ -107,22 +109,17 @@
         }
         </pre>
     </div>
+    <!--test 3-->
     <div>
-        <!--test 2-->
-        <h3>main3</h3>
+        <h3>pagination</h3>
         <main>
             <div>
-                <form jdi-type="Form" jdi-name="form3" jdi-gen="fomr3Content">
-                    <div>
-                        <input jdi-type="ITextField" jdi-parent="form3" jdi-name="t3_form" type="text">
-                        <input jdi-type="ITextArea" jdi-parent="form3" jdi-name="t3_form" type="text">
-
-                        <div>
-                            <button jdi-type="IButton" jdi-parent="form3" jdi-name="b3_form" type="submit">Submit
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                <ul class="uui-pagination" jdi-type="IPagination" jdi-name="pagination1">
+                    <li class="prev" jdi-type="IElement" jdi-parent="pagination1" jdi-name="prev"><a href="#"><i class="fa fa-long-arrow-left"></i></a></li>
+                    <li class="first" jdi-type="IElement" jdi-parent="pagination1" jdi-name="first"><a href="#">First</a></li>
+                    <li class="last" jdi-type="IElement" jdi-parent="pagination1" jdi-name="last"><a href="#">Last</a></li>
+                    <li class="next" jdi-type="IElement" jdi-parent="pagination1" jdi-name="next"><a href="#"><i class="fa fa-long-arrow-right"></i></a></li>
+                </ul>
             </div>
         </main>
         <pre>
@@ -130,27 +127,32 @@
             "name": "name",
             "url": "url",
             "type": "IPage",
+            "packageName": "com.my.test",
             "elements": [
                 {
-                    "type": "Form",
-                    "name": "form3",
-                    "gen": "fomr3Content",
-                    "locator": "[jdi-name=form3]",
+                    "type": "IPagination",
+                    "name": "pagination1",
+                    "locator": "[jdi-name=pagination1]",
                     "elements": [
                         {
-                            "type": "ITextField",
-                            "name": "t3_form",
-                            "locator": "[jdi-name=t3_form]"
+                            "type": "IElement",
+                            "name": "prev",
+                            "locator": "[jdi-name=prev]"
                         },
                         {
-                            "type": "ITextArea",
-                            "name": "t3_form",
-                            "locator": "[jdi-name=t3_form]"
+                            "type": "IElement",
+                            "name": "first",
+                            "locator": "[jdi-name=first]"
                         },
                         {
-                            "type": "IButton",
-                            "name": "b3_form",
-                            "locator": "[jdi-name=b3_form]"
+                            "type": "IElement",
+                            "name": "last",
+                            "locator": "[jdi-name=last]"
+                        },
+                        {
+                            "type": "IElement",
+                            "name": "next",
+                            "locator": "[jdi-name=next]"
                         }
                     ]
                 }
@@ -160,8 +162,7 @@
         </pre>
     </div>
 </div>
-
-<div id="testResults">
+<div>
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
 </div>

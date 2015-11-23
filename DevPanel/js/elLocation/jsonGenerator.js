@@ -44,7 +44,7 @@ var structPage = function (packageName) {
     this.name = location.pathname;
     this.url = document.URL;
     this.type = "IPage";
-    //this.packageName = packageName;
+    this.packageName = packageName;
     this.elements = [];
     this.title = document.title;
     this.toJSON = function () {
@@ -63,7 +63,9 @@ var jsonPageGenerator = function (attrSpec, options, container) {
     var _container = container instanceof $ ? container.get(0) : container;
     var _attrSpec = attrSpec;
     var _page = undefined;
-    var _options = options;
+    var _options = {
+        packageName: options.packageName,
+    };
 
     var getJDIElements = function () {
         return _container.querySelectorAllArray("[" + _attrSpec.jdi_type + "]");
