@@ -19,10 +19,11 @@ $(document).keypress(function (e) {
     console.log("key pressed");
     if (e.which === 115) {
 
-        var jdi = new jdiObject(
+        var jdi = jdiObject(
             $actualElementFromPoint.getAttribute("jdi-name"),
             $actualElementFromPoint.getAttribute("jdi-type"),
-            $actualElementFromPoint.getAttribute("jdi-parent"),undefined, undefined,
+            undefined,
+            undefined,
             "jdi-name="+$actualElementFromPoint.getAttribute("jdi-name"));
 
         chrome.runtime.sendMessage({

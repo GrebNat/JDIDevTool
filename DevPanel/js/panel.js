@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
     })
 
     $('#btn-new-json').on('click', function () {
-        tree_json = undefined;
+        rebuildPageObjectPreviewTab();
+        /*tree_json = undefined;
         tree_json = getJSONFromTree("tree", tree_json);
 
         $('.tab-link').empty();
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
         $.each(translateToJava2(tree_json), function (ind, val) {
             addPageObjectPreviewTab(getJavaStr([val]), val.name)
-        })
+        })*/
     })
 
     $('#btn-empty-tree').on('click', function () {
@@ -40,13 +41,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
             populatePageInfo($.parseJSON(jdi_page_json));
 
             $.each(translateToJava2($.parseJSON(jdi_page_json)), function (ind, val) {
-                addPageObjectPreviewTab(getJavaStr([val]), val.name)
+                addPageObjectPreviewTab(val.data, val.name);
             })
 
             jdi_page_json = undefined;
             chrome.storage.local.remove('jdi_page');
         }
-        if ('jdi_object' in changed){
+        if ('jdi_object' in changed) {
             ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
 
             fillJDIBean(ind, changed.jdi_object.newValue);
@@ -80,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 //draw JDI Tree
 function drawJDITree(jsonElements, parentID) {
     $.each(jsonElements.elements, function (ind, el) {
-        if (el.elements.length === 0)
+        if (el.elements === undefined)
             addNewJDIBeanToTree(parentID, el);
         else {
             var drawnEl = addNewJDIBeanToTree(parentID, el);
@@ -90,32 +91,35 @@ function drawJDITree(jsonElements, parentID) {
     });
 }
 
-function fillJDIBean(index, jdiObject) {
+function fillJDIBean(index, jdiObj) {
 
-    $('#jdi-name-' + index).text(jdiObject === undefined ? "no jdi-name" : jdiObject.name);
-    $('#jdi-type-' + index).text(jdiObject === undefined ? "no jdi-type" : jdiObject.type);
+    $('#jdi-name-' + index).text(jdiObj === undefined ? "no jdi-name" : jdiObj.name);
+    $('#jdi-type-' + index).text(jdiObj === undefined ? "no jdi-type" : jdiObj.type);
 
-    $('#PO-type-' + index).val(jdiObject === undefined ? "no type" : jdiObject.type);
+    $('#PO-type-' + index).val(jdiObj === undefined ? "no type" : jdiObj.type);
 
-    if (jdiObject === undefined) {
+    if (jdiObj === undefined) {
         $('#PO-name-' + index).val("no name").addClass("warningText");
         $('#jdi-name-col-' + index).text("no name").addClass("warningText");
     }
     else {
-        if (jdiObject.name === "" | jdiObject.name === null | jdiObject.name === undefined) {
+
+        $('#PO-gen-' + index).val(jdiObj.gen === undefined ? "" : jdiObj.gen);
+
+        if (jdiObj.name === "" | jdiObj.name === null | jdiObj.name === undefined) {
             $('#PO-name-' + index).val("no name").addClass("warningText");
             $('#jdi-name-col-' + index).text("no name").addClass("warningText");
         }
         else {
-            $('#PO-name-' + index).val(jdiObject.name).removeClass("warningText");
-            $('#jdi-name-col-' + index).text(jdiObject.name).removeClass("warningText");
+            $('#PO-name-' + index).val(jdiObj.name).removeClass("warningText");
+            $('#jdi-name-col-' + index).text(jdiObj.name).removeClass("warningText");
         }
 
-        if (jdiObject.locator === "" | jdiObject.locator === null | jdiObject.locator === undefined) {
+        if (jdiObj.locator === "" | jdiObj.locator === null | jdiObj.locator === undefined) {
             $('#PO-locator-' + index).val("no locator").addClass("warningText");
         }
         else {
-            $('#PO-locator-' + index).val(jdiObject.locator).removeClass("warningText");
+            $('#PO-locator-' + index).val(jdiObj.locator).removeClass("warningText");
         }
     }
 }
@@ -164,10 +168,14 @@ function addJDIBeanEvents(index) {
         $('#PO-name-' + ind).removeClass("warningText");
         $('#jdi-name-col-' + ind).removeClass("warningText")
         $('#jdi-name-col-' + ind).text(txt);
+
+        rebuildPageObjectPreviewTab();
     });
 
     $('#btn-remove-' + index).on('click', function () {
         var ind = this.getAttribute("id").split("-").pop();
+        //  wind =  window.confirm("what to do with sub-elements?");
+
         $('#main-div-' + ind).remove();
     })
 
@@ -203,9 +211,24 @@ function cleanTreeAndTabs() {
     $('.content-area').empty();
 }
 
-function addEventToBeansCheckBox(ind){
+function addEventToBeansCheckBox(ind) {
 
-    if ($('#cb-locate-'+ind).is(':checked')){
+    if ($('#cb-locate-' + ind).is(':checked')) {
+
+        $.each($('#tree  .staticHighlight'), function (i, val) {
+            $(this).removeClass("staticHighlight");
+        });
+        $.each($('#tree input[id^=cb-locate]'), function (i, val) {
+            if (this.getAttribute("id").split("-").pop() !== ind)
+                $(this).removeAttr("checked");
+        });
+        chrome.runtime.sendMessage(
+            {
+                name: requestName.addMouseMoveKeyPressEvent,
+                scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents_Release.js",
+                tabId: chrome.devtools.inspectedWindow.tabId
+            })
+
         $('#div-col-none-' + ind).addClass("staticHighlight");
         $('#div-col-' + ind).addClass("staticHighlight");
         chrome.runtime.sendMessage(
@@ -215,7 +238,7 @@ function addEventToBeansCheckBox(ind){
                 tabId: chrome.devtools.inspectedWindow.tabId
             })
     }
-    else{
+    else {
         $('#div-col-none-' + ind).removeClass("staticHighlight");
         $('#div-col-' + ind).removeClass("staticHighlight");
         chrome.runtime.sendMessage(
@@ -260,16 +283,28 @@ function addPageObjectPreviewTab(javaCode, tabName) {
     });
 }
 
+function rebuildPageObjectPreviewTab(){
+    tree_json = undefined;
+    tree_json = getJSONFromTree("tree", tree_json);
+
+    $('.tab-link').empty();
+    $('.content-area').empty();
+
+    $.each(translateToJava2(tree_json), function (ind, val) {
+        addPageObjectPreviewTab(val.data, val.name)
+    })
+}
+
 //getting jdi from tree
 function getBeanAsJDIObject(beanID) {
-    obj = new jdiObject();
     var ind = beanID.split("-").pop();
 
-    obj.name = $('#PO-name-' + ind).val();
-    obj.type = $('#PO-type-' + ind).val();
-    obj.locator = $('#PO-locator-' + ind).val();
-
-    return obj;
+    return jdiObject(
+        $('#PO-name-' + ind).val(),
+        $('#PO-type-' + ind).val(),
+        $('#PO-gen-' + ind).val(),
+        undefined,
+        $('#PO-locator-' + ind).val());
 }
 
 function getJSONFromTree(parentID, json) {

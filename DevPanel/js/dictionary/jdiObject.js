@@ -1,15 +1,16 @@
-var jdiObject = function (_name, _type, _parent, _gen, _elements, _locator) {
-    this.name = _name;
-    this.type = _type;
-    this.parent = _parent;
-    this.gen = _gen;
-    this.elements = _elements;
-    this.locator = _locator;
+function jdiObject (_name, _type, _gen, _elements, _locator) {
+    return {
+        name: _name,
+        type: _type,
+        gen: _gen,
+        elements: _elements,
+        locator: _locator
+    };
 }
 
 var jdiTags = {
     jdi_type: "jdi-type",
     jdi_name: "jdi-name",
     jdi_parent: "jdi-parent",
-    jdi_get: "jdi-gen"
+    jdi_gen: "jdi-gen"
 }
