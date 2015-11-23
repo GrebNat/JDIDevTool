@@ -6,6 +6,10 @@ Document.prototype.querySelectorAllArray = function (selector) {
     return Array.prototype.slice.call(this.querySelectorAll(selector));
 }
 
+Element.prototype.querySelectorAllArray = function (selector) {
+    return Array.prototype.slice.call(this.querySelectorAll(selector));
+}
+
 Element.prototype.getCAttribute = function (name) {
     return this.hasAttribute(name) ? this.getAttribute(name) : undefined;
 }
@@ -103,7 +107,7 @@ var jsonPageGenerator = function (attrSpec, options, container) {
             var allElements = jQuery.map(rawElements, rawElement2Json);
             var rootElements = jQuery.map(allElements, filterRoot);
             var childElements = jQuery.map(allElements, filterParent);
-            this.process(rootElements, childElements);
+            process(rootElements, childElements);
             return rootElements;
         } catch (e) {
             console.log(e);
