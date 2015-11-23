@@ -76,7 +76,7 @@ var filesTemplate = {
         FieldTemplates[data.type] = function (elem) {
             return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
         };
-        //IncludesDictionary[data.type] = "my.package.{0}".format(data.type);
+        IncludesDictionary[data.type] = "my.package.{0}".format(data.type);
         var c = new JavaClass(data);
         c.includes.push(IncludesDictionary.by);
         c.includes.push(IncludesDictionary.fundBy);
