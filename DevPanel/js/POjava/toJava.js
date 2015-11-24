@@ -4,6 +4,12 @@
 var result = new Array;
 var pname;
 
+var res = {
+    page : [],
+    forms: [],
+    fParam: []
+}
+
 var Templates = {
     javaPage: function (package, imports, clazz) {
         var p = package === undefined ? "" : "package {0};\n\n".format(package);
@@ -59,7 +65,7 @@ var filesTemplate = {
     Form: function (data) {
         data.name = data.name.capitalizeFirstLetter();
         var genClass = JSON.parse(JSON.stringify(data));
-        genClass.name = data.gen;
+        var classParam = genClass.name = data.gen;
         genClass.type = undefined;
         genClass.extendz = undefined;
         $.each(genClass.elements, function (i, val) {
@@ -69,7 +75,9 @@ var filesTemplate = {
                 val.type += " ";
             }
         });
-        result.push(createRecord(new JavaClass(genClass)));
+        var fP = createRecord(new JavaClass(genClass));
+        result.push(fP);
+        res.fParam.push(fP);
         //
         data.extendz = "{0}<{1}>".format(data.type, data.gen);
         data.type = data.name;
@@ -81,7 +89,9 @@ var filesTemplate = {
         c.includes.push(IncludesDictionary.by);
         c.includes.push(IncludesDictionary.fundBy);
         c.includes.push(IncludesDictionary.Form);
+        c.classParam = classParam;
         result.push(createRecord(c));
+        res.forms.push(createRecord(c));
     },
     IPage: function (data) {
         data.extendz = "Page";
@@ -90,6 +100,7 @@ var filesTemplate = {
         c.includes.push(IncludesDictionary.fundBy);
         c.includes.push(IncludesDictionary.Page);
         result.push(createRecord(c));
+        res.page.push(createRecord(c));
     }
 };
 
@@ -102,7 +113,7 @@ var JavaClass = function (src) {
 
     this.genName = function (name) {
         return src.title === undefined ? src.name : src.title;
-    };
+    }
     this.genIncludes = function () {
         var inc = this.includes;
         $.each(this.elements, function (i, val) {
@@ -112,14 +123,14 @@ var JavaClass = function (src) {
             }
         });
         this.includes = inc;
-    };
+    }
     this.getIncludes = function () {
         var total = "";
         $.each(this.includes, function (i, val) {
             total += val.length > 0 ? Templates.imports(val) : "";
         });
         return total;
-    };
+    }
     this.getElements = function () {
         var total = "";
         $.each(this.elements, function (i, val) {
@@ -130,16 +141,16 @@ var JavaClass = function (src) {
             }
         });
         return total;
-    };
+    }
     this.genClass = function () {
         var elements = this.getElements();
         this.genIncludes();
         return (this.extendz === null || this.extendz === undefined) ? Templates.javaClass(this.name, elements) : Templates.javaClassExtends(this.name, this.extendz, elements);
-    };
+    }
     this.print = function () {
         var clazz = this.genClass();
         return Templates.javaPage(this.package, this.getIncludes(), clazz);
-    };
+    }
 
     this.name = this.genName(src.name);
 };
@@ -148,9 +159,9 @@ var processJSON = function (data) {
     filesTemplate[data.type](data);
 }
 
-function translateToJava2(data) {
+function translateToJava(data) {
     pname = data.packageName;
     result = new Array;
     processJSON(data);
-    return result;
+    return res;
 }

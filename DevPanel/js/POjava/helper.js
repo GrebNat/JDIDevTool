@@ -80,7 +80,8 @@ var FindByTemplates = {
 var createRecord = function(data){
     return {
         name : data.name,
-        data : data.print()
+        classParam: data.classParam,
+        data : data.print(),
     }
 }
 
