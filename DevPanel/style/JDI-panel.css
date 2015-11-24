@@ -27,11 +27,8 @@
 }
 .collapseButton{
     float: left;
+    margin: 0%;
     position: relative;
-    margin-right: 1%;
-    margin-left: 1%;
-    margin-top: 1%;
-    margin-bottom: 1%;
 }
 .rightButton{
     top: 0%;
@@ -48,9 +45,11 @@
 .borderRight{
   border-right: 1px solid cadetblue;
 }
-.collapsedDiv, .tableDiv{
-    width: 260px;
-    height: 100px;
+.tableDiv{
+    position: relative;
+    margin-left: 5%;
+    width: 90%;
+    height: 100%;
     font-family: monospace;
 }
 li {
@@ -63,14 +62,19 @@ li {
     background-color: #39db88;
 }
 .collapsedDiv{
+    width: 260px;
+    height: 120px;
+    font-family: monospace;
     border: 1px solid transparent;
     height: auto;
 }
 .collapsedTable{
+    position: relative;
     border: inherit;
+    font-size: smaller;
     background-color: inherit;
-    float: left;
-    height: 100px;
+    margin-left: 5%;
+    height: 100%;
     width: 80%;
     table-layout: auto;
 }
@@ -94,4 +98,10 @@ li {
     float: right;
     margin-right: 8%;
     width: 60%;
+}
+.glyphicon-minus-sign {
+    color: red;
+}
+.glyphicon-plus-sign{
+    color: green;
 }

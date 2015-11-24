@@ -17,16 +17,8 @@ document.addEventListener('DOMContentLoaded', function (e) {
     })
 
     $('#btn-new-json').on('click', function () {
+        clearTabs();
         rebuildPageObjectPreviewTab();
-        /*tree_json = undefined;
-        tree_json = getJSONFromTree("tree", tree_json);
-
-        $('.tab-link').empty();
-        $('.content-area').empty();
-
-        $.each(translateToJava2(tree_json), function (ind, val) {
-            addPageObjectPreviewTab(getJavaStr([val]), val.name)
-        })*/
     })
 
     $('#btn-empty-tree').on('click', function () {
@@ -41,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
             populatePageInfo($.parseJSON(jdi_page_json));
 
             $.each(translateToJava2($.parseJSON(jdi_page_json)), function (ind, val) {
-                addPageObjectPreviewTab(val.data, val.name);
+                addPageObjectPreviewTab(val.data, val.name, 0);
             })
 
             jdi_page_json = undefined;
@@ -75,7 +67,9 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 function (response) {
                 })
         }
-    })
+    });
+
+    addPONavBarEvents();
 });
 
 //draw JDI Tree
@@ -147,15 +141,17 @@ function addJDIBeanEvents(index) {
 
         var ind = this.getAttribute("id").split("-").pop();
 
-        if ($(this).text() == "V") {
-            $(this).text(">");
-            $("#div-col-" + ind).css("display", "none");
-            $("#div-col-none-" + ind).css("display", "block");
-        }
-        else {
-            $(this).text("V");
+        if ($(this).hasClass('glyphicon-expand')) {
+            $(this).removeClass('glyphicon-expand');
+            $(this).addClass('glyphicon-collapse-down');
             $("#div-col-" + ind).css("display", "block");
             $("#div-col-none-" + ind).css("display", "none");
+        }
+        else {
+            $(this).removeClass('glyphicon-collapse-down');
+            $(this).addClass('glyphicon-expand');
+            $("#div-col-" + ind).css("display", "none");
+            $("#div-col-none-" + ind).css("display", "block");
         }
     });
 
@@ -201,14 +197,18 @@ function addJDIBeanEvents(index) {
         var ind = this.getAttribute("id").split("-").pop();
         addEventToBeansCheckBox(ind);
     })
-
 }
 
 function cleanTreeAndTabs() {
     $('#tree').empty();
 
-    $('.tab-link').empty();
-    $('.content-area').empty();
+    clearTabs();
+}
+
+function clearTabs() {
+    $('#form-tabs-header').empty();
+    $('#div-tab-content').empty();
+    $('#pre-page-PO').text("")
 }
 
 function addEventToBeansCheckBox(ind) {
@@ -251,39 +251,48 @@ function addEventToBeansCheckBox(ind) {
 }
 
 //Page Object`s tabs
-function addPageObjectPreviewTab(javaCode, tabName) {
+function addPageObjectPreviewTab(javaCode, tabName, activeTabIndex) {
 
-    var index = $('.tab-link').children().length;
+    if (javaCode.match('public class .* Page') != null) {
+        $('#a-page').text(tabName);
+        $('#pre-page-PO').text(javaCode);
+        $('#pre-page-PO').each(function (i, block) {
+            hljs.highlightBlock(block);
+        });
+    }
+    else if (javaCode.match('public class .* extends Form<.*>') != null) {
+        var index = $('#form-tabs-header').children().length;
 
-    var template = $("#template_tab").html().replace(/{i}/g, index);
-    $('.tab-link').append(template);
+        var template = $("#template-form-tab").html().replace(/{i}/g, index);
+        $('#form-tabs-header').append(template);
+        $('#a-form-' + index).text(tabName);
 
-    template = $("#template_tab_content").html().replace(/{i}/g, index);
-    $('.content-area').append(template);
+        template = $("#template-form-content").html().replace(/{i}/g, index);
+        $('#div-tab-content').append(template);
+        $('#a-collapse-' + index).text(tabName);
+        $('#collapse1-' + index + ' pre').text(javaCode);
+        $('#collapse1-' + index + ' pre').each(function (i, block) {
+            hljs.highlightBlock(block);
+        });
+    }
 
-    $('#code-' + index).text(javaCode);
-    $('#code-' + index).each(function (i, block) {
-        hljs.highlightBlock(block);
+    $('#form-content-' + activeTabIndex).addClass('in active');
+    addPONavBarEvents();
+}
+
+function addPONavBarEvents() {
+    $(".nav-tabs a").click(function () {
+        $(this).tab('show');
     });
-
-    if (tabName !== undefined)
-        $('#a-' + index).text(tabName)
-
-    $($('.tab-link').children()[0]).addClass('active');
-    $($('.content-area').children()[0]).addClass('active');
-
-    $('.tab-panel .tab-link a').on('click', function (e) {
-        var currentAttrValue = $(this).attr('href');
-
-        $('.tab-panel ' + currentAttrValue).slideDown(0).siblings().slideUp(0);
-
-        $(this).parent('li').addClass('active').siblings().removeClass('active');
-
-        e.preventDefault();
+    $('.nav-tabs a').on('shown.bs.tab', function (event) {
+        var x = $(event.target).text();
+        var y = $(event.relatedTarget).text();
+        $(".act span").text(x);
+        $(".prev span").text(y);
     });
 }
 
-function rebuildPageObjectPreviewTab(){
+function rebuildPageObjectPreviewTab() {
     tree_json = undefined;
     tree_json = getJSONFromTree("tree", tree_json);
 
@@ -291,7 +300,7 @@ function rebuildPageObjectPreviewTab(){
     $('.content-area').empty();
 
     $.each(translateToJava2(tree_json), function (ind, val) {
-        addPageObjectPreviewTab(val.data, val.name)
+        addPageObjectPreviewTab(val.data, val.name, 0)
     })
 }
 

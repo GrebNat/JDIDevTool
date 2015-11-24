@@ -53,7 +53,7 @@
 }
 .treeDiv{
      position: relative;
-     margin-top: 5%;
+    overflow-x: scroll;
 }
 .textEditorDiv{
     position: relative;

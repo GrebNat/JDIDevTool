@@ -4,7 +4,7 @@
 
 chrome.devtools.panels.create("JDI Page Objects",
     null,
-    "DevPanel/JDI-panel.html",
+    "DevPanel/JDI-panel-bootstrap.html",
     function(panel) {}
 );
 
