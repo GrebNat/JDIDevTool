@@ -163,5 +163,5 @@ function translateToJava(data) {
     pname = data.packageName;
     result = new Array;
     processJSON(data);
-    return res;
+    return result;
 }
