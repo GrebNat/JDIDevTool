@@ -59,13 +59,17 @@ var structPage = function (packageName) {
     }
 }
 
+/**
+ * JSON generator. Generate based on jdi attributes truct.
+ * @param {object} attrSpec JDI attributes specification.
+ * @param {object} options Some generator options.
+ * @param {Element} container Search on container.
+ */
 var jsonPageGenerator = function (attrSpec, options, container) {
     var _container = container instanceof $ ? container.get(0) : container;
     var _attrSpec = attrSpec;
     var _page = undefined;
-    var _options = {
-        packageName: options.packageName,
-    };
+    var _options = options === undefined ? { packageName:"com.my.test", } : options;
 
     var getJDIElements = function () {
         return _container.querySelectorAllArray("[" + _attrSpec.jdi_type + "]");
@@ -123,12 +127,20 @@ var jsonPageGenerator = function (attrSpec, options, container) {
         _page.elements = processPageElements(elements);
     };
 
+    /**
+     * Get page struct before stringify.
+     */
     this.getPageStruct = function () {
         if (_page === undefined)
             translatePage2Struct();
         return _page;
     };
 
+    /**
+     * Get JSON plain text.
+     @param {Function} [replacer]
+     @param {Number|String} [space]
+     */
     this.getJSON = function (replacer, space) {
         if (_page === undefined) {
             translatePage2Struct();
