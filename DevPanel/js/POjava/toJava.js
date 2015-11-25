@@ -4,6 +4,12 @@
 var result = new Array;
 var pname;
 
+var fileTypes = {
+    page:"IPage",
+    form:"Form",
+    pClass:"parameterClass",
+}
+
 var res = {
     page : [],
     forms: [],
@@ -75,7 +81,9 @@ var filesTemplate = {
                 val.type += " ";
             }
         });
-        var fP = createRecord(new JavaClass(genClass));
+        var cc = new JavaClass(genClass);
+        cc.type = fileTypes.pClass;
+        var fP = createRecord(cc);
         result.push(fP);
         res.fParam.push(fP);
         //
@@ -90,6 +98,7 @@ var filesTemplate = {
         c.includes.push(IncludesDictionary.fundBy);
         c.includes.push(IncludesDictionary.Form);
         c.classParam = classParam;
+        c.type = fileTypes.form;
         result.push(createRecord(c));
         res.forms.push(createRecord(c));
     },
@@ -99,6 +108,7 @@ var filesTemplate = {
         c.includes.push(IncludesDictionary.by);
         c.includes.push(IncludesDictionary.fundBy);
         c.includes.push(IncludesDictionary.Page);
+        c.type = fileTypes.page;
         result.push(createRecord(c));
         res.page.push(createRecord(c));
     }
@@ -110,6 +120,7 @@ var JavaClass = function (src) {
     this.includes = new Array;
     this.package = pname;
     this.elements = src.elements;
+    this.type = src.type;
 
     this.genName = function (name) {
         return src.title === undefined ? src.name : src.title;
@@ -159,9 +170,31 @@ var processJSON = function (data) {
     filesTemplate[data.type](data);
 }
 
+var getCombElements = function () {
+    var ress = [];
+    var baseRes = deepCopy(result);
+    $.each(baseRes, function(i, e){
+        switch (e.type){
+            case fileTypes.page:
+                ress.push(e);
+                break;
+            case fileTypes.form:
+                e.elements = e.elements === undefined ? [] : e.elements;
+                var name = e.classParam;
+                e.elements.push(jQuery.grep(result, function(e, i){ return e.name === name} ));
+                ress.push(e);
+                break;
+            case fileTypes.pClass:
+                break;
+        }
+    });
+    return ress;
+}
+
 function translateToJava(data) {
     pname = data.packageName;
     result = new Array;
     processJSON(data);
+    result.getCombElements = getCombElements;
     return result;
 }
