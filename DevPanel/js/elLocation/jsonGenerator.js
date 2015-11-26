@@ -6,6 +6,10 @@ Document.prototype.querySelectorAllArray = function (selector) {
   return Array.prototype.slice.call(this.querySelectorAll(selector));
 }
 
+Element.prototype.querySelectorAllArray = function (selector) {
+  return Array.prototype.slice.call(this.querySelectorAll(selector));
+}
+
 Element.prototype.getCAttribute = function (name) {
   return this.hasAttribute(name) ? this.getAttribute(name) : undefined;
 }
@@ -23,7 +27,7 @@ var structElement = function (rawElement, spec) {
       "[{0}={1}]".format(spec.jdi_name, rawElement.getCAttribute(spec.jdi_name))
   );
   temp.parent = rawElement.getCAttribute(spec.jdi_parent);
-  temp.toJSON = function(){
+  temp.toJSON = function () {
     return {
       type: this.type,
       name: this.name,
@@ -40,7 +44,7 @@ var structPage = function (packageName) {
   this.name = location.pathname;
   this.url = document.URL;
   this.type = "IPage";
-  //this.packageName = packageName;
+  this.packageName = packageName;
   this.elements = [];
   this.title = document.title;
   this.toJSON = function () {
@@ -55,36 +59,42 @@ var structPage = function (packageName) {
   }
 }
 
+/**
+ * JSON generator. Generate based on jdi attributes truct.
+ * @param {object} attrSpec JDI attributes specification.
+ * @param {object} options Some generator options.
+ * @param {Element} container Search on container.
+ */
 var jsonPageGenerator = function (attrSpec, options, container) {
   var _container = container instanceof $ ? container.get(0) : container;
   var _attrSpec = attrSpec;
   var _page = undefined;
-  var _options = options;
+  var _options = options === undefined ? { packageName:"com.my.test", } : options;
 
-  this.getJDIElements = function () {
+  var getJDIElements = function () {
     return _container.querySelectorAllArray("[" + _attrSpec.jdi_type + "]");
   }
 
-  this.rawElement2Json = function (rawElement) {
+  var rawElement2Json = function (rawElement) {
     return new structElement(rawElement, _attrSpec);
   };
 
-  this.filterParent = function (element) {
+  var filterParent = function (element) {
     if (element.parent !== undefined)
       return element;
   }
 
-  this.filterRoot = function (element) {
+  var filterRoot = function (element) {
     if (element.parent === undefined)
       return element;
   }
 
-  this.process = function (prn, cld) {
+  var process = function (prn, cld) {
     for (var i = 0; i < cld.length; i++) {
       for (var j = 0; j < prn.length; j++) {
         if (prn[j].elements !== undefined)
           if (prn[j].elements.length > 0) {
-            this.process(prn[j].elements, cld);
+            process(prn[j].elements, cld);
           }
         j = (prn[j] === undefined) ? 0 : j;
         i = (cld[i] === undefined) ? 0 : i;
@@ -97,35 +107,43 @@ var jsonPageGenerator = function (attrSpec, options, container) {
     }
   }
 
-  this.processPageElements = function (array) {
+  var processPageElements = function (array) {
     try {
       var rawElements = array;
-      var allElements = jQuery.map(rawElements, this.rawElement2Json);
-      var rootElements = jQuery.map(allElements, this.filterRoot);
-      var childElements = jQuery.map(allElements, this.filterParent);
-      this.process(rootElements, childElements);
+      var allElements = jQuery.map(rawElements, rawElement2Json);
+      var rootElements = jQuery.map(allElements, filterRoot);
+      var childElements = jQuery.map(allElements, filterParent);
+      process(rootElements, childElements);
       return rootElements;
-    } catch (e){
+    } catch (e) {
       console.log(e);
     }
   };
 
-  this.translatePage2Struct = function () {
-    var elements = this.getJDIElements();
+  var translatePage2Struct = function () {
+    var elements = getJDIElements();
     _page = new structPage();
-    //_page = new structPage(_options.packageName);
-    _page.elements = this.processPageElements(elements);
+    _page = new structPage(_options.packageName);
+    _page.elements = processPageElements(elements);
   };
 
+  /**
+   * Get page struct before stringify.
+   */
   this.getPageStruct = function () {
     if (_page === undefined)
-      this.translatePage2Struct();
+      translatePage2Struct();
     return _page;
   };
 
+  /**
+   * Get JSON plain text.
+   @param {Function} [replacer]
+   @param {Number|String} [space]
+   */
   this.getJSON = function (replacer, space) {
     if (_page === undefined) {
-      this.translatePage2Struct();
+      translatePage2Struct();
     }
     return JSON.stringify(_page, replacer, space);
   };

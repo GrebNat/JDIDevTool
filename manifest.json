@@ -24,7 +24,9 @@
         "DevPanel/js/dictionary/requestsName.js",
         "DevPanel/js/dictionary/jdiObject.js",
         "DevPanel/js/inspWindowContent.js",
-        "DevPanel/js/elLocation/jsonGenerator.js"]
+        "DevPanel/js/elLocation/jsonGenerator.js",
+        "DevPanel/js/elLocation/highlightElement.js",
+        "DevPanel/js/elLocation/mouseMoveKeyPressEvents.js"]
     }
   ],
   "permissions": [

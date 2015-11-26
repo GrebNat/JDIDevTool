@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="libs/jquery-2.1.4.js"></script>
+    <script src="libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
     <script src="js/panel.js"></script>
     <script src="js/dictionary/jdiObject.js"></script>
     <script src="js/dictionary/requestsName.js"></script>
@@ -20,7 +21,7 @@
     <script src="libs/bootstrap-3.3.5-dist/css/bootstrap.css"></script>
     <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 </head>
-<body style="height: 100%">
+<body>
 
 <div id="template" style="display: none">
     <li class="collapsedDiv" id="main-div-{i}">
@@ -65,6 +66,30 @@
                       title="delete this element"></span>
                 <span id="btn-add-{i}" class="treeButtons glyphicon glyphicon-plus-sign" title="add new element"></span>
                 <input type="checkbox" id="cb-locate-{i}" title="locate this element">
+                <!-- Modal -->
+                <div class="modal" id="modal-{i}" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">What to do with children...</h4>
+                            </div>
+                            <div class="modal-footer">
+                                <div class=" btn-group btn-group-sm">
+                                    <button id="modal-btn-up-{i}" type="button" class="btn btn-success"
+                                            data-dismiss="modal">Move Up
+                                    </button>
+                                    <button id="modal-cancel-{i}" type="button" class="btn" data-dismiss="modal">
+                                        Cancel
+                                    </button>
+                                    <button id="modal-btn-delete-{i}" type="submit" class="btn btn-danger"
+                                            data-dismiss="modal">Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
             <div class="tableDiv" style="display: block" id="div-col-none-{i}">
                 <table class="">
@@ -73,6 +98,8 @@
                     </tr>
                 </table>
             </div>
+
+
         </div>
     </li>
 </div>
@@ -86,7 +113,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1-{i}" id="a-collapse-{i}"></a>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1-{i}" id="a-collapse1-{i}"></a>
                 </h4>
             </div>
             <div id="collapse1-{i}" class="panel-collapse collapse">
@@ -96,32 +123,25 @@
             </div>
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2-{i}">Collapsible Group 2</a>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2-{i}" id="a-collapse2-{i}"></a>
                 </h4>
             </div>
             <div id="collapse2-{i}" class="panel-collapse collapse">
-                <pre class="panel-body">Lorem ipsum dolor sit amet, consectetur adipisicing
-                    elit,
-                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-                    ad minim veniam,
-                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                </pre>
+                <pre class="panel-body"></pre>
             </div>
         </div>
     </div>
 </div>
 
 <div class="container-fluid" style="-webkit-user-select: none; height: 100%">
+
     <div class="row">
         <div class="col-xs-12"><br>
-
             <div class="btn-group btn-group-sm">
                 <button id="btn-all" class="btn btn-success">ShowAll</button>
-                <button id="btn-new-json" class="btn">GetJSON</button>
+                <button id="btn-new-json" class="btn">Update PageObjects</button>
                 <button id="btn-empty-tree" class="btn btn-danger">Clear All</button>
             </div>
-            <br><br>
         </div>
     </div>
     <hr>
@@ -129,7 +149,7 @@
         <div class="col-xs-6">
             <form class="form-horizontal" role="form">
                 <div class="form-group">
-                    <label for="txt-name" class="col-xs-2 col-sm-2 col-md-2 control-label">
+                    <label id="lbl" for="txt-name" class="col-xs-2 col-sm-2 col-md-2 control-label">
                         Name:
                     </label>
 
@@ -171,33 +191,44 @@
             </form>
         </div>
     </div>
+    <div class="row">
+        <form class="form-horizontal" role="form">
+            <label for="txt-package" class="col-xs-2 control-label">
+                Package Name:
+            </label>
+
+            <div class="col-xs-10">
+                <input type="text" class="form-control" id="txt-package" placeholder="enter your package name here">
+            </div>
+        </form>
+    </div>
     <hr>
     <div class="row">
         <div class="col-xs-6">
             <div class="row">
                 <div class="col-xs-12">
-                    <div id="tree" class="treeDiv"></div>
+                    <div id="tree" class="treeDiv" style="overflow-x: scroll"></div>
                 </div>
             </div>
         </div>
         <div class="col-xs-6">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#page" id="a-page">Page</a></li>
-                    <li><a href="#forms">Forms</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div id="page" class="tab-pane fade in active">
-                        <br>
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#page" id="a-page">Page</a></li>
+                <li><a href="#forms">Forms</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="page" class="tab-pane fade in active">
+                    <br>
                     <pre style="-webkit-user-select: text" id="pre-page-PO"><i>Page Objects for the page will be shown
                         here</i></pre>
-                    </div>
-                    <div id="forms" class="tab-pane fade">
-                        <div class="panel">
-                            <ul class="nav nav-tabs" id="form-tabs-header"></ul>
-                            <div class="tab-content" id="div-tab-content" style="-webkit-user-select: text"></div>
-                        </div>
+                </div>
+                <div id="forms" class="tab-pane fade">
+                    <div class="panel">
+                        <ul class="nav nav-tabs" id="form-tabs-header"></ul>
+                        <div class="tab-content" id="div-tab-content" style="-webkit-user-select: text"></div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>

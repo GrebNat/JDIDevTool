@@ -2,6 +2,7 @@ var treeElementCount = 0;
 var jdi_page_json = undefined;
 var tree_json = [];
 var done = false;
+var draggingStarted = false;
 
 document.addEventListener('DOMContentLoaded', function (e) {
 
@@ -9,11 +10,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
     $('#btn-all').on('click', function () {
         cleanTreeAndTabs();
-
+        chrome.storage.local.clear();
         chrome.runtime.sendMessage({
             name: requestName.savePageJSONByJDIElementsToStorage,
             pageId: chrome.devtools.inspectedWindow.tabId
         });
+
+
     })
 
     $('#btn-new-json').on('click', function () {
@@ -32,9 +35,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
             drawJDITree($.parseJSON(jdi_page_json), "tree");
             populatePageInfo($.parseJSON(jdi_page_json));
 
-            $.each(translateToJava2($.parseJSON(jdi_page_json)), function (ind, val) {
-                addPageObjectPreviewTab(val.data, val.name, 0);
-            })
+            $.each(translateToJava($.parseJSON(jdi_page_json)).getCombElements(),
+                function (ind, val) {
+                    addPageObjectPreviewTab(val, 0);
+                });
 
             jdi_page_json = undefined;
             chrome.storage.local.remove('jdi_page');
@@ -43,29 +47,6 @@ document.addEventListener('DOMContentLoaded', function (e) {
             ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
 
             fillJDIBean(ind, changed.jdi_object.newValue);
-        }
-    });
-
-    $('#cb-light').on("change", function (e) {
-        if ($('#cb-light').is(':checked')) {
-            chrome.runtime.sendMessage(
-                {
-                    name: requestName.addMouseMoveKeyPressEvent,
-                    scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents.js",
-                    tabId: chrome.devtools.inspectedWindow.tabId
-                },
-                function (response) {
-                })
-        }
-        else {
-            chrome.runtime.sendMessage(
-                {
-                    name: requestName.releaseElementLocationState,
-                    scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents_Release.js",
-                    tabId: chrome.devtools.inspectedWindow.tabId
-                },
-                function (response) {
-                })
         }
     });
 
@@ -83,8 +64,16 @@ function drawJDITree(jsonElements, parentID) {
             drawJDITree(el, 'main-div-' + ind);
         }
     });
+
 }
 
+function cleanTreeAndTabs() {
+    $('#tree').empty();
+
+    clearTabs();
+}
+
+//JDI Bean
 function fillJDIBean(index, jdiObj) {
 
     $('#jdi-name-' + index).text(jdiObj === undefined ? "no jdi-name" : jdiObj.name);
@@ -114,6 +103,7 @@ function fillJDIBean(index, jdiObj) {
         }
         else {
             $('#PO-locator-' + index).val(jdiObj.locator).removeClass("warningText");
+            addEventToBeanLocator(index);
         }
     }
 }
@@ -128,6 +118,7 @@ function addNewJDIBeanToTree(parentID, jdiElement) {
         $("#" + parentID).children('ul').append(template)
 
     addJDIBeanEvents(treeElementCount);
+    makeJDIBeanDraggableDroppable(treeElementCount);
     fillJDIBean(treeElementCount, jdiElement)
 
     treeElementCount++;
@@ -168,11 +159,34 @@ function addJDIBeanEvents(index) {
         rebuildPageObjectPreviewTab();
     });
 
-    $('#btn-remove-' + index).on('click', function () {
+    $('#modal-btn-delete-' + index).on('click', function () {
         var ind = this.getAttribute("id").split("-").pop();
-        //  wind =  window.confirm("what to do with sub-elements?");
+
+        $('#modal-' + ind).modal("hide");
+        $('#main-div-' + ind).remove();
+    })
+
+    $('#modal-btn-up-' + index).on('click', function () {
+        var ind = this.getAttribute("id").split("-").pop();
+
+        $('#modal-' + ind).modal("hide");
+
+        var elements = $('#main-div-' + ind).children('ul').children();
+
+        $.each(elements, function (index, val) {
+            $(val).insertBefore('#main-div-' + ind);
+        })
 
         $('#main-div-' + ind).remove();
+    })
+
+    $('#btn-remove-' + index).on('click', function () {
+        var ind = this.getAttribute("id").split("-").pop();
+
+        if ($('#main-div-' + ind).children('ul').children().length > 0)
+            $("#modal-" + ind).modal("show");
+        else
+            $('#main-div-' + ind).remove();
     })
 
     $('#btn-add-' + index).on('click', function () {
@@ -194,21 +208,62 @@ function addJDIBeanEvents(index) {
     });
 
     $('#cb-locate-' + index).on('change', function () {
-        var ind = this.getAttribute("id").split("-").pop();
-        addEventToBeansCheckBox(ind);
+        addEventToBeansCheckBox(this.getAttribute("id").split("-").pop());
     })
+
+    $('#PO-locator-' + index).on('input', function () {
+        addEventToBeanLocator(this.getAttribute("id").split("-").pop())
+    });
 }
 
-function cleanTreeAndTabs() {
-    $('#tree').empty();
+function makeJDIBeanDraggableDroppable(index) {
 
-    clearTabs();
+    $('#main-div-' + index).draggable({
+            stop: function (event, index) {
+                if (draggingStarted) {
+                    $('#tree > ul').append(event.target);
+                    $(event.target).css({left: 0, top: "auto"});
+                }
+                draggingStarted = false;
+            },
+            start: function (event, index) {
+                draggingStarted = true;
+            }
+        }
+    );
+    $('#main-div-' + index).droppable({
+        drop: function (event, ui) {
+
+            clearSelectionToDrop()
+
+            if ($(event.target).children('ul').length === 0)
+                $(event.target).append("<ul></ul>");
+
+            $($(event.target).children('ul')[0]).append(ui.draggable);
+            $(ui.draggable).css({left: "auto", top: "auto"});
+
+            draggingStarted = false;
+        },
+        over: function (event) {
+
+            ind = $(event.target).attr("id").split("-").pop();
+
+            $(event.target).find('#div-col-none-' + ind).addClass("selectedToDrop");
+            $(event.target).find('#div-col-' + ind).addClass("selectedToDrop");
+        },
+        out: function (event) {
+
+            ind = $(event.target).attr("id").split("-").pop();
+
+            clearSelectionToDrop()
+        }
+    });
 }
 
-function clearTabs() {
-    $('#form-tabs-header').empty();
-    $('#div-tab-content').empty();
-    $('#pre-page-PO').text("")
+function clearSelectionToDrop(){
+
+    while ($("[id^=div-col-]").hasClass("selectedToDrop"))
+        $("[id^=div-col-]").removeClass("selectedToDrop");
 }
 
 function addEventToBeansCheckBox(ind) {
@@ -222,56 +277,84 @@ function addEventToBeansCheckBox(ind) {
             if (this.getAttribute("id").split("-").pop() !== ind)
                 $(this).removeAttr("checked");
         });
-        chrome.runtime.sendMessage(
-            {
-                name: requestName.addMouseMoveKeyPressEvent,
-                scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents_Release.js",
-                tabId: chrome.devtools.inspectedWindow.tabId
-            })
+
+        chrome.runtime.sendMessage({
+            name: requestName.releaseMouseMoveKeyPressEvent,
+            tabId: chrome.devtools.inspectedWindow.tabId
+        })
+        chrome.runtime.sendMessage({
+            name: requestName.restoreAllElementBackgroundColorOnWeb,
+            tabId: chrome.devtools.inspectedWindow.tabId
+        })
+
+        chrome.runtime.sendMessage({
+            name: requestName.highlightElementOnWeb,
+            tabId: chrome.devtools.inspectedWindow.tabId,
+            cssLocator: $("#PO-locator-" + ind).val()
+        })
+        chrome.runtime.sendMessage({
+            name: requestName.addMouseMoveKeyPressEvent,
+            tabId: chrome.devtools.inspectedWindow.tabId
+        })
 
         $('#div-col-none-' + ind).addClass("staticHighlight");
         $('#div-col-' + ind).addClass("staticHighlight");
-        chrome.runtime.sendMessage(
-            {
-                name: requestName.addMouseMoveKeyPressEvent,
-                scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents.js",
-                tabId: chrome.devtools.inspectedWindow.tabId
-            })
     }
     else {
         $('#div-col-none-' + ind).removeClass("staticHighlight");
         $('#div-col-' + ind).removeClass("staticHighlight");
-        chrome.runtime.sendMessage(
-            {
-                name: requestName.addMouseMoveKeyPressEvent,
-                scriptToExecute: "DevPanel/js/elLocation/mouseMoveKeyPressEvents_Release.js",
-                tabId: chrome.devtools.inspectedWindow.tabId
-            })
+
+        chrome.runtime.sendMessage({
+            name: requestName.releaseMouseMoveKeyPressEvent,
+            tabId: chrome.devtools.inspectedWindow.tabId
+        })
+        chrome.runtime.sendMessage({
+            name: requestName.restoreAllElementBackgroundColorOnWeb,
+            tabId: chrome.devtools.inspectedWindow.tabId
+        })
+
+    }
+}
+
+function addEventToBeanLocator(ind) {
+    if ($('#cb-locate-' + ind).is(':checked')) {
+        chrome.runtime.sendMessage({
+            name: requestName.highlightElementOnWeb,
+            tabId: chrome.devtools.inspectedWindow.tabId,
+            cssLocator: $("#PO-locator-" + ind).val()
+        })
     }
 }
 
 //Page Object`s tabs
-function addPageObjectPreviewTab(javaCode, tabName, activeTabIndex) {
+function addPageObjectPreviewTab(data, activeTabIndex) {
 
-    if (javaCode.match('public class .* Page') != null) {
-        $('#a-page').text(tabName);
-        $('#pre-page-PO').text(javaCode);
+    if (data.type === "IPage") {
+        $('#a-page').text(data.name);
+        $('#pre-page-PO').text(data.data);
         $('#pre-page-PO').each(function (i, block) {
             hljs.highlightBlock(block);
         });
     }
-    else if (javaCode.match('public class .* extends Form<.*>') != null) {
+    else if (data.type === "Form") {
         var index = $('#form-tabs-header').children().length;
 
         var template = $("#template-form-tab").html().replace(/{i}/g, index);
         $('#form-tabs-header').append(template);
-        $('#a-form-' + index).text(tabName);
+        $('#a-form-' + index).text(data.name);
 
         template = $("#template-form-content").html().replace(/{i}/g, index);
         $('#div-tab-content').append(template);
-        $('#a-collapse-' + index).text(tabName);
-        $('#collapse1-' + index + ' pre').text(javaCode);
+
+        $('#a-collapse1-' + index).text(data.name);
+        $('#collapse1-' + index + ' pre').text(data.data);
         $('#collapse1-' + index + ' pre').each(function (i, block) {
+            hljs.highlightBlock(block);
+        });
+
+        $('#a-collapse2-' + index).text(data.elements[0][0].name);
+        $('#collapse2-' + index + ' pre').text(data.elements[0][0].data);
+        $('#collapse2-' + index + ' pre').each(function (i, block) {
             hljs.highlightBlock(block);
         });
     }
@@ -296,12 +379,17 @@ function rebuildPageObjectPreviewTab() {
     tree_json = undefined;
     tree_json = getJSONFromTree("tree", tree_json);
 
-    $('.tab-link').empty();
-    $('.content-area').empty();
+    clearTabs();
 
-    $.each(translateToJava2(tree_json), function (ind, val) {
-        addPageObjectPreviewTab(val.data, val.name, 0)
+    $.each(translateToJava(tree_json).getCombElements(), function (ind, val) {
+        addPageObjectPreviewTab(val, 0)
     })
+}
+
+function clearTabs() {
+    $('#form-tabs-header').empty();
+    $('#div-tab-content').empty();
+    $('#pre-page-PO').text("")
 }
 
 //getting jdi from tree
@@ -334,6 +422,7 @@ function getJSONFromTree(parentID, json) {
             title: $('#txt-title').val(),
             type: $('#txt-type').val(),
             url: $('#txt-URL').val(),
+            packageName: $('#txt-package').val(),
             elements: json
         };
 
@@ -346,5 +435,7 @@ function populatePageInfo(jsonElements) {
     $('#txt-title').val(jsonElements.title);
     $('#txt-type').val(jsonElements.type);
     $('#txt-URL').val(jsonElements.url);
+    if (jsonElements.packageName !== undefined)
+        $('#txt-package').val(jsonElements.packageName);
 }
 

@@ -9,13 +9,22 @@ chrome.runtime.onMessage.addListener(
                 executeContextScript(request);
                 break;
             case requestName.addMouseMoveKeyPressEvent:
-                addMouseMoveKeyPressToPage(request);
+                sendMessageToContent(request);
+                break;
+            case requestName.releaseMouseMoveKeyPressEvent:
+                sendMessageToContent(request);
                 break;
             case requestName.jdiFromContentSaveClicked:
                 saveJDIObjectToStorage(request.data);
                 break;
             case requestName.savePageJSONByJDIElementsToStorage:
                 savePageJSONByJDIElementsToStorage(request.pageId);
+                break;
+            case requestName.highlightElementOnWeb:
+                sendMessageToContent(request);
+                break;
+            case requestName.restoreAllElementBackgroundColorOnWeb:
+                sendMessageToContent(request);
                 break;
             default :
                 alert("request "+request.name+" not supported in background")
@@ -25,9 +34,15 @@ chrome.runtime.onMessage.addListener(
 
 function savePageJSONByJDIElementsToStorage(pageId){
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(pageId, requestName.getPageJSONByJDIElements, function(response) {
+        chrome.tabs.sendMessage(pageId,{name: requestName.getPageJSONByJDIElements}, function(response) {
             saveToLocalStorage(response, storageSegment.jdi_page);
         });
+    });
+}
+
+function sendMessageToContent(data){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(data.tabId, {name: data.name, message: data});
     });
 }
 

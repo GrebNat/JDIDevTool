@@ -80,8 +80,14 @@ var FindByTemplates = {
 var createRecord = function(data){
     return {
         name : data.name,
-        data : data.print()
+        classParam: data.classParam,
+        type: data.type,
+        data : data.print(),
     }
+}
+
+var deepCopy = function (obj) {
+    return JSON.parse(JSON.stringify(obj));
 }
 
 String.prototype.capitalizeFirstLetter = function() {

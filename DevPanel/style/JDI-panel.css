@@ -3,6 +3,11 @@
     font-weight: bolder;
     font-size: larger;
 }
+.selectedToDrop{
+    color: #6db982;
+    font-weight: bolder;
+    font-size: larger;
+}
 .normalText{
     color: inherit;
     font-weight: inherit;
