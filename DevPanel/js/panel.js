@@ -9,14 +9,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
     chrome.storage.local.clear();
 
     $('#btn-all').on('click', function () {
-        cleanTreeAndTabs();
+        cleanAll();
         chrome.storage.local.clear();
         chrome.runtime.sendMessage({
             name: requestName.savePageJSONByJDIElementsToStorage,
-            pageId: chrome.devtools.inspectedWindow.tabId
+            tabId: chrome.devtools.inspectedWindow.tabId
         });
-
-
     })
 
     $('#btn-new-json').on('click', function () {
@@ -25,28 +23,32 @@ document.addEventListener('DOMContentLoaded', function (e) {
     })
 
     $('#btn-empty-tree').on('click', function () {
-        cleanTreeAndTabs();
+        cleanAll();
     })
 
     chrome.storage.onChanged.addListener(function (changed, e1) {
         if ('jdi_page' in changed) {
-            jdi_page_json = changed.jdi_page.newValue;
+            if (changed.jdi_page.newValue.tabId == chrome.devtools.inspectedWindow.tabId) {
+                jdi_page_json = changed.jdi_page.newValue.data;
 
-            drawJDITree($.parseJSON(jdi_page_json), "tree");
-            populatePageInfo($.parseJSON(jdi_page_json));
+                drawJDITree($.parseJSON(jdi_page_json), "tree");
+                populatePageInfo($.parseJSON(jdi_page_json));
 
-            $.each(translateToJava($.parseJSON(jdi_page_json)).getCombElements(),
-                function (ind, val) {
-                    addPageObjectPreviewTab(val, 0);
-                });
+                $.each(translateToJava($.parseJSON(jdi_page_json)).getCombElements(),
+                    function (ind, val) {
+                        addPageObjectPreviewTab(val, 0);
+                    });
 
-            jdi_page_json = undefined;
-            chrome.storage.local.remove('jdi_page');
+                jdi_page_json = undefined;
+                chrome.storage.local.remove('jdi_page');
+            }
         }
         if ('jdi_object' in changed) {
-            ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
+            if (changed.jdi_object.newValue.tabId == chrome.devtools.inspectedWindow.tabId) {
+                ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
 
-            fillJDIBean(ind, changed.jdi_object.newValue);
+                fillJDIBean(ind, changed.jdi_object.newValue.data);
+            }
         }
     });
 
@@ -65,12 +67,6 @@ function drawJDITree(jsonElements, parentID) {
         }
     });
 
-}
-
-function cleanTreeAndTabs() {
-    $('#tree').empty();
-
-    clearTabs();
 }
 
 //JDI Bean
@@ -335,6 +331,11 @@ function addPageObjectPreviewTab(data, activeTabIndex) {
         $('#pre-page-PO').each(function (i, block) {
             hljs.highlightBlock(block);
         });
+        $('#btn-download-page').on('click', function(e){
+            (new saveFile).asJava(
+                [$('#pre-page-PO').text()],
+                $('#a-page').text());
+        })
     }
     else if (data.type === "Form") {
         var index = $('#form-tabs-header').children().length;
@@ -346,21 +347,28 @@ function addPageObjectPreviewTab(data, activeTabIndex) {
         template = $("#template-form-content").html().replace(/{i}/g, index);
         $('#div-tab-content').append(template);
 
-        $('#a-collapse1-' + index).text(data.name);
-        $('#collapse1-' + index + ' pre').text(data.data);
-        $('#collapse1-' + index + ' pre').each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
-
-        $('#a-collapse2-' + index).text(data.elements[0][0].name);
-        $('#collapse2-' + index + ' pre').text(data.elements[0][0].data);
-        $('#collapse2-' + index + ' pre').each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
+        collapsePanelEvent(1, index, data);
+        collapsePanelEvent(2, index, data.elements[0][0]);
     }
 
     $('#form-content-' + activeTabIndex).addClass('in active');
     addPONavBarEvents();
+}
+
+function collapsePanelEvent(panelInd, ind, data){
+    $('#a-collapse{0}-{1}'.format(panelInd, ind)).text(data.name);
+    $('#collapse{0}-{1} pre'.format(panelInd, ind)).text(data.data);
+    $('#collapse{0}-{1} pre'.format(panelInd, ind)).each(function (i, block) {
+        hljs.highlightBlock(block);
+    });
+
+    $('#btn-collapse{0}-{1}'.format(panelInd, ind)).on("click", function(e){
+        var ind = this.getAttribute("id").split("-").pop();
+
+        (new saveFile).asJava(
+            [$('#collapse{0}-{1} pre'.format(panelInd, ind)).text()],
+            $('#a-collapse{0}-{1}'.format(panelInd, ind)).text());
+    })
 }
 
 function addPONavBarEvents() {
@@ -384,12 +392,6 @@ function rebuildPageObjectPreviewTab() {
     $.each(translateToJava(tree_json).getCombElements(), function (ind, val) {
         addPageObjectPreviewTab(val, 0)
     })
-}
-
-function clearTabs() {
-    $('#form-tabs-header').empty();
-    $('#div-tab-content').empty();
-    $('#pre-page-PO').text("")
 }
 
 //getting jdi from tree
@@ -437,5 +439,28 @@ function populatePageInfo(jsonElements) {
     $('#txt-URL').val(jsonElements.url);
     if (jsonElements.packageName !== undefined)
         $('#txt-package').val(jsonElements.packageName);
+}
+
+//clear functions
+function cleanAll() {
+    $('#tree').empty();
+
+    clearTabs();
+    clearPageInfo();
+}
+
+function clearTabs() {
+    $('#form-tabs-header').empty();
+    $('#div-tab-content').empty();
+    $('#pre-page-PO').text("")
+    $('#a-page').text("Page");
+}
+
+function clearPageInfo(){
+    $('#txt-name').val("");
+    $('#txt-title').val("");
+    $('#txt-type').val("");
+    $('#txt-URL').val("");
+    $('#txt-package').val("");
 }
 

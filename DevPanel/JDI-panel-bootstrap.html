@@ -20,6 +20,10 @@
     <link rel="stylesheet" href="libs/bootstrap-3.3.5-dist/css/bootstrap.min.css">
     <script src="libs/bootstrap-3.3.5-dist/css/bootstrap.css"></script>
     <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+    <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="style/bootstrap_ext.css">
+    <script src="js/utils/saveFiles.js"></script>
+    <script src="libs/FileSaver.js"></script>
 </head>
 <body>
 
@@ -114,7 +118,9 @@
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse1-{i}" id="a-collapse1-{i}"></a>
+                    <button id="btn-collapse1-{i}" class="btn-success btn-sm btn"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
                 </h4>
+
             </div>
             <div id="collapse1-{i}" class="panel-collapse collapse">
                 <div class="panel-body">
@@ -124,10 +130,13 @@
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse2-{i}" id="a-collapse2-{i}"></a>
+                    <button id="btn-collapse2-{i}" class="btn-success btn-sm btn"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
                 </h4>
             </div>
             <div id="collapse2-{i}" class="panel-collapse collapse">
-                <pre class="panel-body"></pre>
+                <div class="panel-body">
+                    <pre></pre>
+                </div>
             </div>
         </div>
     </div>
@@ -137,6 +146,7 @@
 
     <div class="row">
         <div class="col-xs-12"><br>
+
             <div class="btn-group btn-group-sm">
                 <button id="btn-all" class="btn btn-success">ShowAll</button>
                 <button id="btn-new-json" class="btn">Update PageObjects</button>
@@ -144,6 +154,7 @@
             </div>
         </div>
     </div>
+    <!--buttons-->
     <hr>
     <div class="row">
         <div class="col-xs-6">
@@ -191,6 +202,7 @@
             </form>
         </div>
     </div>
+    <!--text fields-->
     <div class="row">
         <form class="form-horizontal" role="form">
             <label for="txt-package" class="col-xs-2 control-label">
@@ -202,16 +214,17 @@
             </div>
         </form>
     </div>
+    <!--package text field-->
     <hr>
-    <div class="row">
-        <div class="col-xs-6">
+    <div class="row"><!--tree+pages-->
+        <div class="col-xs-6 col-xxs-12">
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xxs-12">
                     <div id="tree" class="treeDiv" style="overflow-x: scroll"></div>
                 </div>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-6 hidden-xxs">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#page" id="a-page">Page</a></li>
                 <li><a href="#forms">Forms</a></li>
@@ -219,11 +232,13 @@
             <div class="tab-content">
                 <div id="page" class="tab-pane fade in active">
                     <br>
-                    <pre style="-webkit-user-select: text" id="pre-page-PO"><i>Page Objects for the page will be shown
-                        here</i></pre>
+                    <button id="btn-download-page" class="btn-success btn-sm btn" style="float: right"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                    <br><br>
+                    <pre style="-webkit-user-select: text; width: 100%" id="pre-page-PO"><i>Page Objects for the page will be shown here</i></pre>
                 </div>
                 <div id="forms" class="tab-pane fade">
                     <div class="panel">
+                        <br>
                         <ul class="nav nav-tabs" id="form-tabs-header"></ul>
                         <div class="tab-content" id="div-tab-content" style="-webkit-user-select: text"></div>
                     </div>

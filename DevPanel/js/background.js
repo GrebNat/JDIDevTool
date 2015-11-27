@@ -15,10 +15,10 @@ chrome.runtime.onMessage.addListener(
                 sendMessageToContent(request);
                 break;
             case requestName.jdiFromContentSaveClicked:
-                saveJDIObjectToStorage(request.data);
+                saveJDIObjectToStorage(request.data, sender);
                 break;
             case requestName.savePageJSONByJDIElementsToStorage:
-                savePageJSONByJDIElementsToStorage(request.pageId);
+                savePageJSONByJDIElementsToStorage(request.tabId);
                 break;
             case requestName.highlightElementOnWeb:
                 sendMessageToContent(request);
@@ -32,10 +32,10 @@ chrome.runtime.onMessage.addListener(
 
     });
 
-function savePageJSONByJDIElementsToStorage(pageId){
+function savePageJSONByJDIElementsToStorage(tabId){
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(pageId,{name: requestName.getPageJSONByJDIElements}, function(response) {
-            saveToLocalStorage(response, storageSegment.jdi_page);
+        chrome.tabs.sendMessage(tabId,{name: requestName.getPageJSONByJDIElements}, function(response) {
+            saveToLocalStorage({data: response, tabId: tabId}, storageSegment.jdi_page);
         });
     });
 }
@@ -51,8 +51,9 @@ function saveToLocalStorage(obj, segmentName){
     chrome.storage.local.set({jdi_page: obj});
 }
 
-function saveJDIObjectToStorage(data) {
-    chrome.storage.local.set({'jdi_object': data});
+function saveJDIObjectToStorage(data, sender) {
+    chrome.storage.local.set({'jdi_object': {data: data, tabId: sender.tab.id}});
+   // saveToLocalStorage({data: data, pageId: pageId}, storageSegment.jdi_object)
 }
 
 function addJDIObjectToStorage(data) {

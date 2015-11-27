@@ -56,15 +56,16 @@
     width: 90%;
     height: 100%;
     font-family: monospace;
+    border-radius: 6px;
 }
 li {
     list-style-type: none;
 }
 .highlight{
-    background-color: #93DBD5;
+    background-color: rgba(147, 219, 213, 0.4);
 }
 .staticHighlight{
-    background-color: #39db88;
+    background-color: rgba(57, 219, 136, 0.6);
 }
 .collapsedDiv{
     width: 260px;
@@ -77,7 +78,7 @@ li {
     position: relative;
     border: inherit;
     font-size: smaller;
-    background-color: inherit;
+    background-color: transparent;
     margin-left: 5%;
     height: 100%;
     width: 80%;
