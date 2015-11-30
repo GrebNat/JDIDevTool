@@ -35,6 +35,7 @@ var FieldTemplates = {
     String:  function(elem) {
         return "\tpublic {0} {1};\n".format(elem.type, elem.name);
     },
+    Section: simpleFileld,
     ITextArea: simpleFileld,
     IButton: simpleFileld,
     Form: simpleFileld,

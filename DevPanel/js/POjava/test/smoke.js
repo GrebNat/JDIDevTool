@@ -44,8 +44,15 @@ function runTests() {
 }
 $(document).ready(function () {
     init();
-    var data = JSON.parse($("[id=form]").text())
-    var java = translateToJava(data);
-    java.getCombElements();
-    console.log(java);
+    //var data = JSON.parse($("[id=form]").text())
+    //var java = translateToJava(data);
+    //java.getCombElements();
+    //console.log(java);
+    var a = translateToJava(JSON.parse($("[id=section]").text()));
+    console.log(a.data);
+    var e = $("[id=res]");
+    $.each(a, function (i, elem) {
+        var temp = e.text();
+        e.text(temp + elem.data);
+    });
 });

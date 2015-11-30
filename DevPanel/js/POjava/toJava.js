@@ -51,6 +51,10 @@ var ElemTemplates = {
     String: moduleSimple,
     ITextArea: moduleSimple,
     IButton: moduleSimple,
+    Section: function (data) {
+        filesTemplate.Section(data);
+        return moduleSimple(data);
+    },
     Form: function (data) {
         filesTemplate.Form(data);
         return moduleSimple(data);
@@ -68,6 +72,22 @@ var ElemTemplates = {
 }
 
 var filesTemplate = {
+    Section: function(data) {
+        data.extendz = "{0}<{1}>".format(data.type, data.gen);
+        data.type = data.name;
+        FieldTemplates[data.type] = function (elem) {
+            return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
+        };
+        IncludesDictionary[data.type] = "my.package.{0}".format(data.type);
+        var c = new JavaClass(data);
+        c.includes.push(IncludesDictionary.by);
+        c.includes.push(IncludesDictionary.fundBy);
+        c.includes.push(IncludesDictionary.Form);
+        c.classParam = data.gen;
+        c.type = fileTypes.form;
+        result.push(createRecord(c));
+        res.forms.push(createRecord(c));
+    },
     Form: function (data) {
         data.name = data.name.capitalizeFirstLetter();
         var genClass = JSON.parse(JSON.stringify(data));

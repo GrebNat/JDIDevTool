@@ -162,6 +162,78 @@
         }
         </pre>
     </div>
+    <!--test 4-->
+    <div>
+        <h3>qwe</h3>
+        <main>
+            <div>
+                <ul class="uui-pagination" jdi-type="IPagination" jdi-name="pagination1">
+                    <li class="prev" jdi-type="IElement" jdi-parent="pagination1" jdi-name="prev"><a href="#"><i class="fa fa-long-arrow-left"></i></a></li>
+                    <li class="first" jdi-type="IElement" jdi-parent="pagination1" jdi-name="first"><a href="#">First</a></li>
+                    <li class="last" jdi-type="IElement" jdi-parent="pagination1" jdi-name="last"><a href="#">Last</a></li>
+                    <li class="next" jdi-type="IElement" jdi-parent="pagination1" jdi-name="next"><a href="#"><i class="fa fa-long-arrow-right"></i></a></li>
+                </ul>
+            </div>
+        </main>
+        <pre id="section">
+        {
+            "name": "name",
+            "url": "url",
+            "type": "IPage",
+            "packageName": "com.my.test",
+            "elements": [
+                {
+                    "type": "Section",
+                    "name": "section1",
+                    "gen": "section",
+                    "locator": "[jdi-name=section1]",
+                    "elements": [
+                        {
+                            "type": "ITextField",
+                            "name": "t1",
+                            "locator": "[jdi-name=t1]"
+                        },
+                        {
+                            "type": "ITextField",
+                            "name": "t2",
+                            "locator": "[jdi-name=t2]"
+                        },
+                        {
+                            "type": "IButton",
+                            "name": "b1",
+                            "locator": "[jdi-name=b1]"
+                        },
+                        {
+                            "type": "Form",
+                            "name": "form1",
+                            "gen": "form1Content",
+                            "locator": "[jdi-name=form1]",
+                            "elements": [
+                                {
+                                    "type": "ITextField",
+                                    "name": "t1_form",
+                                    "locator": "[jdi-name=t1_form]"
+                                },
+                                {
+                                    "type": "ITextArea",
+                                    "name": "t1_form",
+                                    "locator": "[jdi-name=t1_form]"
+                                },
+                                {
+                                    "type": "IButton",
+                                    "name": "b1_form",
+                                    "locator": "[jdi-name=b1_form]"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "title": "title"
+        }
+        </pre>
+        <pre id="res"></pre>
+    </div>
 </div>
 <div>
     <div id="qunit"></div>
