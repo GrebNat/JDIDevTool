@@ -5,4 +5,13 @@ var saveFile = function() {
         saveAs(blob, "{0}.java".format(fileName));
     };
 
+    this.asZip = function(data, fileName){
+        var zip = new JSZip();
+        $.each(data, function (i, val) {
+            zip.file("pageObject/{0}.java".format(val.name), val.data);
+        });
+        var blob = zip.generate({type:"blob"});
+        saveAs(blob, "{0}.zip".format(fileName));
+    }
+
 }

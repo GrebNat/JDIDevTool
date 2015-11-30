@@ -3,6 +3,7 @@ var jdi_page_json = undefined;
 var tree_json = [];
 var done = false;
 var draggingStarted = false;
+var pageObjectsFiles = [];
 
 document.addEventListener('DOMContentLoaded', function (e) {
 
@@ -26,15 +27,29 @@ document.addEventListener('DOMContentLoaded', function (e) {
         cleanAll();
     })
 
+    $('#btn-download-all').on('click', function(){
+        (new saveFile).asZip(pageObjectsFiles, "PageObjects");
+    })
+
+    $('#load-new-page').on('click', function(){
+        chrome.devtools.inspectedWindow.eval(
+            "window.location.href='http://localhost:8090/page6.htm'",
+            function(result, isException) {
+                console.log(result);
+            });
+    })
+
     chrome.storage.onChanged.addListener(function (changed, e1) {
         if ('jdi_page' in changed) {
             if (changed.jdi_page.newValue.tabId == chrome.devtools.inspectedWindow.tabId) {
+                pageObjectsFiles = [];
                 jdi_page_json = changed.jdi_page.newValue.data;
+                pageObjectsFiles=translateToJava($.parseJSON(jdi_page_json))
 
                 drawJDITree($.parseJSON(jdi_page_json), "tree");
                 populatePageInfo($.parseJSON(jdi_page_json));
 
-                $.each(translateToJava($.parseJSON(jdi_page_json)).getCombElements(),
+                $.each(pageObjectsFiles.getCombElements(),
                     function (ind, val) {
                         addPageObjectPreviewTab(val, 0);
                     });
@@ -385,11 +400,14 @@ function addPONavBarEvents() {
 
 function rebuildPageObjectPreviewTab() {
     tree_json = undefined;
+    pageObjectsFiles = [];
+
     tree_json = getJSONFromTree("tree", tree_json);
+    pageObjectsFiles = translateToJava(tree_json);
 
     clearTabs();
 
-    $.each(translateToJava(tree_json).getCombElements(), function (ind, val) {
+    $.each(pageObjectsFiles.getCombElements(), function (ind, val) {
         addPageObjectPreviewTab(val, 0)
     })
 }
