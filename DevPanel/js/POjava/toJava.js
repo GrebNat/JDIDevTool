@@ -73,7 +73,7 @@ var ElemTemplates = {
 
 var filesTemplate = {
     Section: function(data) {
-        data.extendz = "{0}<{1}>".format(data.type, data.gen);
+        data.extendz = "{0}".format(data.gen.capitalizeFirstLetter());
         data.type = data.name;
         FieldTemplates[data.type] = function (elem) {
             return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
