@@ -98,6 +98,7 @@ var jsonPageGenerator = function (attrSpec, options, container) {
                     }
                 j = (prn[j] === undefined) ? 0 : j;
                 i = (cld[i] === undefined) ? 0 : i;
+                if(cld.length === 0) break;
                 if (prn[j].name === cld[i].parent) {
                     prn[j].elements.push(cld.splice(i, 1)[0]);
                     i = j = -1;
