@@ -18,221 +18,192 @@
     <div>
         <h3>page with 3 elements</h3>
         <main>
-            <div>
-                <div>
-                    <label for="login">Name</label>
-                    <input jdi-type="ITextField" jdi-name="t1" id="login" type="text">
-                </div>
-                <div>
-                    <label for="password">Last Name</label>
-                    <input jdi-type="ITextField" jdi-name="t2" id="password" type="text">
-                </div>
-                <button jdi-type="IButton" jdi-name="b1" type="submit">Submit</button>
-            </div>
-        </main>
-        <pre>
+            <pre>
             {
             "name": "name",
             "url": "url",
             "type": "IPage",
             "packageName": "com.my.test",
-            "elements": [
-                {
-                    "type": "ITextField",
-                    "name": "t1",
-                    "locator": "[jdi-name=t1]"
-                },
-                {
-                    "type": "ITextField",
-                    "name": "t2",
-                    "locator": "[jdi-name=t2]"
-                },
-                {
-                    "type": "IButton",
-                    "name": "b1",
-                    "locator": "[jdi-name=b1]"
-                }
-            ],
+                "elements": [
+                    {
+                        "type": "ITextField",
+                        "name": "t1",
+                        "locator": "[jdi-name=t1]"
+                    },
+                    {
+                        "type": "ITextField",
+                        "name": "t2",
+                        "locator": "[jdi-name=t2]"
+                    },
+                        {
+                        "type": "IButton",
+                        "name": "b1",
+                        "locator": "[jdi-name=b1]"
+                    }
+                ],
             "title": "title"
-        }
+            }
+            </pre>
+        </main>
+        <pre>
+
         </pre>
     </div>
     <!--test 2-->
     <div>
         <h3>form</h3>
-        <main>
-            <div>
-                <form jdi-type="Form" jdi-name="form3" jdi-gen="fomr3Content">
-                    <div>
-                        <input jdi-type="ITextField" jdi-parent="form3" jdi-name="t3_form" type="text">
-                        <input jdi-type="ITextArea" jdi-parent="form3" jdi-name="t3_form" type="text">
-
-                        <div>
-                            <button jdi-type="IButton" jdi-parent="form3" jdi-name="b3_form" type="submit">Submit
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <main id="form">
+            <pre>
+            {
+                "name": "name",
+                "url": "url",
+                "type": "IPage",
+                "packageName": "com.my.test",
+                "elements": [
+                    {
+                        "type": "Form",
+                        "name": "form3",
+                        "gen": "fomr3Content",
+                        "locator": "[jdi-name=form3]",
+                        "elements": [
+                            {
+                                "type": "ITextField",
+                                "name": "t3_form",
+                                "locator": "[jdi-name=t3_form]"
+                            },
+                            {
+                                "type": "ITextArea",
+                                "name": "t3_form",
+                                "locator": "[jdi-name=t3_form]"
+                            },
+                            {
+                                "type": "IButton",
+                                "name": "b3_form",
+                                "locator": "[jdi-name=b3_form]"
+                            }
+                        ]
+                    }
+                ],
+                "title": "title"
+            }
+            </pre>
         </main>
-        <pre id="form">
-        {
-            "name": "name",
-            "url": "url",
-            "type": "IPage",
-            "packageName": "com.my.test",
-            "elements": [
-                {
-                    "type": "Form",
-                    "name": "form3",
-                    "gen": "fomr3Content",
-                    "locator": "[jdi-name=form3]",
-                    "elements": [
-                        {
-                            "type": "ITextField",
-                            "name": "t3_form",
-                            "locator": "[jdi-name=t3_form]"
-                        },
-                        {
-                            "type": "ITextArea",
-                            "name": "t3_form",
-                            "locator": "[jdi-name=t3_form]"
-                        },
-                        {
-                            "type": "IButton",
-                            "name": "b3_form",
-                            "locator": "[jdi-name=b3_form]"
-                        }
-                    ]
-                }
-            ],
-            "title": "title"
-        }
+        <pre>
+
         </pre>
     </div>
     <!--test 3-->
     <div>
         <h3>pagination</h3>
         <main>
-            <div>
-                <ul class="uui-pagination" jdi-type="IPagination" jdi-name="pagination1">
-                    <li class="prev" jdi-type="IElement" jdi-parent="pagination1" jdi-name="prev"><a href="#"><i class="fa fa-long-arrow-left"></i></a></li>
-                    <li class="first" jdi-type="IElement" jdi-parent="pagination1" jdi-name="first"><a href="#">First</a></li>
-                    <li class="last" jdi-type="IElement" jdi-parent="pagination1" jdi-name="last"><a href="#">Last</a></li>
-                    <li class="next" jdi-type="IElement" jdi-parent="pagination1" jdi-name="next"><a href="#"><i class="fa fa-long-arrow-right"></i></a></li>
-                </ul>
-            </div>
+            <pre>
+            {
+                "name": "name",
+                "url": "url",
+                "type": "IPage",
+                "packageName": "com.my.test",
+                "elements": [
+                    {
+                        "type": "IPagination",
+                        "name": "pagination1",
+                        "locator": "[jdi-name=pagination1]",
+                        "elements": [
+                            {
+                                "type": "IElement",
+                                "name": "prev",
+                                "locator": "[jdi-name=prev]"
+                            },
+                            {
+                                "type": "IElement",
+                                "name": "first",
+                                "locator": "[jdi-name=first]"
+                            },
+                            {
+                                "type": "IElement",
+                                "name": "last",
+                                "locator": "[jdi-name=last]"
+                            },
+                            {
+                                "type": "IElement",
+                                "name": "next",
+                                "locator": "[jdi-name=next]"
+                            }
+                        ]
+                    }
+                ],
+                "title": "title"
+            }
+            </pre>
         </main>
         <pre>
-        {
-            "name": "name",
-            "url": "url",
-            "type": "IPage",
-            "packageName": "com.my.test",
-            "elements": [
-                {
-                    "type": "IPagination",
-                    "name": "pagination1",
-                    "locator": "[jdi-name=pagination1]",
-                    "elements": [
-                        {
-                            "type": "IElement",
-                            "name": "prev",
-                            "locator": "[jdi-name=prev]"
-                        },
-                        {
-                            "type": "IElement",
-                            "name": "first",
-                            "locator": "[jdi-name=first]"
-                        },
-                        {
-                            "type": "IElement",
-                            "name": "last",
-                            "locator": "[jdi-name=last]"
-                        },
-                        {
-                            "type": "IElement",
-                            "name": "next",
-                            "locator": "[jdi-name=next]"
-                        }
-                    ]
-                }
-            ],
-            "title": "title"
-        }
+
         </pre>
     </div>
     <!--test 4-->
     <div>
-        <h3>qwe</h3>
-        <main>
-            <div>
-                <ul class="uui-pagination" jdi-type="IPagination" jdi-name="pagination1">
-                    <li class="prev" jdi-type="IElement" jdi-parent="pagination1" jdi-name="prev"><a href="#"><i class="fa fa-long-arrow-left"></i></a></li>
-                    <li class="first" jdi-type="IElement" jdi-parent="pagination1" jdi-name="first"><a href="#">First</a></li>
-                    <li class="last" jdi-type="IElement" jdi-parent="pagination1" jdi-name="last"><a href="#">Last</a></li>
-                    <li class="next" jdi-type="IElement" jdi-parent="pagination1" jdi-name="next"><a href="#"><i class="fa fa-long-arrow-right"></i></a></li>
-                </ul>
-            </div>
+        <h3>mega test 4</h3>
+        <main id="section">
+            <pre>
+            {
+                "name": "name",
+                "url": "url",
+                "type": "IPage",
+                "packageName": "com.my.test",
+                "elements": [
+                    {
+                        "type": "Section",
+                        "name": "section1",
+                        "gen": "section",
+                        "locator": "[jdi-name=section1]",
+                        "elements": [
+                            {
+                                "type": "ITextField",
+                                "name": "t1",
+                                "locator": "[jdi-name=t1]"
+                            },
+                            {
+                                "type": "ITextField",
+                                "name": "t2",
+                                "locator": "[jdi-name=t2]"
+                            },
+                            {
+                                "type": "IButton",
+                                "name": "b1",
+                                "locator": "[jdi-name=b1]"
+                            },
+                            {
+                                "type": "Form",
+                                "name": "form1",
+                                "gen": "form1Content",
+                                "locator": "[jdi-name=form1]",
+                                "elements": [
+                                    {
+                                        "type": "ITextField",
+                                        "name": "t1_form",
+                                        "locator": "[jdi-name=t1_form]"
+                                    },
+                                    {
+                                        "type": "ITextArea",
+                                        "name": "t1_form",
+                                        "locator": "[jdi-name=t1_form]"
+                                    },
+                                    {
+                                        "type": "IButton",
+                                        "name": "b1_form",
+                                        "locator": "[jdi-name=b1_form]"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "title": "title"
+            }
+            </pre>
         </main>
-        <pre id="section">
-        {
-            "name": "name",
-            "url": "url",
-            "type": "IPage",
-            "packageName": "com.my.test",
-            "elements": [
-                {
-                    "type": "Section",
-                    "name": "section1",
-                    "gen": "section",
-                    "locator": "[jdi-name=section1]",
-                    "elements": [
-                        {
-                            "type": "ITextField",
-                            "name": "t1",
-                            "locator": "[jdi-name=t1]"
-                        },
-                        {
-                            "type": "ITextField",
-                            "name": "t2",
-                            "locator": "[jdi-name=t2]"
-                        },
-                        {
-                            "type": "IButton",
-                            "name": "b1",
-                            "locator": "[jdi-name=b1]"
-                        },
-                        {
-                            "type": "Form",
-                            "name": "form1",
-                            "gen": "form1Content",
-                            "locator": "[jdi-name=form1]",
-                            "elements": [
-                                {
-                                    "type": "ITextField",
-                                    "name": "t1_form",
-                                    "locator": "[jdi-name=t1_form]"
-                                },
-                                {
-                                    "type": "ITextArea",
-                                    "name": "t1_form",
-                                    "locator": "[jdi-name=t1_form]"
-                                },
-                                {
-                                    "type": "IButton",
-                                    "name": "b1_form",
-                                    "locator": "[jdi-name=b1_form]"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
-            "title": "title"
-        }
+        <pre id="res">
+
         </pre>
-        <pre id="res"></pre>
     </div>
 </div>
 <div>

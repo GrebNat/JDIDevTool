@@ -34,25 +34,27 @@ QUnit.testStart(function () {
 function runTests() {
     var c = $("[id=testData]").children();
     $.each(c, function (i, e) {
-        QUnit.test("test " + e.getElementsByTagName("h3")[0].innerHTML, function (assert) {
-            console.log("test " + e.getElementsByTagName("h3")[0].innerHTML)
-            jsonGen = new jsonPageGenerator(jdiTags, opt, e.getElementsByTagName("main")[0]);
-            resetValues(jsonGen.getPageStruct());
-            assert.ok(jsonGen.getJSON() === e.getElementsByTagName("pre")[0].innerHTML.replace(/(\s|\n|\r)/g, ""), "Passed!");
+        var name = e.getElementsByTagName("h3")[0].innerHTML;
+        QUnit.test("test " + name, function (assert) {
+            console.log("test " + name);
+            var data = JSON.parse(e.getElementsByTagName("pre")[0].innerHTML);
+            var java = translateToJava(data);
+            //assert.ok(jsonGen.getJSON() === e.getElementsByTagName("pre")[0].innerHTML.replace(/(\s|\n|\r)/g, ""), "Passed!");
         });
     });
 }
 $(document).ready(function () {
     init();
+    runTests();
     //var data = JSON.parse($("[id=form]").text())
     //var java = translateToJava(data);
     //java.getCombElements();
     //console.log(java);
-    var a = translateToJava(JSON.parse($("[id=section]").text()));
-    console.log(a.data);
-    var e = $("[id=res]");
-    $.each(a, function (i, elem) {
-        var temp = e.text();
-        e.text(temp + elem.data);
-    });
+    //var a = translateToJava(JSON.parse($("[id=section]").text()));
+    //console.log(a.data);
+    //var e = $("[id=res]");
+    //$.each(a, function (i, elem) {
+    //    var temp = e.text();
+    //    e.text(temp + elem.data);
+    //});
 });
