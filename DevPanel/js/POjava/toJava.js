@@ -211,7 +211,8 @@ var getCombElements = function () {
     return ress;
 }
 
-function translateToJava(data) {
+function translateToJava(rawData) {
+    var data = JSON.parse(JSON.stringify(rawData));
     pname = data.packageName;
     result = new Array;
     processJSON(data);
