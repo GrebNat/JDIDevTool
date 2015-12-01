@@ -82,7 +82,7 @@ var filesTemplate = {
         var c = new JavaClass(data);
         c.includes.push(IncludesDictionary.by);
         c.includes.push(IncludesDictionary.fundBy);
-        c.includes.push(IncludesDictionary.Form);
+        c.includes.push(IncludesDictionary.Section);
         c.classParam = data.gen;
         c.type = fileTypes.form;
         result.push(createRecord(c));
