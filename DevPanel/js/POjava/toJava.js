@@ -73,12 +73,11 @@ var ElemTemplates = {
 
 var filesTemplate = {
     Section: function(data) {
-        data.extendz = "{0}".format(data.gen.capitalizeFirstLetter());
-        data.type = data.name;
+        data.extendz = "{0}".format(data.type);
+        data.type = data.name.capitalizeFirstLetter();
         FieldTemplates[data.type] = function (elem) {
             return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
         };
-        IncludesDictionary[data.type] = "my.package.{0}".format(data.type);
         var c = new JavaClass(data);
         c.includes.push(IncludesDictionary.by);
         c.includes.push(IncludesDictionary.fundBy);

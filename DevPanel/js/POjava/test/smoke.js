@@ -37,8 +37,15 @@ function runTests() {
         var name = e.getElementsByTagName("h3")[0].innerHTML;
         QUnit.test("test " + name, function (assert) {
             console.log("test " + name);
-            var data = JSON.parse(e.getElementsByTagName("pre")[0].innerHTML);
+            var dataContainer = e.getElementsByTagName("pre")[0];
+            var resultContainer = $(e.getElementsByTagName("pre")[1]);
+            var data = JSON.parse(dataContainer.innerHTML);
             var java = translateToJava(data);
+            var text = "";
+            $.each(java, function(i, e){
+                text += e.data;
+            });
+            resultContainer.text(text);
             assert.ok(1 === 1,"Passed");
             //assert.ok(jsonGen.getJSON() === e.getElementsByTagName("pre")[0].innerHTML.replace(/(\s|\n|\r)/g, ""), "Passed!");
         });
