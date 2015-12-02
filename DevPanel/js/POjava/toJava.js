@@ -10,12 +10,6 @@ var fileTypes = {
     pClass:"parameterClass",
 }
 
-var res = {
-    page : [],
-    forms: [],
-    fParam: []
-}
-
 var Templates = {
     javaPage: function (package, imports, clazz) {
         var p = package === undefined ? "" : "package {0};\n\n".format(package);
@@ -86,7 +80,7 @@ var filesTemplate = {
         c.classParam = data.gen;
         c.type = fileTypes.form;
         result.push(createRecord(c));
-        res.forms.push(createRecord(c));
+
     },
     Form: function (data) {
         data.name = data.name.capitalizeFirstLetter();
@@ -105,7 +99,6 @@ var filesTemplate = {
         cc.type = fileTypes.pClass;
         var fP = createRecord(cc);
         result.push(fP);
-        res.fParam.push(fP);
         //
         data.extendz = "{0}<{1}>".format(data.type, data.gen);
         data.type = data.name;
@@ -120,7 +113,6 @@ var filesTemplate = {
         c.classParam = classParam;
         c.type = fileTypes.form;
         result.push(createRecord(c));
-        res.forms.push(createRecord(c));
     },
     IPage: function (data) {
         data.extendz = "Page";
@@ -130,7 +122,6 @@ var filesTemplate = {
         c.includes.push(IncludesDictionary.Page);
         c.type = fileTypes.page;
         result.push(createRecord(c));
-        res.page.push(createRecord(c));
     }
 };
 
