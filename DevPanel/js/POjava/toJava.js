@@ -69,6 +69,7 @@ var ElemTemplates = {
     ITextField: moduleSimple,
     RFileInput: moduleSimple,
     IRange: moduleSimple,
+    ITable: moduleSimple,
 }
 
 var filesTemplate = {

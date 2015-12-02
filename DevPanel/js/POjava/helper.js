@@ -3,21 +3,22 @@
  */
 
 var IncludesDictionary = {
-    ITextArea: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.ITextArea",
-    IButton: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.IButton",
-    Form: "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Form",
-    Section: "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Section",
-    IPagination: "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Pagination",
-    ITimePicker: "/*com.epam.jdi.ITimePicker*/",
-    IDatePicker: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.IDatePicker",
-    IPage: "import com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Page",
-    IElement: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.base.IElement",
-    ITextField: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.ITextField",
-    RFileInput: "com.ggasoftware.jdiuitests.implementation.robot.elements.common.RFileInput",
-    IRange: "/*com.epam.jdi.IRange*/",
-    Page : "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Page",
-    by: "org.openqa.selenium.By",
-    fundBy:"org.openqa.selenium.support.FindBy"
+    ITextArea:      "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.ITextArea",
+    IButton:        "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.IButton",
+    Form:           "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Form",
+    Section:        "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Section",
+    IPagination:    "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Pagination",
+    ITimePicker:    "/*com.epam.jdi.ITimePicker*/",
+    IDatePicker:    "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.IDatePicker",
+    IPage:          "import com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Page",
+    IElement:       "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.base.IElement",
+    ITextField:     "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.ITextField",
+    RFileInput:     "com.ggasoftware.jdiuitests.implementation.robot.elements.common.RFileInput",
+    IRange:         "/*com.epam.jdi.IRange*/",
+    Page :          "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Page",
+    by:             "org.openqa.selenium.By",
+    fundBy:         "org.openqa.selenium.support.FindBy",
+    ITable:         "com.ggasoftware.jdiuitests.implementation.selenium.elements.complex.table.interfaces.ITable"
 }
 
 var ConvertToJavaType = {
@@ -50,6 +51,7 @@ var FieldTemplates = {
     },
     IDatePicker: simpleFileld,
     RFileInput: simpleFileld,
+    ITable: simpleFileld,
 }
 
 var Pagination = function (element) {
