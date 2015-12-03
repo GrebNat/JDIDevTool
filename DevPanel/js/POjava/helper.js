@@ -6,6 +6,7 @@ var IncludesDictionary = {
     ITextArea: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.ITextArea",
     IButton: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.IButton",
     Form: "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Form",
+    Section: "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Section",
     IPagination: "com.ggasoftware.jdiuitests.implementation.selenium.elements.composite.Pagination",
     ITimePicker: "/*com.epam.jdi.ITimePicker*/",
     IDatePicker: "com.ggasoftware.jdiuitests.implementation.selenium.elements.interfaces.common.IDatePicker",
@@ -35,6 +36,7 @@ var FieldTemplates = {
     String:  function(elem) {
         return "\tpublic {0} {1};\n".format(elem.type, elem.name);
     },
+    Section: simpleFileld,
     ITextArea: simpleFileld,
     IButton: simpleFileld,
     Form: simpleFileld,

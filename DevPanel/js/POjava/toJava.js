@@ -51,6 +51,10 @@ var ElemTemplates = {
     String: moduleSimple,
     ITextArea: moduleSimple,
     IButton: moduleSimple,
+    Section: function (data) {
+        filesTemplate.Section(data);
+        return moduleSimple(data);
+    },
     Form: function (data) {
         filesTemplate.Form(data);
         return moduleSimple(data);
@@ -68,6 +72,21 @@ var ElemTemplates = {
 }
 
 var filesTemplate = {
+    Section: function(data) {
+        data.extendz = "{0}".format(data.type);
+        data.type = data.name.capitalizeFirstLetter();
+        FieldTemplates[data.type] = function (elem) {
+            return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
+        };
+        var c = new JavaClass(data);
+        c.includes.push(IncludesDictionary.by);
+        c.includes.push(IncludesDictionary.fundBy);
+        c.includes.push(IncludesDictionary.Section);
+        c.classParam = data.gen;
+        c.type = fileTypes.form;
+        result.push(createRecord(c));
+        res.forms.push(createRecord(c));
+    },
     Form: function (data) {
         data.name = data.name.capitalizeFirstLetter();
         var genClass = JSON.parse(JSON.stringify(data));
@@ -191,7 +210,8 @@ var getCombElements = function () {
     return ress;
 }
 
-function translateToJava(data) {
+function translateToJava(rawData) {
+    var data = JSON.parse(JSON.stringify(rawData));
     pname = data.packageName;
     result = new Array;
     processJSON(data);
