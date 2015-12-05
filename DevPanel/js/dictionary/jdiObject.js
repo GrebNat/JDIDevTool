@@ -22,4 +22,15 @@ function pageURLRelation(page_id, url) {
     }
 }
 
-var sectionTypes = new Array('Form', 'IPagination');
+var sectionTypes = new Array('Form', 'Section');
+var elementTypes = new Array(
+    'ITextArea',
+    'IButton',
+    'IPagination',
+    'ITimePicker',
+    'IDatePicker',
+    'IElement',
+    'ITextField',
+    'RFileInput',
+    'IRange',
+    'ITable')

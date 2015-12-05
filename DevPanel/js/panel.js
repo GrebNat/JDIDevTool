@@ -1,7 +1,4 @@
 var treeElementCount = 0;
-var jdi_page_json = undefined;
-var tree_json = [];
-var done = false;
 var draggingStarted = false;
 var pageObjectsFiles = [];
 var sections = new Sections();
@@ -13,8 +10,14 @@ document.addEventListener('DOMContentLoaded', function (e) {
     $('#page-0').append(template);
     (new PageBuilder("page-0")).buildPageContent();
 
-    $('#add-new-tag').on('click', function (e) {
+    $('#add-new-tag').on('click', function(e) {
         addNewTabLinkEvent();
+    })
+
+    $('#a-tab-sections').on('click', function(e){
+        drawSectionPage();
+        scroll(0, 0);
+        $("html, body").animate({scrollTop: 0});
     })
 
     navigateToWebPageEvent("#a-page-0")
@@ -23,27 +26,23 @@ document.addEventListener('DOMContentLoaded', function (e) {
         if ('jdi_page' in changed) {
             if (changed.jdi_page.newValue.tabId === chrome.devtools.inspectedWindow.tabId) {
 
-                jdi_page_json = changed.jdi_page.newValue.data;
-                json = $.parseJSON(jdi_page_json);
-                pageObjectsFiles = translateToJava(json)
+                var jdi_page_json = changed.jdi_page.newValue.data;
+                var jsonObject = $.parseJSON(jdi_page_json);
+                pageObjectsFiles = translateToJava(jsonObject);
 
-                //  var pageId = getItemByFieldContent(pagesUrlsRel, "url", json.url).PageId;
-
-                var pageId = pages.getPageByURL(json.url).id;
+                var pageId = pages.getPageByURL(jsonObject.url).id;
                 var pageIndex = pageId.split("-").pop();
 
                 pages.updatePageData(page("page-{0}".format(pageIndex),
-                        json.url,
-                        json));
+                        jsonObject.url,
+                        jsonObject));
+
                 pages.addSectionObjects("page-{0}".format(pageIndex), sections);
 
-                drawJDITree(json, "#tree-{0}".format(pageIndex));
-                populatePageInfo(json, pageId);
+                drawJDITree(jsonObject, "#tree-{0}".format(pageIndex));
+                fillPageInfo(jsonObject, pageId);
 
-                $.each(pageObjectsFiles.getCombElements(),
-                        function (ind, val) {
-                            addPageObjectPreviewTab(val, 0, pageId);
-                        });
+                fillPageObjectPre(pageObjectsFiles.getCombElements(),pageId);
 
                 jdi_page_json = undefined;
                 chrome.storage.local.remove('jdi_page');
@@ -54,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
 
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
+                editPageData(ind, changed.jdi_object.newValue.data);
             }
         }
     });
@@ -92,6 +92,7 @@ function addNewTabLinkEvent() {
     scroll(0, 0);
     $("html, body").animate({scrollTop: 0});
 }
+
 function navigateToWebPageEvent(a) {
     $(a).click(function (e) {
         $(this).tab('show');
@@ -107,5 +108,23 @@ function navigateToWebPageEvent(a) {
         scroll(0, 0);
         $("html, body").animate({scrollTop: 0});
     })
+}
+
+function addPageNavigateEvent(pageId) {
+    $("#a-"+pageId).click(function () {
+        $(this).tab('show');
+
+        var pageId = $(this).attr('href').substring(1);
+        var pageIndex = pageId.split('-').pop();
+        var pageObject = pages.getPageByID(pageId).data;
+
+        cleanAll(pageId);
+
+        drawJDITree(pageObject, "#tree-{0}".format(pageIndex));
+        fillPageObjectPre(translateToJava(pageObject).getCombElements(),pageId);
+        fillPageInfo(pageObject, pageId);
+
+        scroll(0, 0);
+    });
 }
 

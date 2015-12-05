@@ -29,14 +29,6 @@ function PageBuilder(pageId) {
                     });
         });
 
-        $('#btn-new-json-{0}'.format(this.pageIndex)).on('click', function (e) {
-
-            var pageIndex = $(e.target).attr("id").split("-").pop()
-
-            clearTabs(pageIndex);
-            rebuildPageObjectPreviewTab(pageIndex);
-        })
-
         $('#btn-empty-tree-{0}'.format(this.pageIndex)).on('click', function (e) {
             cleanAll($(e.target).parents("[id^=page-]")[0].id);
         })
@@ -45,79 +37,54 @@ function PageBuilder(pageId) {
             (new saveFile).asZip(pageObjectsFiles, "PageObjects");
         })
 
-        addPONavBarEvents();
-        pages.addNewPage(page(pageId))
+        $('#span-add-new-bean-{0}'.format(this.pageIndex)).on('click', function (){
+            var pageIndex = $(this).attr("id").split("-").pop();
+            var pageId = getCurrentPageId();
+
+            var beanID = $(addNewJDIBeanToTree('#tree-{0}'.format(pageIndex))).attr('id');
+
+            pages.addBean(pageId, [], getBeanAsJDIObject(beanID));
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        })
+
+        addNavBarEvents();
+        pages.addNewPage(page(pageId));
+        addPageNavigateEvent(this.pageId);
     };
 }
 
 //Page Object`s tabs
-function addPageObjectPreviewTab(data, activeTabIndex, pageId) {
+function fillPageObjectPre(data, pageId) {
 
-    var pageIndex = pageId.split("-").pop();
-    if (data.type === "IPage") {
-        $('#a-page-tab-{0}'.format(pageIndex)).text(data.name);
-        $('#a-page-{0}'.format(pageIndex)).text(data.name);
-        $('#pre-page-PO-{0}'.format(pageIndex)).text(data.data);
-        $('#pre-page-PO-{0}'.format(pageIndex)).each(function (i, block) {
-            hljs.highlightBlock(block);
-        });
-        $('#btn-download-page-{0}'.format(pageIndex)).on('click', function (e) {
+    for (var i=0; i<data.length; i++) {
+        var pageIndex = pageId.split("-").pop();
 
-            var ind = this.getAttribute("id").split("-").pop();
-            (new saveFile).asJava(
-                    [$('#pre-page-PO-{0}'.format(ind)).text()],
+        if (data[i].type === "IPage") {
+            $('#a-page-{0}'.format(pageIndex)).text(data[i].name);
+            $('#PO-pre-{0}'.format(pageIndex)).text(data[i].data);
+            $('#PO-pre-{0}'.format(pageIndex)).each(function (i, block) {
+                hljs.highlightBlock(block);
+            });
+            $('#btn-download-page-{0}'.format(pageIndex)).on('click', function (e) {
+
+                var ind = this.getAttribute("id").split("-").pop();
+                (new saveFile).asJava(
+                    [$('#PO-pre-{0}'.format(ind)).text()],
                     $('#a-page-{0}'.format(ind)).text());
-        })
-    } else if (data.type === "Form") {
-        var tabIndex = $('#form-tabs-header-{0}'.format(pageIndex)).children().length;
-        var template = $("#template-form-tab").html().replace(/{page}/g, pageIndex).replace(/{tab}/g, tabIndex);
-        $('#form-tabs-header-{0}'.format(pageIndex)).append(template);
-        $('#a-forms-{0}-{1}'.format(pageIndex, tabIndex)).text(data.name);
-        template = $("#template-form-content").html().replace(/{page}/g, pageIndex).replace(/{tab}/g, tabIndex);
-        $('#div-tab-content-{0}'.format(pageIndex)).append(template);
-        collapsePanelEvent(1, pageIndex, tabIndex, data);
-        collapsePanelEvent(2, pageIndex, tabIndex, data.elements[0][0]);
+            })
+        }
     }
-
-    $('#form-content-{0}-{1}'.format(pageIndex, activeTabIndex)).addClass('in active');
-    addPONavBarEvents();
 }
 
-function addPONavBarEvents() {
+function addNavBarEvents() {
     $(".nav-tabs a").click(function () {
         $(this).tab('show');
         scroll(0, 0);
     });
 }
 
-function collapsePanelEvent(ind, pageId, tabInd, data) {
-    $('#a-collapse{0}-{1}-{2}'.format(ind, pageId, tabInd)).text(data.name);
-    $('#collapse{0}-{1}-{2} pre'.format(ind, pageId, tabInd)).text(data.data);
-    $('#collapse{0}-{1}-{2} pre'.format(ind, pageId, tabInd)).each(function (i, block) {
-        hljs.highlightBlock(block);
-    });
-    $('#btn-collapse{0}-{1}-{2}'.format(ind, pageId, tabInd)).on("click", function (e) {
-        var ind = this.getAttribute("id").substring(12);
-        (new saveFile).asJava(
-                [$('#collapse{0} pre'.format(ind)).text()],
-                $('#a-collapse{0}'.format(ind)).text());
-    })
-}
-
-function rebuildPageObjectPreviewTab(pageIndex) {
-    tree_json = undefined;
-    pageObjectsFiles = [];
-    tree_json = getJSONFromTree("tree-{0}".format(pageIndex), tree_json, pageIndex);
-    pageObjectsFiles = translateToJava(tree_json);
-    clearTabs(pageIndex);
-    $.each(pageObjectsFiles.getCombElements(), function (ind, val) {
-        addPageObjectPreviewTab(val, 0, pageIndex)
-    })
-}
-
-
 //Page info
-function populatePageInfo(jsonElements, pageId) {
+function fillPageInfo(jsonElements, pageId) {
 
     var pageIndex = pageId.split("-").pop();
     $('#txt-name-{0}'.format(pageIndex)).val(jsonElements.name);
@@ -132,6 +99,21 @@ function getCurrentPageId() {
     return $('#main-tab-content > .active').attr('id');
 }
 
+function getBeanIndexSequenceOnPage(beanId){
+    var sequence = [];
+
+    var bean = beanId;
+
+    sequence.push($('#' + beanId).index());
+
+    while ($("#" + bean).parent().parent().attr('class') !== 'treeDiv'){
+        bean = $("#" + bean).parent().parent().attr('id');
+        sequence.unshift($('#' + bean).index());
+    }
+
+    return sequence;
+}
+
 //clear functions
 function cleanAll(pageId) {
 
@@ -139,14 +121,12 @@ function cleanAll(pageId) {
     chrome.storage.local.remove('jdi_page');
     chrome.storage.local.clear();
     $('#tree-{0}'.format(pageIndex)).empty();
-    clearTabs(pageIndex);
+    clearPOPreview(pageIndex);
     clearPageInfo(pageIndex);
 }
 
-function clearTabs(pageIndex) {
-    $('#form-tabs-header-{0}'.format(pageIndex)).empty();
-    $('#div-tab-content-{0}'.format(pageIndex)).empty();
-    $('#pre-page-PO-{0}'.format(pageIndex)).text("")
+function clearPOPreview(pageIndex) {
+    $('#PO-pre-{0}'.format(pageIndex)).text("")
     $('#a-page-{0}'.format(pageIndex)).text("Page");
 }
 

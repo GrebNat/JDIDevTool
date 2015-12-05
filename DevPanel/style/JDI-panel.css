@@ -111,3 +111,7 @@ li {
 .glyphicon-plus-sign{
     color: green;
 }
+.glyphicon-sign-lg {
+    color: forestgreen;
+    font-size: 2em;
+}

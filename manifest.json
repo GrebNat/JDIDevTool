@@ -10,7 +10,7 @@
     "*"
   ],
   "background": {
-    "matches": [ "http://*/*", "https://*/*", "file:///D:/vol2/page/generator.html", "*://*/*"],
+    "matches": [ "http://*/*", "https://*/*", "file:///D:/vol2/page/generator.html", "file:///D:/vol2/page/generator_2.html", "file:///D:/vol2/page/generator_3.html", "*://*/*"],
     "scripts": ["DevPanel/libs/jquery-2.1.4.js",
       "DevPanel/js/background.js",
       "DevPanel/js/dictionary/requestsName.js",
@@ -18,7 +18,7 @@
   },
   "content_scripts": [
     {
-      "matches": [ "http://*/*", "https://*/*", "file:///D:/vol2/page/generator.html", "*://*/*"],
+      "matches": [ "http://*/*", "https://*/*", "file:///D:/vol2/page/generator.html", "file:///D:/vol2/page/generator_2.html", "file:///D:/vol2/page/generator_3.html", "*://*/*"],
       "js": ["DevPanel/libs/jquery-2.1.4.js",
         "DevPanel/libs/string.format-1.0.packed.js",
         "DevPanel/js/dictionary/requestsName.js",
@@ -37,6 +37,9 @@
     "notifications",
     "http://*/",
     "https://*/",
-    "file:///D:/vol2/page/generator.html"
+    "file:///D:/vol2/page/generator.html",
+    "file:///D:/vol2/page/generator_2.html",
+    "file:///D:/vol2/page/generator_3.html",
+    "*://*/*"
   ]
 }

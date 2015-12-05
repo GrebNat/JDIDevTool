@@ -8,6 +8,120 @@ var Pages = function () {
         return this.getPageIndex(page.url, page.id);
     };
 
+    this.addBean = function (pageId, elSequence, bean) {
+        var page = this.getPageByID(pageId).data;
+
+        for (ind in elSequence)
+            page = page.elements[elSequence[ind]];
+
+        if (page.elements === undefined)
+            page.elements = [];
+
+        page.elements.push(bean);
+    }
+
+    this.addSectionObjects = function (pageId, sections) {
+
+        for (var ind in this.getPageByID(pageId).data.elements) {
+            val = this.getPageByID(pageId).data.elements[ind];
+
+            if (sectionTypes.indexOf(val.type) !== -1) {
+                var sectionIndex = sections.getSectionIndex(val.locator);
+                if (sectionIndex === -1)
+                    sectionIndex = sections.addNewSection(val);
+                else
+                    sectionIndex = sections.updateSection(val.locator, val.data);
+
+                this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
+            }
+
+        }
+        ;
+    }
+
+
+    this.updatePageData = function (data) {
+
+        var ind = this.getPageIndex(data.url, data.id);
+        this.pagesArray[ind].data = data.data;
+        this.pagesArray[ind].url = data.url;
+
+        return this.pagesArray[ind];
+    }
+
+    this.updateBeanData = function (pageId, elSequence, newValue) {
+
+        var el = new Object();
+        el = this.getPageByID(pageId).data;
+
+        for (var ind in elSequence)
+            el = el.elements[elSequence[ind]];
+
+        if ('locator' in newValue)
+            el.locator = newValue.locator;
+        if ('name' in newValue) {
+            el.name = newValue.name;
+        }
+        if ('gen' in newValue) {
+            el.gen = newValue.gen;
+        }
+        if ('type' in newValue) {
+            el.type = newValue.type;
+            if (sectionTypes.indexOf(newValue.type) !== -1){
+                var sectionIndex = sections.addNewSection(el);
+               // this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
+
+                var elT = this.getPageByID(pageId).data.elements;
+                for (var i=0; i < elSequence.length; i++){
+
+                    if (i === elSequence.length-1) {
+
+                      //  var elT  =  elT[elSequence[i]].elements;
+                        elT.splice(elSequence[i],1,sections.getSectionByIndex(sectionIndex));
+
+                    }
+                    else
+                        elT = elT[elSequence[i]].elements;
+                }
+            }
+        }
+    }
+
+
+    this.removeBean = function (pageId, elSequence) {
+        var el = new Object();
+        el = this.getPageByID(pageId).data.elements;
+
+        for (var i=0; i < elSequence.length; i++){
+            if (i === elSequence.length-1)
+                el.splice(elSequence[i],1);
+            else {
+                el = el[elSequence[i]].elements;
+            }
+        }
+    }
+
+    this.upChildren = function (pageId, elSequence){
+        var el = new Object();
+        el = this.getPageByID(pageId).data.elements;
+
+        for (var i=0; i < elSequence.length; i++){
+            if (i === elSequence.length-1) {
+
+                var elT  =  el[elSequence[i]].elements;
+
+                el.splice(elSequence[i],1);
+
+                for (var j = elT.length- 1; j >= 0; j--){
+                    el.splice(elSequence[i],0, elT[j]);
+                }
+            }
+            else
+                el = el[elSequence[i]].elements;
+        }
+    }
+
+
     this.getPageByID = function (id) {
         return this.pagesArray[getIndex(this.pagesArray, "id", id)];
     }
@@ -33,34 +147,6 @@ var Pages = function () {
             return indByID;
         }
         return -1;
-    }
-
-    this.updatePageData = function (data) {
-
-        var ind = this.getPageIndex(data.url, data.id);
-        this.pagesArray[ind].data = data.data;
-        this.pagesArray[ind].url = data.url;
-
-        return this.pagesArray[ind];
-    }
-
-    this.addSectionObjects = function (pageId, sections) {
-
-        for (var ind in this.getPageByID(pageId).data.elements) {
-            val = this.getPageByID(pageId).data.elements[ind];
-
-            if (sectionTypes.indexOf(val.type) !== -1) {
-                var sectionIndex = sections.getSectionIndex(val.locator);
-                if (sectionIndex === -1)
-                    sectionIndex = sections.addNewSection(val);
-                else
-                    sectionIndex = sections.updateSection(val.locator, val.data);
-
-                this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
-            }
-
-        }
-        ;
     }
 
 };

@@ -12,6 +12,7 @@
     <script src="js/panel.js"></script>
     <script src="js/ui/pageActivity.js"></script>
     <script src="js/ui/treeActivity.js"></script>
+    <script src="js/ui/sectionActivity.js"></script>
     <script src="js/dictionary/jdiObject.js"></script>
     <script src="js/dictionary/requestsName.js"></script>
     <script src="libs/string.format-1.0.packed.js"></script>
@@ -31,6 +32,8 @@
     <script src="libs/FileSaver.js"></script>
     <script src="libs/jszip/jszip.js"></script>
     <script src="libs/jszip/jszip.min.js"></script>
+    <link rel="stylesheet" href="libs/font-awesome-4.5.0/css/font-awesome.css">
+
 </head>
 
 <div id="template" style="display: none">
@@ -46,17 +49,16 @@
                         <td class="borderBottom">Type</td>
                     </tr>
                     <tr>
-                        <td class="borderRight">JDI</td>
-                        <td id="jdi-name-{i}"></td>
-                        <td id="jdi-type-{i}"></td>
-                    </tr>
-                    <tr>
                         <td class="borderRight">Page<br>Object</td>
                         <td>
                             <input id="PO-name-{i}" type="text" class="POTextArea">
                         </td>
                         <td>
-                            <input id="PO-type-{i}" type="text" class="POTextArea">
+                            <div class="dropdown">
+                                <input id="PO-type-{i}" class="dropdown-toggle POTextArea" type="text" data-toggle="dropdown">
+                                <ul class="dropdown-menu" style="font-size: inherit">
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -72,8 +74,8 @@
                         </td>
                     </tr>
                 </table>
-                <span id="btn-remove-{i}" class="treeButtons glyphicon glyphicon-minus-sign"
-                      title="delete this element"></span>
+                    <span id="btn-remove-{i}" class="treeButtons glyphicon glyphicon-minus-sign"
+                          title="delete this element"></span>
                 <span id="btn-add-{i}" class="treeButtons glyphicon glyphicon-plus-sign" title="add new element"></span>
                 <input type="checkbox" id="cb-locate-{i}" title="locate this element">
                 <!-- Modal -->
@@ -109,7 +111,6 @@
                 </table>
             </div>
 
-
         </div>
     </li>
 </div>
@@ -118,31 +119,37 @@
     <li><a href="#form-content-{page}-{tab}" id="a-forms-{page}-{tab}">new form</a></li>
 </div>
 
-<div id="template-form-content" style="display: none">
-    <div id="form-content-{page}-{tab}" class="tab-pane fade">
+<div id="template-section-nav-tab-link" style="display: none">
+    <li><a href="#section-content-{section}" id="a-section-{section}">new section</a></li>
+</div>
+
+<div id="template-sect-nav-cont" style="display: none">
+    <div id="section-content-{section}" class="tab-pane fade">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1-{page}-{tab}" id="a-collapse1-{page}-{tab}"></a>
-                    <button id="btn-collapse1-{page}-{tab}" class="btn-success btn-sm btn"><span
-                            class="glyphicon glyphicon-download-alt"></span> Download
+                    <a data-toggle="collapse" data-parent="#accordion" href="#coll1-{section}"
+                       id="a-coll1-{section}">No Name</a>
+                    <button id="btn-coll1-{section}" class="btn-success btn-sm btn"><span
+                            class="glyphicon glyphicon-download-alt"></span>
                     </button>
                 </h4>
             </div>
-            <div id="collapse1-{page}-{tab}" class="panel-collapse collapse">
+            <div id="coll1-{section}" class="panel-collapse collapse in">
                 <div class="panel-body">
                     <pre></pre>
                 </div>
             </div>
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2-{page}-{tab}" id="a-collapse2-{page}-{tab}"></a>
-                    <button id="btn-collapse2-{page}-{tab}" class="btn-success btn-sm btn"><span
-                            class="glyphicon glyphicon-download-alt"></span> Download
+                    <a data-toggle="collapse" data-parent="#accordion" href="#coll2-{section}"
+                       id="a-coll2-{section}"></a>
+                    <button id="btn-coll2-{section}" class="btn-success btn-sm btn"><span
+                            class="glyphicon glyphicon-download-alt"></span>
                     </button>
                 </h4>
             </div>
-            <div id="collapse2-{page}-{tab}" class="panel-collapse collapse">
+            <div id="coll2-{section}" class="panel-collapse collapse in">
                 <div class="panel-body">
                     <pre></pre>
                 </div>
@@ -160,13 +167,12 @@
 
                 <div class="btn-group btn-group-sm">
                     <button id="btn-all-{page}" class="btn btn-success">ShowAll</button>
-                    <button id="btn-new-json-{page}" class="btn">Update</button>
                     <button id="btn-empty-tree-{page}" class="btn btn-danger">Clear All</button>
                 </div>
             </div>
             <div class="col-xs-4"><br>
                 <button id="btn-download-all-{page}" class="btn-success btn btn-sm" style="float: right"><span
-                        class="glyphicon glyphicon-download-alt"></span> Download All
+                        class="glyphicon glyphicon-download-alt"></span> All Pages
                 </button>
             </div>
         </div>
@@ -226,11 +232,22 @@
                 </label>
 
                 <div class="col-xs-10">
-                    <input type="text" class="form-control" id="txt-package-{page}" placeholder="enter your package name here">
+                    <input type="text" class="form-control" id="txt-package-{page}"
+                           placeholder="enter your package name here">
                 </div>
             </form>
         </div>
         <hr>
+        <div class="row">
+            <div class="col-xs-12">
+                <span class="glyphicon glyphicon-plus-sign fa-2x" id="span-add-new-bean-{page}"></span>
+                <span id="btn-download-page-{page}" class="glyphicon glyphicon-download-alt fa-2x hidden-xxs"
+                      style="float: right">
+                </span>
+                <br>
+                <br>
+            </div>
+        </div>
         <div class="row"><!--tree+pages-->
             <div class="col-xs-6 col-xxs-12">
                 <div class="row">
@@ -240,26 +257,9 @@
                 </div>
             </div>
             <div class="col-xs-6 hidden-xxs">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#page-tab-{page}" id="a-page-tab-{page}">Page</a></li>
-                    <li><a href="#forms-{page}" id="a-tab-{page}">Sections</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div id="page-tab-{page}" class="tab-pane fade in active">
-                        <br>
-                        <button id="btn-download-page-{page}" class="btn-success btn-sm btn" style="float: right"><span
-                                class="glyphicon glyphicon-download-alt"></span> Download
-                        </button>
-                        <br><br>
-                    <pre style="-webkit-user-select: text; width: 100%" id="pre-page-PO-{page}"><i>Page Objects for the page
-                        will be shown here</i></pre>
-                    </div>
-                    <div id="forms-{page}" class="tab-pane fade">
-                        <div class="panel">
-                            <br>
-                            <ul class="nav nav-tabs" id="form-tabs-header-{page}"></ul>
-                            <div class="tab-content" id="div-tab-content-{page}" style="-webkit-user-select: text"></div>
-                        </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <pre id="PO-pre-{page}">Page Object will be shown here</pre>
                     </div>
                 </div>
             </div>
@@ -273,11 +273,32 @@
             <ul class="nav nav-tabs" id="main-nav-tabs">
                 <li class="active"><a href="#page-0" id="a-page-0">Current Page</a></li>
                 <li><a id="add-new-tag"><span class="glyphicon glyphicon-plus"></span></a></li>
+                <li style="float: right"><a href="#page-sections" id="a-tab-sections" style="background: lightgrey">Sections</a>
+                </li>
             </ul>
             <div class="tab-content" id="main-tab-content">
                 <div id="page-0" class="tab-pane fade in active"></div>
+                <div id="page-sections" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <br>
+                            <ul class="nav nav-tabs" id="section-nav-tab"></ul>
+                            <div class="tab-content" id="section-nav-content"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-7" style="color: darkgrey; margin-top: 7%">
+            <span class="fa fa-github-square fa-2x" style="margin-right: 2%"></span>
+            <span class="fa fa-vk fa-2x" style="margin-right: 2%"></span>
+            <span class="fa fa-facebook fa-2x" style="margin-right: 2%"></span>
+            <span class="fa fa-twitter-square fa-2x"></span>
+        </div>
+
+        <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
     </div>
 </div>
 

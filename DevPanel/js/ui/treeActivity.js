@@ -14,10 +14,9 @@ function drawJDITree(jsonElements, parentID) {
 //JDI Bean
 function fillJDIBean(index, jdiObj) {
 
-    $('#jdi-name-{0}'.format(index)).text(jdiObj === undefined ? "no jdi-name" : jdiObj.name);
-    $('#jdi-type-{0}'.format(index)).text(jdiObj === undefined ? "no jdi-type" : jdiObj.type);
-
     $('#PO-type-{0}'.format(index)).val(jdiObj === undefined ? "no type" : jdiObj.type);
+
+    fillPOTypeDropDown($("#PO-type-{0}".format(index)).parent(), index);
 
     if (jdiObj === undefined) {
         $('#PO-name-{0}'.format(index)).val("no name").addClass("warningText");
@@ -43,6 +42,13 @@ function fillJDIBean(index, jdiObj) {
     }
 }
 
+function editPageData(index, jdiObj) {
+
+    var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+
+    pages.updateBeanData(getCurrentPageId(), elPath, jdiObj);
+}
+
 function addNewJDIBeanToTree(parentCSS, jdiElement) {
 
     var template = $("#template").html().replace(/{i}/g, treeElementCount);
@@ -56,6 +62,8 @@ function addNewJDIBeanToTree(parentCSS, jdiElement) {
     makeJDIBeanDraggableDroppable(treeElementCount);
     fillJDIBean(treeElementCount, jdiElement)
 
+    addJDIBeanEditEvent_DataEdit(treeElementCount);
+
     treeElementCount++;
 
     return $(template)[0];
@@ -64,17 +72,17 @@ function addNewJDIBeanToTree(parentCSS, jdiElement) {
 function makeJDIBeanDraggableDroppable(index) {
 
     $('#main-div-' + index).draggable({
-        stop: function (event, index) {
-            if (draggingStarted) {
-                $('#tree > ul').append(event.target);
-                $(event.target).css({left: 0, top: "auto"});
+            stop: function (event, index) {
+                if (draggingStarted) {
+                    $('#tree > ul').append(event.target);
+                    $(event.target).css({left: 0, top: "auto"});
+                }
+                draggingStarted = false;
+            },
+            start: function (event, index) {
+                draggingStarted = true;
             }
-            draggingStarted = false;
-        },
-        start: function (event, index) {
-            draggingStarted = true;
         }
-    }
     );
     $('#main-div-' + index).droppable({
         drop: function (event, ui) {
@@ -190,32 +198,28 @@ function addJDIBeanEvents(index) {
         }
     });
 
-    $('#PO-name-{0}'.format(index)).on('input', function () {
-
-        var ind = this.getAttribute("id").split("-").pop();
-
-        var txt = $('#PO-name-' + ind).val();
-
-        $('#PO-name-' + ind).removeClass("warningText");
-        $('#jdi-name-col-' + ind).removeClass("warningText")
-        $('#jdi-name-col-' + ind).text(txt);
-
-        var pageIndex = $('#jdi-name-col-' + ind).parents("[id^='page-']").attr('id').split("-").pop();
-
-        rebuildPageObjectPreviewTab(pageIndex);
-    });
-
     $('#modal-btn-delete-{0}'.format(index)).on('click', function () {
         var ind = this.getAttribute("id").split("-").pop();
+        var pageId = getCurrentPageId();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(ind));
+
+        pages.removeBean(pageId, elPath);
 
         $('#modal-' + ind).modal("hide");
         $('#main-div-' + ind).remove();
+
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
     })
 
     $('#modal-btn-up-{0}'.format(index)).on('click', function () {
         var ind = this.getAttribute("id").split("-").pop();
 
         $('#modal-' + ind).modal("hide");
+
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(ind));
+        var pageId = getCurrentPageId();
+
+        pages.upChildren(pageId, elPath);
 
         var elements = $('#main-div-' + ind).children('ul').children();
 
@@ -224,6 +228,8 @@ function addJDIBeanEvents(index) {
         })
 
         $('#main-div-' + ind).remove();
+
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
     })
 
     $('#btn-remove-{0}'.format(index)).on('click', function () {
@@ -231,8 +237,17 @@ function addJDIBeanEvents(index) {
 
         if ($('#main-div-' + ind).children('ul').children().length > 0)
             $("#modal-" + ind).modal("show");
-        else
+        else {
+            var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(ind));
+            var pageId = getCurrentPageId();
+
+            pages.removeBean(pageId, elPath);
             $('#main-div-' + ind).remove();
+
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        }
+
+
     })
 
     $('#btn-add-{0}'.format(index)).on('click', function () {
@@ -256,29 +271,71 @@ function addJDIBeanEvents(index) {
     $('#cb-locate-{0}'.format(index)).on('change', function () {
         addEventToBeansCheckBox(this.getAttribute("id").split("-").pop());
     })
-
-    $('#PO-locator-{0}'.format(index)).on('input', function () {
-        addEventToBeanLocator(this.getAttribute("id").split("-").pop())
-    });
 }
 
 function addJDIBeanEditEvent_DataEdit(index) {
     addNewBeanEvent_DataEdit(index);
-    deleteBeanEvent_DataEdit(index);
     editBeanTxtFieldEvent_DataEdit(index);
 }
 
+function addNewBeanEvent_DataEdit(index) {
+    $('#btn-add-{0}'.format(index)).on('click', function () {
+        var indexParent = $(this).attr('id').split("-").pop();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(indexParent));
+        var pageId = getCurrentPageId();
+        var beanID = $("#main-div-{0} > ul > li:nth-last-child(1)".format(indexParent)).attr('id');
+
+        pages.addBean(pageId, elPath, getBeanAsJDIObject(beanID));
+
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+    })
+}
+function editBeanTxtFieldEvent_DataEdit(index) {
+
+    $('#PO-locator-{0}'.format(index)).on('change', function () {
+        var index = $(this).attr('id').split("-").pop();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+        var pageId = getCurrentPageId();
+
+        pages.updateBeanData(pageId, elPath, {locator: $(this).val()});
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+    });
+    $('#PO-name-{0}'.format(index)).on('input', function () {
+        var index = $(this).attr('id').split("-").pop();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+        var pageId = getCurrentPageId();
+
+        pages.updateBeanData(pageId, elPath, {name: $(this).val()});
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+    });
+    $('#PO-type-{0}'.format(index)).on('input', function () {
+        var index = $(this).attr('id').split("-").pop();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+        var pageId = getCurrentPageId();
+
+        pages.updateBeanData(pageId, elPath, {type: $(this).val()});
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+    });
+    $('#PO-gen-{0}'.format(index)).on('input', function () {
+        var index = $(this).attr('id').split("-").pop();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+        var pageId = getCurrentPageId();
+
+        pages.updateBeanData(pageId, elPath, {gen: $(this).val()});
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+    });
+}
 
 //getting jdi from tree
 function getBeanAsJDIObject(beanID) {
     var ind = beanID.split("-").pop();
 
     return jdiObject(
-            $('#PO-name-' + ind).val(),
-            $('#PO-type-' + ind).val(),
-            $('#PO-gen-' + ind).val(),
-            undefined,
-            $('#PO-locator-' + ind).val());
+        $('#PO-name-' + ind).val(),
+        $('#PO-type-' + ind).val(),
+        $('#PO-gen-' + ind).val(),
+        undefined,
+        $('#PO-locator-' + ind).val());
 }
 
 function getJSONFromTree(parentID, json, pageIndex) {
@@ -304,4 +361,39 @@ function getJSONFromTree(parentID, json, pageIndex) {
         };
 
     return json;
+}
+
+//populate
+
+function fillPOTypeDropDown(dropDown, index){
+    var ul = $(dropDown).find('ul');
+
+    ul.append('<li class="dropdown-header">Sections</li>');
+    for (var i = 0, len = sectionTypes.length; i<len; i++ ){
+        var a = '<li><a id="a-PO-section-type-{0}-{1}">{2}</a></li>'.format(index, i, sectionTypes[i]);
+
+        ul.append(a)
+
+        $('#a-PO-section-type-{0}-{1}'.format(index, i)).on('click', function () {
+
+            var i = $(this).attr('id').split('-').pop()
+
+            $(this).parents('.dropdown').find('input').val(sectionTypes[i])
+        })
+    }
+
+    ul.append('<li class="divider"></li>');
+    ul.append('<li class="dropdown-header">Elements</li>');
+    for (var i = 0, len = elementTypes.length; i<len; i++ ){
+        var a = '<li><a id="a-PO-elements-type-{0}-{1}">{2}</a></li>'.format(index, i, elementTypes[i]);
+
+        ul.append(a)
+
+        $('#a-PO-elements-type-{0}-{1}'.format(index, i)).on('click', function () {
+
+            var i = $(this).attr('id').split('-').pop()
+
+            $(this).parents('.dropdown').find('input').val(elementTypes[i])
+        })
+    }
 }
