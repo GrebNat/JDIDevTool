@@ -52,6 +52,10 @@ var FieldTemplates = {
     IDatePicker: simpleFileld,
     RFileInput: simpleFileld,
     ITable: simpleFileld,
+    IRange: function (elem) {
+        elem.type = "IElement";
+        return simpleFileld(elem);
+    },
 }
 
 var Pagination = function (element) {
