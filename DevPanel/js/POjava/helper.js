@@ -44,7 +44,7 @@ var FieldTemplates = {
     IPage: simpleFileld,
     IElement: simpleFileld,
     ITextField: simpleFileld,
-    IPagination: function (elem) {
+    Pagination: function (elem) {
         return "\n\tpublic Pagination {0} = new Pagination({1}, {2}, {3}, {4}, {5});\n".format(
             elem.name, elem.get("template"), elem.get("next"), elem.get("prev"), elem.get("first"), elem.get("last")
         );
@@ -66,7 +66,7 @@ var Pagination = function (element) {
         return (this.elems[key] === undefined) ? "\n\t\tnull" : FindByTemplates.byCss(this.elems[key].name)
     }
     this.print = function () {
-        return FieldTemplates.IPagination(this);
+        return FieldTemplates.Pagination(this);
     }
 
     var res = new Array;
