@@ -94,7 +94,7 @@
     </div>
     <!--test 3-->
     <div>
-        <h3>pagination</h3>
+        <h3>pagination own</h3>
         <main>
             <pre>
             {
@@ -107,6 +107,7 @@
                         "type": "IPagination",
                         "name": "pagination1",
                         "locator": "[jdi-name=pagination1]",
+                        "own":"true",
                         "elements": [
                             {
                                 "type": "IElement",
@@ -283,6 +284,54 @@
                     }
                 ],
             "title": "title"
+            }
+            </pre>
+        </main>
+        <pre>
+
+        </pre>
+    </div>
+    <!--test 7-->
+    <div>
+        <h3>pagination</h3>
+        <main>
+            <pre>
+            {
+                "name": "name",
+                "url": "url",
+                "type": "IPage",
+                "packageName": "com.my.test",
+                "elements": [
+                    {
+                        "type": "IPagination",
+                        "name": "pagination1",
+                        "locator": "[jdi-name=pagination1]",
+                        "own":"false",
+                        "elements": [
+                            {
+                                "type": "IElement",
+                                "name": "prev",
+                                "locator": "[jdi-name=prev]"
+                            },
+                            {
+                                "type": "IElement",
+                                "name": "first",
+                                "locator": "[jdi-name=first]"
+                            },
+                            {
+                                "type": "IElement",
+                                "name": "last",
+                                "locator": "[jdi-name=last]"
+                            },
+                            {
+                                "type": "IElement",
+                                "name": "next",
+                                "locator": "[jdi-name=next]"
+                            }
+                        ]
+                    }
+                ],
+                "title": "title"
             }
             </pre>
         </main>

@@ -54,6 +54,10 @@ var ElemTemplates = {
         return moduleSimple(data);
     },
     IPagination: function (data) {
+        if (JSON.parse(data.own) === true){
+            filesTemplate.IPagination(data);
+            return moduleSimple(data);
+        }
         return new Pagination(data).print();
     },
     ITimePicker: moduleSimple,
@@ -67,6 +71,11 @@ var ElemTemplates = {
 }
 
 var filesTemplate = {
+    IPagination: function (data) {
+        data.name = data.name.capitalizeFirstLetter();
+        var genClass = JSON.parse(JSON.stringify(data));
+        var c = new JavaClass(genClass);
+    },
     Section: function(data) {
         data.extendz = "{0}".format(data.type);
         data.type = data.name.capitalizeFirstLetter();
@@ -80,7 +89,6 @@ var filesTemplate = {
         c.classParam = data.gen;
         c.type = fileTypes.form;
         result.push(createRecord(c));
-
     },
     Form: function (data) {
         data.name = data.name.capitalizeFirstLetter();
