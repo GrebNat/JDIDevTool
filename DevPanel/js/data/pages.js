@@ -20,23 +20,35 @@ var Pages = function () {
         page.elements.push(bean);
     }
 
+
     this.addSectionObjects = function (pageId, sections) {
 
         for (var ind in this.getPageByID(pageId).data.elements) {
-            val = this.getPageByID(pageId).data.elements[ind];
+            var val = this.getPageByID(pageId).data.elements[ind];
 
             if (sectionTypes.indexOf(val.type) !== -1) {
                 var sectionIndex = sections.getSectionIndex(val.locator);
                 if (sectionIndex === -1)
-                    sectionIndex = sections.addNewSection(val);
-                else
-                    sectionIndex = sections.updateSection(val.locator, val.data);
+                    sectionIndex = sections.addNewSection(section(val.locator, val));
+               /* else
+                    sectionIndex = sections.updateSection(val.locator, val);*/
 
-                this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
+                this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex).data;
             }
 
         }
         ;
+    }
+    this.updatePagesAfterSectionDelete = function (sectionIndex){
+
+        var section = sections.getSectionByIndex(sectionIndex).data;
+
+        for (var pageInd in this.pagesArray){
+            for (var elInd in this.pagesArray[pageInd].data.elements){
+                if (this.pagesArray[pageInd].data.elements[elInd] === section)
+                    this.pagesArray[pageInd].data.elements.splice(elInd,1);
+            }
+        }
     }
 
 
@@ -65,19 +77,22 @@ var Pages = function () {
         if ('gen' in newValue) {
             el.gen = newValue.gen;
         }
+        if ('section' in newValue) {
+            el.section = newValue.section;
+        }
         if ('type' in newValue) {
             el.type = newValue.type;
-            if (sectionTypes.indexOf(newValue.type) !== -1){
+            if (sectionTypes.indexOf(newValue.type) !== -1) {
                 var sectionIndex = sections.addNewSection(el);
-               // this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
+                // this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
 
                 var elT = this.getPageByID(pageId).data.elements;
-                for (var i=0; i < elSequence.length; i++){
+                for (var i = 0; i < elSequence.length; i++) {
 
-                    if (i === elSequence.length-1) {
+                    if (i === elSequence.length - 1) {
 
-                      //  var elT  =  elT[elSequence[i]].elements;
-                        elT.splice(elSequence[i],1,sections.getSectionByIndex(sectionIndex));
+                        //  var elT  =  elT[elSequence[i]].elements;
+                        elT.splice(elSequence[i], 1, sections.getSectionByIndex(sectionIndex));
 
                     }
                     else
@@ -92,33 +107,40 @@ var Pages = function () {
         var el = new Object();
         el = this.getPageByID(pageId).data.elements;
 
-        for (var i=0; i < elSequence.length; i++){
-            if (i === elSequence.length-1)
-                el.splice(elSequence[i],1);
+        for (var i = 0; i < elSequence.length; i++) {
+            if (i === elSequence.length - 1)
+                el.splice(elSequence[i], 1);
             else {
                 el = el[elSequence[i]].elements;
             }
         }
     }
 
-    this.upChildren = function (pageId, elSequence){
+    this.upChildren = function (pageId, elSequence) {
         var el = new Object();
         el = this.getPageByID(pageId).data.elements;
 
-        for (var i=0; i < elSequence.length; i++){
-            if (i === elSequence.length-1) {
+        for (var i = 0; i < elSequence.length; i++) {
+            if (i === elSequence.length - 1) {
 
-                var elT  =  el[elSequence[i]].elements;
+                var elT = el[elSequence[i]].elements;
 
-                el.splice(elSequence[i],1);
+                el.splice(elSequence[i], 1);
 
-                for (var j = elT.length- 1; j >= 0; j--){
-                    el.splice(elSequence[i],0, elT[j]);
+                for (var j = elT.length - 1; j >= 0; j--) {
+                    el.splice(elSequence[i], 0, elT[j]);
                 }
             }
             else
                 el = el[elSequence[i]].elements;
         }
+    }
+
+    this.removePage = function (pageId) {
+        var index = this.getPageIndexById(pageId);
+
+        this.pagesArray[index].url = "";
+        this.pagesArray[index].data = {};
     }
 
 
@@ -137,6 +159,12 @@ var Pages = function () {
             return getIndex(this.pagesArray, "url", url)
         else
             return -1;
+    }
+
+    this.getPageIndexById = function (id) {
+        if (id !== undefined)
+            return getIndex(this.pagesArray, "id", id);
+        return -1;
     }
 
     this.getPageIndexByURLandID = function (url, id) {

@@ -13,10 +13,29 @@ var Sections = function () {
         return this.updateSection(section.locator, section.data);
     }
 
+    this.updateSection = function (locator, newData) {
+        var ind = this.getSectionIndex(locator);
+        this.sectionsArray[ind].data = newData;
+
+        return ind;
+    };
+
+
+    this.removeSectionByLocator = function (locator){
+        var sectionIndex = this.getSectionIndex(locator);
+        this.sectionsArray.locator = "";
+        this.sectionsArray.data = {};
+    }
+    this.removeSection = function (index){
+        this.sectionsArray.splice(index, 1);
+    }
+
+
     this.addNewSection = function (section) {
         this.sectionsArray.push(section)
         return this.getSectionIndex(section.locator);
     };
+
 
     this.getSectionIndex = function (locator) {
         return getIndex(this.sectionsArray, "locator", locator);
@@ -31,16 +50,9 @@ var Sections = function () {
         return this.sectionsArray[ind];
     }
 
-    this.updateSection = function (locator, newData) {
-        var ind = this.getSectionIndex(locator);
-        this.sectionsArray[ind].data = newData;
-
-        return ind;
-    };
-
 };
 
-function section(jdiName, locator, data) {
+function section(locator, data) {
     return{
         locator: locator,
         data: data

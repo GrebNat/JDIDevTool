@@ -1,6 +1,5 @@
 var treeElementCount = 0;
 var draggingStarted = false;
-var pageObjectsFiles = [];
 var sections = new Sections();
 var pages = new Pages();
 
@@ -10,17 +9,18 @@ document.addEventListener('DOMContentLoaded', function (e) {
     $('#page-0').append(template);
     (new PageBuilder("page-0")).buildPageContent();
 
-    $('#add-new-tag').on('click', function(e) {
+    $('#add-new-tag').on('click', function (e) {
         addNewTabLinkEvent();
     })
 
-    $('#a-tab-sections').on('click', function(e){
+    $('#a-tab-sections').on('click', function (e) {
         drawSectionPage();
         scroll(0, 0);
         $("html, body").animate({scrollTop: 0});
     })
 
-    navigateToWebPageEvent("#a-page-0")
+    navigateToWebPageEvent("#a-page-0");
+
 
     chrome.storage.onChanged.addListener(function (changed, e1) {
         if ('jdi_page' in changed) {
@@ -28,23 +28,22 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
                 var jdi_page_json = changed.jdi_page.newValue.data;
                 var jsonObject = $.parseJSON(jdi_page_json);
-                pageObjectsFiles = translateToJava(jsonObject);
+                var pageObjectsFiles = translateToJava(jsonObject);
 
                 var pageId = pages.getPageByURL(jsonObject.url).id;
                 var pageIndex = pageId.split("-").pop();
 
                 pages.updatePageData(page("page-{0}".format(pageIndex),
-                        jsonObject.url,
-                        jsonObject));
+                    jsonObject.url,
+                    jsonObject));
 
                 pages.addSectionObjects("page-{0}".format(pageIndex), sections);
 
                 drawJDITree(jsonObject, "#tree-{0}".format(pageIndex));
                 fillPageInfo(jsonObject, pageId);
 
-                fillPageObjectPre(pageObjectsFiles.getCombElements(),pageId);
+                fillPageObjectPre(pageObjectsFiles.getCombElements(), pageId);
 
-                jdi_page_json = undefined;
                 chrome.storage.local.remove('jdi_page');
             }
         }
@@ -54,13 +53,20 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
                 editPageData(ind, changed.jdi_object.newValue.data);
+
+                var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(ind));
+                var pageId = getCurrentPageId();
+
+                pages.updateBeanData(pageId, elPath, {type: $(this).text()});
+                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
             }
         }
     });
 });
 
 function addNewTabLinkEvent() {
-    var pageIndex = $('#main-nav-tabs [id^=a-page-]').length;
+
+    var pageIndex = pages.pagesArray.length;
 
     $.each($('#main-tab-content > div'), function (ind, val) {
         $(val).removeClass("in active");
@@ -71,11 +77,14 @@ function addNewTabLinkEvent() {
     $('#main-tab-content')
 
     $('#add-new-tag')
-            .attr('id', "a-page-{0}".format(pageIndex))
-            .attr('href', "#page-{0}".format(pageIndex))
-            .empty()
-            .text('New Tab')
-            .off('click');
+        .attr('id', "a-page-{0}".format(pageIndex))
+        .attr('href', "#page-{0}".format(pageIndex))
+        .empty()
+        .text('New Tab')
+        .off('click')
+        .append('<button id="a-close-page-{0}" class="close">×</button>'.format(pageIndex));
+
+    addCloseTabEvent(pageIndex);
 
     navigateToWebPageEvent("#a-page-{0}".format(pageIndex));
 
@@ -100,31 +109,33 @@ function navigateToWebPageEvent(a) {
         var url = $($(e.target).attr('href')).find("[id^='txt-URL-']").val();
 
         chrome.devtools.inspectedWindow.eval(
-                "window.location.href='{0}'".format(url),
-                function (result, isException) {
-                    console.log(result);
-                });
+            "window.location.href='{0}'".format(url),
+            function (result, isException) {
+                console.log(result);
+            });
 
         scroll(0, 0);
         $("html, body").animate({scrollTop: 0});
     })
 }
 
-function addPageNavigateEvent(pageId) {
-    $("#a-"+pageId).click(function () {
-        $(this).tab('show');
+function renameTab(NewName, linkId){
+    var linkContent = $('#'+linkId).html();
+    linkContent = linkContent.substring(linkContent.indexOf("<"));
 
-        var pageId = $(this).attr('href').substring(1);
-        var pageIndex = pageId.split('-').pop();
-        var pageObject = pages.getPageByID(pageId).data;
+    $('#'+linkId).html(NewName+linkContent);
 
-        cleanAll(pageId);
+    addCloseTabEvent(linkId.split("-").pop());
+}
 
-        drawJDITree(pageObject, "#tree-{0}".format(pageIndex));
-        fillPageObjectPre(translateToJava(pageObject).getCombElements(),pageId);
-        fillPageInfo(pageObject, pageId);
+function addCloseTabEvent(pageIndex) {
+    $('#a-close-page-{0}'.format(pageIndex)).on('click', function () {
 
-        scroll(0, 0);
-    });
+        var pageIndex = $(this).attr('id').split("-").pop();
+        var pageId = 'page-{0}'.format(pageIndex);
+
+        $('#{0}, [href="#{0}"]'.format(pageId)).remove();
+        pages.removePage(pageId);
+    })
 }
 

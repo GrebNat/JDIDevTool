@@ -54,6 +54,10 @@ var ElemTemplates = {
         return moduleSimple(data);
     },
     IPagination: function (data) {
+        if (JSON.parse(data.own) === true){
+            filesTemplate.IPagination(data);
+            return moduleSimple(data);
+        }
         return new Pagination(data).print();
     },
     ITimePicker: moduleSimple,
@@ -67,6 +71,17 @@ var ElemTemplates = {
 }
 
 var filesTemplate = {
+    IPagination: function (rawData) {
+        var data = jQuery.extend(true, {}, rawData)
+        //var data = JSON.parse(JSON.stringify(rawData));
+        data.name = data.name.capitalizeFirstLetter();
+        FieldTemplates[data.type] = function (elem) {
+            return "\n\tpublic {0} {1};\n".format(data.name, elem.name.downFirstLetter());
+        };
+        var genClass = JSON.parse(JSON.stringify(data));
+        var c = new JavaClass(genClass);
+        result.push(createRecord(c));
+    },
     Section: function(data) {
         data.extendz = "{0}".format(data.type);
         data.type = data.name.capitalizeFirstLetter();

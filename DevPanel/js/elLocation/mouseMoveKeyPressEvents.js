@@ -1,4 +1,4 @@
-var $actualBachgroundColore = "";
+var $actualBackgroundColore = "";
 var $actualElementFromPoint = "";
 
 function addMouseMoveAndKeyPressEvent() {
@@ -37,21 +37,19 @@ function releaseMouseMoveAndKeyPressEvent() {
 
     restoreActualElementColor();
 
-    $(document).off("mouseout");
-    $(document).off("mouseover");
-    $(document).off("keypress");
+    $(document).off(["mouseout", "mouseover", "keypress"]);
 }
 
 function restoreActualElementColor() {
     if ($actualElementFromPoint !== "" && $actualElementFromPoint !== undefined)
-        $actualElementFromPoint.style.backgroundColor = $actualBachgroundColore;
+        $actualElementFromPoint.style.backgroundColor = $actualBackgroundColore;
 
-    $actualBachgroundColore = "";
+    $actualBackgroundColore = "";
     $actualElementFromPoint = "";
 }
 
 function fillActualElementColor(target) {
     $actualElementFromPoint = target;
-    $actualBachgroundColore = $(target).css('background-color');
+    $actualBackgroundColore = $(target).css('background-color');
 }
 

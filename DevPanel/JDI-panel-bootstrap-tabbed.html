@@ -49,28 +49,35 @@
                         <td class="borderBottom">Type</td>
                     </tr>
                     <tr>
-                        <td class="borderRight">Page<br>Object</td>
+                        <td class="borderRight">PageObject</td>
                         <td>
                             <input id="PO-name-{i}" type="text" class="POTextArea">
                         </td>
                         <td>
                             <div class="dropdown">
-                                <input id="PO-type-{i}" class="dropdown-toggle POTextArea" type="text" data-toggle="dropdown">
+                                <input id="PO-type-{i}" class="dropdown-toggle POTextArea" type="text"
+                                       data-toggle="dropdown">
                                 <ul class="dropdown-menu" style="font-size: inherit">
                                 </ul>
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td class="borderRight">locator</td>
+                        <td class="borderRight">Locator</td>
                         <td colspan="2">
                             <input id="PO-locator-{i}" type="text" class="POTextArea">
                         </td>
                     </tr>
-                    <tr>
-                        <td class="borderRight">gen</td>
+                    <tr id="tr-PO-gen-{i}" style="display: none">
+                        <td class="borderRight">InitClass</td>
                         <td colspan="2">
                             <input id="PO-gen-{i}" type="text" class="POTextArea">
+                        </td>
+                    </tr>
+                    <tr id="tr-PO-section-{i}" style="display: none">
+                        <td class="borderRight">SectionClass</td>
+                        <td colspan="2">
+                            <input id="PO-section-{i}" type="text" class="POTextArea">
                         </td>
                     </tr>
                 </table>
@@ -120,7 +127,7 @@
 </div>
 
 <div id="template-section-nav-tab-link" style="display: none">
-    <li><a href="#section-content-{section}" id="a-section-{section}">new section</a></li>
+    <li><a href="#section-content-{section}" id="a-section-{section}">new section <button class="close">×</button></a></li>
 </div>
 
 <div id="template-sect-nav-cont" style="display: none">
@@ -271,7 +278,11 @@
     <div class="row">
         <div class="col-sx-12">
             <ul class="nav nav-tabs" id="main-nav-tabs">
-                <li class="active"><a href="#page-0" id="a-page-0">Current Page</a></li>
+                <li class="active">
+                     <a href="#page-0" id="a-page-0">Current Page
+                     <button id='a-close-page-0' class='close'>×</button>
+                     </a>
+                </li>
                 <li><a id="add-new-tag"><span class="glyphicon glyphicon-plus"></span></a></li>
                 <li style="float: right"><a href="#page-sections" id="a-tab-sections" style="background: lightgrey">Sections</a>
                 </li>
@@ -291,7 +302,8 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-offset-5 col-sm-7" style="color: darkgrey; margin-top: 7%">
+        <div class="col-sm-offset-5 col-sm-7 col-md-offset-5 col-md-7 col-xs-offset-5 col-xs-7"
+             style="color: darkgrey; margin-top: 7%">
             <span class="fa fa-github-square fa-2x" style="margin-right: 2%"></span>
             <span class="fa fa-vk fa-2x" style="margin-right: 2%"></span>
             <span class="fa fa-facebook fa-2x" style="margin-right: 2%"></span>
