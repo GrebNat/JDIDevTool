@@ -29,12 +29,12 @@ var structElement = function (rawElement, spec) {
     temp.parent = rawElement.getCAttribute(spec.jdi_parent);
     temp.toJSON = function () {
         return {
-            type: this.type,
-            name: this.name,
-            gen: this.gen,
-            locator: this.locator,
-            elements: this.elements.length === 0 ? undefined : this
-                .elements,
+            type:     this.type,
+            name:     this.name,
+            gen:      this.gen,
+            locator:  this.locator,
+            elements: this.elements.length === 0 ? undefined : this.elements,
+            section:  this.section,
         }
     }
     return temp;
@@ -49,12 +49,12 @@ var structPage = function (packageName) {
     this.title = document.title;
     this.toJSON = function () {
         return {
-            name: this.name,
-            url: this.url,
-            type: this.type,
-            packageName: this.packageName,
-            elements: this.elements,
-            title: this.title,
+            name:           this.name,
+            url:            this.url,
+            type:           this.type,
+            packageName:    this.packageName,
+            elements:       this.elements,
+            title:          this.title,
         }
     }
 }
@@ -112,6 +112,13 @@ var jsonPageGenerator = function (attrSpec, options, container) {
         try {
             var rawElements = array;
             var allElements = jQuery.map(rawElements, rawElement2Json);
+            $.each(allElements, function (i, e) {
+                $.each(sectionTypes, function(ii, ee){
+                    if(e.type === ee){
+                        e.section = e.name.capitalizeFirstLetter();
+                    }
+                });
+            });
             var rootElements = jQuery.map(allElements, filterRoot);
             var childElements = jQuery.map(allElements, filterParent);
             process(rootElements, childElements);
