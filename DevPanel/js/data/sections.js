@@ -31,9 +31,9 @@ var Sections = function () {
     }
 
 
-    this.addNewSection = function (section) {
-        this.sectionsArray.push(section)
-        return this.getSectionIndex(section.locator);
+    this.addNewSection = function (sec) {
+        this.sectionsArray.push(sec);
+        return this.getSectionIndex(sec.locator);
     };
 
 

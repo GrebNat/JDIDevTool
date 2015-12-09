@@ -1,4 +1,4 @@
-function drawSectionPage(){
+function drawSectionPage() {
 
     cleanSectionPage();
     $.each(sections.sectionsArray, function (ind, val) {
@@ -10,7 +10,7 @@ function drawSectionPage(){
             $('#section-nav-tab').append(template);
             $('#a-section-{0}'.format(ind))
                 .text(data[1].name)
-                .append("<button id='a-close-section-{0}' class='close'>×</button>".format(ind));
+                .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind));
 
             template = $('#template-sect-nav-cont').html().replace(/{section}/g, ind);
             $('#section-nav-content').append(template);
@@ -27,14 +27,16 @@ function drawSectionPage(){
 
             $('#a-close-section-{0}'.format(ind)).on('click', function () {
 
-                var sectionIndex = $(this).attr('id').split("-").pop();
-                var sectionId = 'a-section-{0}'.format(sectionIndex);
+                var sectionId = 'a-section-{0}'.format($(this).attr('id').split("-").pop());
+                var sectionIndex = $('#' + sectionId).parent().index();
 
-                $('#{0}, [href="#{0}"]'.format(sectionId)).remove();
+                $('#{0}'.format(sectionId)).parent().remove();
+                $('#section-content-{0}'.format($(this).attr('id').split("-").pop())).remove();
 
                 pages.updatePagesAfterSectionDelete(sectionIndex)
                 sections.removeSection(sectionIndex);
 
+                $($('#page-sections ul').children()[0]).tab('show');
             })
         }
     });
@@ -42,11 +44,11 @@ function drawSectionPage(){
 
 }
 
-function cleanSectionPage(){
+function cleanSectionPage() {
     $('#section-nav-tab, #section-nav-content').empty();
 }
-function downloadAction(sectionInd, collapseInd){
-    $('#btn-coll{1}-{0}'.format(sectionInd, collapseInd)).on('click', function(){
+function downloadAction(sectionInd, collapseInd) {
+    $('#btn-coll{1}-{0}'.format(sectionInd, collapseInd)).on('click', function () {
 
         var collPanelId = $(this).parent().find('a').attr('href').substr(1);
         var data = $('#{0} pre'.format(collPanelId)).text();
@@ -56,11 +58,11 @@ function downloadAction(sectionInd, collapseInd){
     })
 }
 
-function fillSection(sectionInd, collapseInd, data){
+function fillSection(sectionInd, collapseInd, data) {
     $('#section-content-{0} #a-coll{1}-{0}'.format(sectionInd, collapseInd)).text(data.name)
     $('#section-content-{0} #coll{1}-{0}  pre'.format(sectionInd, collapseInd))
         .text(data.data)
         .each(function (i, block) {
-        hljs.highlightBlock(block);
-    });
+            hljs.highlightBlock(block);
+        });
 }

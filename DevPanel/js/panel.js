@@ -49,15 +49,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
         }
         if ('jdi_object' in changed) {
             if (changed.jdi_object.newValue.tabId == chrome.devtools.inspectedWindow.tabId) {
-                ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
+                var ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
+                var pageId = getCurrentPageId();
 
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
                 editPageData(ind, changed.jdi_object.newValue.data);
 
-                var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(ind));
-                var pageId = getCurrentPageId();
-
-                pages.updateBeanData(pageId, elPath, {type: $(this).text()});
                 fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
             }
         }
@@ -82,7 +79,7 @@ function addNewTabLinkEvent() {
         .empty()
         .text('New Tab')
         .off('click')
-        .append('<button id="a-close-page-{0}" class="close">×</button>'.format(pageIndex));
+        .append('<span id="a-close-page-{0}" class="close fa fa-times"></span>'.format(pageIndex));
 
     addCloseTabEvent(pageIndex);
 
