@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 drawJDITree(jsonObject, "#tree-{0}".format(pageIndex));
                 fillPageInfo(jsonObject, pageId);
 
-                fillPageObjectPre(pageObjectsFiles.getCombElements(), pageId);
+                fillPageObjectPre(pageObjectsFiles.getCombElements, pageId);
 
                 chrome.storage.local.remove('jdi_page');
             }

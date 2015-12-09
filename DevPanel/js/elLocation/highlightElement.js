@@ -22,13 +22,13 @@ function highlightElement(locator){
 
 function restoreAllElementsBackground(){
     $.each(originColors, function(ind, val){
-        $(val.locator).css("background-color", val.color);
+        $(val.sectionName).css("background-color", val.color);
     })
     originColors = [];
 }
 
 function  restoreAllElementsHighlighting(elements){
     $.each(elements, function(ind, val){
-        $(val.locator).css("background-color", highlightColor);
+        $(val.sectionName).css("background-color", highlightColor);
     })
 }

@@ -3,24 +3,46 @@ function drawSectionPage() {
     cleanSectionPage();
     $.each(sections.sectionsArray, function (ind, val) {
 
-        if (sectionTypes.indexOf(val.data.type) !== -1) {
-            var data = translateToJava(val.data);
+        if ($.inArray(val.data.type, sectionTypes) > -1) {
+            if (val.data.type === 'Form') {
+                var data = translateToJava(val.data);
 
-            var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
-            $('#section-nav-tab').append(template);
-            $('#a-section-{0}'.format(ind))
-                .text(data[1].name)
-                .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind));
+                var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
+                $('#section-nav-tab').append(template);
+                $('#a-section-{0}'.format(ind))
+                    .text(data[1].name)
+                    .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind));
 
-            template = $('#template-sect-nav-cont').html().replace(/{section}/g, ind);
-            $('#section-nav-content').append(template);
+                template = $('#template-sect-nav-cont').html().replace(/{section}/g, ind);
+                $('#section-nav-content').append(template);
 
-            fillSection(ind, 1, data[1]);
-            fillSection(ind, 2, data[0]);
+                fillSection(ind, 1, data[1]);
+                fillSection(ind, 2, data[0]);
 
-            downloadAction(ind, 1);
-            downloadAction(ind, 2);
+                downloadAction(ind, 1);
+                downloadAction(ind, 2);
+            }
+            else {
+                var data = translateToJava(val.data);
 
+                var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
+                $('#section-nav-tab').append(template);
+                $('#a-section-{0}'.format(ind))
+                    .text(data[0].name)
+                    .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind))
+
+                var template = $('#template-sect-nav-cont-nonForm').html().replace(/{section}/g, ind);
+                $('#section-nav-content').append(template);
+
+                $('#section-content-{0}'.format(ind))
+                    .find('pre')
+                    .text(data[0].data)
+                    .each(function (i, block) {
+                        hljs.highlightBlock(block);
+                    });
+                ;
+
+            }
             $($("[id^='a-section-']")[1]).tab('show');
 
             addNavBarEvents();

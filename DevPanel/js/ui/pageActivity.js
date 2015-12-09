@@ -61,7 +61,11 @@ function PageBuilder(pageId) {
 
             var beanID = $(addNewJDIBeanToTree('#tree-{0}'.format(pageIndex))).attr('id');
 
-            pages.addBean(pageId, [], getBeanAsJDIObject(beanID));
+            var elSequence = getBeanIndexSequenceOnPage(beanID);
+            pages.addBean(pageId, elSequence, getBeanAsJDIObject(beanID));
+
+            pages.addSectionObjects("page-{0}".format(pageIndex), sections);
+
             fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
         })
 

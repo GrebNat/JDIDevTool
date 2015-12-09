@@ -33,8 +33,8 @@ var structElement = function (rawElement, spec) {
       name: this.name,
       gen: this.gen,
       locator: this.locator,
-      elements: this.elements.length === 0 ? undefined : this
-          .elements,
+      elements: this.elements.length === 0 ? undefined : this.elements,
+      section: this.section,
     }
   }
   return temp;
@@ -47,6 +47,7 @@ var structPage = function (packageName) {
   this.packageName = packageName;
   this.elements = [];
   this.title = document.title;
+  this.section = document.title.removeIllegalLetter();
   this.toJSON = function () {
     return {
       name: this.name,
@@ -55,6 +56,7 @@ var structPage = function (packageName) {
       packageName: this.packageName,
       elements: this.elements,
       title: this.title,
+      section: this.section,
     }
   }
 }
@@ -69,7 +71,7 @@ var jsonPageGenerator = function (attrSpec, options, container) {
   var _container = container instanceof $ ? container.get(0) : container;
   var _attrSpec = attrSpec;
   var _page = undefined;
-  var _options = options === undefined ? { packageName:"com.my.test", } : options;
+  var _options = options === undefined ? {packageName: "com.my.test",} : options;
 
   var getJDIElements = function () {
     return _container.querySelectorAllArray("[" + _attrSpec.jdi_type + "]");
@@ -98,7 +100,7 @@ var jsonPageGenerator = function (attrSpec, options, container) {
           }
         j = (prn[j] === undefined) ? 0 : j;
         i = (cld[i] === undefined) ? 0 : i;
-        if(cld.length === 0) break;
+        if (cld.length === 0) break;
         if (prn[j].name === cld[i].parent) {
           prn[j].elements.push(cld.splice(i, 1)[0]);
           i = j = -1;
@@ -112,6 +114,9 @@ var jsonPageGenerator = function (attrSpec, options, container) {
     try {
       var rawElements = array;
       var allElements = jQuery.map(rawElements, rawElement2Json);
+      $.each(allElements, function (i, e) {
+        e.section = e.name.capitalizeFirstLetter();
+      });
       var rootElements = jQuery.map(allElements, filterRoot);
       var childElements = jQuery.map(allElements, filterParent);
       process(rootElements, childElements);

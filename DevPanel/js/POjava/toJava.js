@@ -7,6 +7,7 @@ var pname;
 var fileTypes = {
     page:"IPage",
     form:"Form",
+    pagination: "IPagination",
     pClass:"parameterClass",
 }
 
@@ -54,11 +55,11 @@ var ElemTemplates = {
         return moduleSimple(data);
     },
     IPagination: function (data) {
-        if (JSON.parse(data.own) === true){
-            filesTemplate.IPagination(data);
-            return moduleSimple(data);
-        }
-        return new Pagination(data).print();
+        //if (JSON.parse(data.own) === true){
+        filesTemplate.IPagination(data);
+        return moduleSimple(data);
+        //}
+        //return new Pagination(data).print();
     },
     ITimePicker: moduleSimple,
     IDatePicker: moduleSimple,
@@ -84,9 +85,8 @@ var filesTemplate = {
     },
     Section: function(data) {
         data.extendz = "{0}".format(data.type);
-        data.type = data.name.capitalizeFirstLetter();
         FieldTemplates[data.type] = function (elem) {
-            return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
+            return "\n\tpublic {0} {1};\n".format(elem.section, elem.name);
         };
         var c = new JavaClass(data);
         c.includes.push(IncludesDictionary.by);
@@ -98,7 +98,8 @@ var filesTemplate = {
 
     },
     Form: function (data) {
-        data.name = data.name.capitalizeFirstLetter();
+        //data.name = data.name.capitalizeFirstLetter();
+        //data.name = data.section;
         var genClass = JSON.parse(JSON.stringify(data));
         var classParam = genClass.name = data.gen;
         genClass.type = undefined;
@@ -118,7 +119,7 @@ var filesTemplate = {
         data.extendz = "{0}<{1}>".format(data.type, data.gen);
         data.type = data.name;
         FieldTemplates[data.type] = function (elem) {
-            return "\n\tpublic {0} {1};\n".format(elem.type, elem.name.downFirstLetter());
+            return "\n\tpublic {0} {1};\n".format(elem.section, elem.name);
         };
         IncludesDictionary[data.type] = "my.package.{0}".format(data.type);
         var c = new JavaClass(data);
@@ -149,7 +150,7 @@ var JavaClass = function (src) {
     this.type = src.type;
 
     this.genName = function (name) {
-        return src.title === undefined ? src.name : src.title;
+        return src.section === undefined ? src.name : src.section;
     }
     this.genIncludes = function () {
         var inc = this.includes;
@@ -201,6 +202,7 @@ var getCombElements = function () {
     var baseRes = deepCopy(result);
     $.each(baseRes, function(i, e){
         switch (e.type){
+            case fileTypes.pagination:
             case fileTypes.page:
                 ress.push(e);
                 break;
@@ -222,6 +224,6 @@ function translateToJava(rawData) {
     pname = data.packageName;
     result = new Array;
     processJSON(data);
-    result.getCombElements = getCombElements;
+    result.getCombElements = getCombElements();
     return result;
 }

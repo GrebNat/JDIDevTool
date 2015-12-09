@@ -7,23 +7,23 @@ var Sections = function () {
     this.sectionsArray = [];
 
     this.addNew_UpdateOnExists = function (section) {
-        if (this.getSection(section.locator) !== -1)
+        if (this.getSection(section.sectionName) !== -1)
             return this.addNewSection(section);
 
-        return this.updateSection(section.locator, section.data);
+        return this.updateSection(section.sectionName, section.data);
     }
 
-    this.updateSection = function (locator, newData) {
-        var ind = this.getSectionIndex(locator);
+    this.updateSection = function (sectionName, newData) {
+        var ind = this.getSectionIndex(sectionName);
         this.sectionsArray[ind].data = newData;
 
         return ind;
     };
 
 
-    this.removeSectionByLocator = function (locator){
-        var sectionIndex = this.getSectionIndex(locator);
-        this.sectionsArray.locator = "";
+    this.removeSectionByName = function (sectionName){
+        var sectionIndex = this.getSectionIndex(sectionName);
+        this.sectionsArray.sectionName = "";
         this.sectionsArray.data = {};
     }
     this.removeSection = function (index){
@@ -33,16 +33,16 @@ var Sections = function () {
 
     this.addNewSection = function (sec) {
         this.sectionsArray.push(sec);
-        return this.getSectionIndex(sec.locator);
+        return this.getSectionIndex(sec.sectionName);
     };
 
 
-    this.getSectionIndex = function (locator) {
-        return getIndex(this.sectionsArray, "locator", locator);
+    this.getSectionIndex = function (sectionName) {
+        return getIndex(this.sectionsArray, "sectionName", sectionName);
     };
 
-    this.getSection = function (locator) {
-        var ind = this.getSectionIndex(locator)
+    this.getSection = function (sectionName) {
+        var ind = this.getSectionIndex(sectionName)
         return this.sectionsArray[ind];
     };
 
@@ -52,9 +52,9 @@ var Sections = function () {
 
 };
 
-function section(locator, data) {
+function section(sectionName, data) {
     return{
-        locator: locator,
+        sectionName: sectionName,
         data: data
     };
 }

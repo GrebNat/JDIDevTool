@@ -27,11 +27,9 @@ var Pages = function () {
             var val = this.getPageByID(pageId).data.elements[ind];
 
             if (sectionTypes.indexOf(val.type) !== -1) {
-                var sectionIndex = sections.getSectionIndex(val.locator);
+                var sectionIndex = sections.getSectionIndex(val.section);
                 if (sectionIndex === -1)
-                    sectionIndex = sections.addNewSection(section(val.locator, val));
-                /* else
-                 sectionIndex = sections.updateSection(val.locator, val);*/
+                    sectionIndex = sections.addNewSection(section(val.section, val));
 
                 this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex).data;
             }
@@ -71,6 +69,8 @@ var Pages = function () {
 
         if ('locator' in newValue)
             el.locator = newValue.locator;
+        if ('section' in newValue)
+            el.section = newValue.section;
         if ('name' in newValue) {
             el.name = newValue.name;
         }
@@ -88,7 +88,7 @@ var Pages = function () {
                 }
                 else {
                     el.type = newValue.type;
-                    var sectionIndex = sections.addNewSection(section(el.locator, el));
+                    var sectionIndex = sections.addNewSection(section(el.sectionName, el));
 
                     var elT = this.getPageByID(pageId).data.elements;
 
@@ -103,23 +103,6 @@ var Pages = function () {
                 el.type = newValue.type;
                 return
             }
-
-
-            /* var sectionIndex = sections.addNewSection(section(el.locator, el));
-             // this.getPageByID(pageId).data.elements[ind] = sections.getSectionByIndex(sectionIndex);
-
-             var elT = this.getPageByID(pageId).data.elements;
-             for (var i = 0; i < elSequence.length; i++) {
-
-             if (i === elSequence.length - 1) {
-
-             //  var elT  =  elT[elSequence[i]].elements;
-             elT.splice(elSequence[i], 1, sections.getSectionByIndex(sectionIndex));
-
-             }
-             else
-             elT = elT[elSequence[i]].elements;
-             }*/
         }
     }
 

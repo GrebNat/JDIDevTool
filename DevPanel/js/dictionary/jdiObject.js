@@ -16,6 +16,6 @@ var jdiTags = {
     jdi_gen: "jdi-gen"
 }
 
-var sectionTypes = ['Form', 'Section'];
+var sectionTypes = ['Form', 'Section', 'IPagination'];
 var elementTypes = ['ITextArea', 'IButton', 'ITimePicker',
-    'IDatePicker', 'IElement',  'ITextField', 'RFileInput', 'IRange', 'ITable', 'IPagination', 'ISearch'];
+    'IDatePicker', 'IElement',  'ITextField', 'RFileInput', 'IRange', 'ITable', 'ISearch'];
