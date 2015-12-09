@@ -108,7 +108,8 @@ var createRecord = function(data){
 }
 
 var deepCopy = function (obj) {
-    return JSON.parse(JSON.stringify(obj));
+    //return JSON.parse(JSON.stringify(obj));
+    return jQuery.extend(true, {}, obj)
 }
 
 String.prototype.capitalizeFirstLetter = function() {
