@@ -47,6 +47,7 @@ var structPage = function (packageName) {
     this.packageName = packageName;
     this.elements = [];
     this.title = document.title;
+    this.section = document.title.removeIllegalLetter();
     this.toJSON = function () {
         return {
             name: this.name,
@@ -55,6 +56,7 @@ var structPage = function (packageName) {
             packageName: this.packageName,
             elements: this.elements,
             title: this.title,
+            section: this.section,
         }
     }
 }
