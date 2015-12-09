@@ -7,6 +7,7 @@ var pname;
 var fileTypes = {
     page:"IPage",
     form:"Form",
+    pagination: "IPagination",
     pClass:"parameterClass",
 }
 
@@ -54,11 +55,11 @@ var ElemTemplates = {
         return moduleSimple(data);
     },
     IPagination: function (data) {
-        if (JSON.parse(data.own) === true){
+        //if (JSON.parse(data.own) === true){
             filesTemplate.IPagination(data);
             return moduleSimple(data);
-        }
-        return new Pagination(data).print();
+        //}
+        //return new Pagination(data).print();
     },
     ITimePicker: moduleSimple,
     IDatePicker: moduleSimple,
@@ -201,6 +202,7 @@ var getCombElements = function () {
     var baseRes = deepCopy(result);
     $.each(baseRes, function(i, e){
         switch (e.type){
+            case fileTypes.pagination:
             case fileTypes.page:
                 ress.push(e);
                 break;
