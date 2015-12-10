@@ -1,35 +1,55 @@
-var $actualBachgroundColore = "";
+var $actualBackgroundColore = "";
 var $actualElementFromPoint = "";
 
-$(document).on("mouseout", function (e) {
+function addMouseMoveAndKeyPressEvent() {
+
+    $(document).on("mouseout", function (e) {
+        restoreActualElementColor();
+        restoreAllElementsHighlighting(originColors);
+    });
+
+    $(document).on("mouseover", function (e) {
+        fillActualElementColor(e.target);
+        e.target.style.backgroundColor = "#93DBD5";
+        restoreAllElementsHighlighting(originColors);
+    });
+
+    $(document).keypress(function (e) {
+
+        if (e.which === 115) {
+            var jdi = jdiObject(
+                $actualElementFromPoint.getAttribute("jdi-name"),
+                $actualElementFromPoint.getAttribute("jdi-type"),
+                undefined,
+                undefined,
+                "[jdi-name=" + $actualElementFromPoint.getAttribute("jdi-name") + ']');
+
+            chrome.runtime.sendMessage({
+                name: requestName.jdiFromContentSaveClicked,
+                data: jdi
+            });
+        }
+        ;
+    });
+}
+
+function releaseMouseMoveAndKeyPressEvent() {
+
+    restoreActualElementColor();
+
+    $(document).off(["mouseout", "mouseover", "keypress"]);
+}
+
+function restoreActualElementColor() {
     if ($actualElementFromPoint !== "" && $actualElementFromPoint !== undefined)
-        $actualElementFromPoint.style.backgroundColor = $actualBachgroundColore;
-    $actualBachgroundColore = "";
+        $actualElementFromPoint.style.backgroundColor = $actualBackgroundColore;
+
+    $actualBackgroundColore = "";
     $actualElementFromPoint = "";
-});
+}
 
-$(document).on("mouseover", function (e) {
-    $actualElementFromPoint = e.target;
-    $actualBachgroundColore = $actualElementFromPoint.style.backgroundColor;
-    e.target.style.backgroundColor = "#93DBD5";
-});
-
-$(document).keypress(function (e) {
-
-    console.log("key pressed");
-    if (e.which === 115) {
-
-        var jdi = jdiObject(
-            $actualElementFromPoint.getAttribute("jdi-name"),
-            $actualElementFromPoint.getAttribute("jdi-type"),
-            undefined,
-            undefined,
-            "jdi-name="+$actualElementFromPoint.getAttribute("jdi-name"));
-
-        chrome.runtime.sendMessage({
-            name: requestName.jdiFromContentSaveClicked,
-            data: jdi
-        });
-    };
-});
+function fillActualElementColor(target) {
+    $actualElementFromPoint = target;
+    $actualBackgroundColore = $(target).css('background-color');
+}
 

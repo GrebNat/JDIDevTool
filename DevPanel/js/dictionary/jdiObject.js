@@ -4,7 +4,8 @@ function jdiObject(_name, _type, _gen, _elements, _locator) {
         type: _type,
         gen: _gen,
         elements: _elements,
-        locator: _locator
+        locator: _locator,
+        section: _name
     };
 }
 
@@ -15,22 +16,6 @@ var jdiTags = {
     jdi_gen: "jdi-gen"
 }
 
-function pageURLRelation(page_id, url) {
-    return {
-        PageId: page_id,
-        url: url
-    }
-}
-
-var sectionTypes = ['Form', 'Section'];
-
-var elementTypes = ['ITextArea',
-    'IButton',
-    'IPagination',
-    'ITimePicker',
-    'IDatePicker',
-    'IElement',
-    'ITextField',
-    'RFileInput',
-    'IRange',
-    'ITable']
+var sectionTypes = ['Form', 'Section', 'IPagination', 'ISearch'];
+var elementTypes = ['ITextArea', 'IButton', 'ITimePicker',
+    'IDatePicker', 'IElement',  'ITextField', 'RFileInput', 'IRange', 'ITable'];

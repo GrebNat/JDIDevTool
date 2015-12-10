@@ -9,13 +9,22 @@ chrome.runtime.onMessage.addListener(
                 executeContextScript(request);
                 break;
             case requestName.addMouseMoveKeyPressEvent:
-                addMouseMoveKeyPressToPage(request);
+                sendMessageToContent(request);
+                break;
+            case requestName.releaseMouseMoveKeyPressEvent:
+                sendMessageToContent(request);
                 break;
             case requestName.jdiFromContentSaveClicked:
-                saveJDIObjectToStorage(request.data);
+                saveJDIObjectToStorage(request.data, sender);
                 break;
             case requestName.savePageJSONByJDIElementsToStorage:
-                savePageJSONByJDIElementsToStorage(request.pageId);
+                savePageJSONByJDIElementsToStorage(request.tabId);
+                break;
+            case requestName.highlightElementOnWeb:
+                sendMessageToContent(request);
+                break;
+            case requestName.restoreAllElementBackgroundColorOnWeb:
+                sendMessageToContent(request);
                 break;
             default :
                 alert("request "+request.name+" not supported in background")
@@ -23,11 +32,17 @@ chrome.runtime.onMessage.addListener(
 
     });
 
-function savePageJSONByJDIElementsToStorage(pageId){
+function savePageJSONByJDIElementsToStorage(tabId){
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(pageId, requestName.getPageJSONByJDIElements, function(response) {
-            saveToLocalStorage(response, storageSegment.jdi_page);
+        chrome.tabs.sendMessage(tabId,{name: requestName.getPageJSONByJDIElements}, function(response) {
+            saveToLocalStorage({data: response, tabId: tabId}, storageSegment.jdi_page);
         });
+    });
+}
+
+function sendMessageToContent(data){
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(data.tabId, {name: data.name, message: data});
     });
 }
 
@@ -36,8 +51,9 @@ function saveToLocalStorage(obj, segmentName){
     chrome.storage.local.set({jdi_page: obj});
 }
 
-function saveJDIObjectToStorage(data) {
-    chrome.storage.local.set({'jdi_object': data});
+function saveJDIObjectToStorage(data, sender) {
+    chrome.storage.local.set({'jdi_object': {data: data, tabId: sender.tab.id}});
+   // saveToLocalStorage({data: data, pageId: pageId}, storageSegment.jdi_object)
 }
 
 function addJDIObjectToStorage(data) {
