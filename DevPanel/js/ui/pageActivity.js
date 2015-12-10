@@ -66,7 +66,7 @@ function PageBuilder(pageId) {
 
             pages.addSectionObjects("page-{0}".format(pageIndex), sections);
 
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
         })
 
         addNavBarEvents();
@@ -86,7 +86,7 @@ function fillPage(pageId) {
         cleanAll(pageId);
 
         drawJDITree(pageObject, "#tree-{0}".format(pageIndex));
-        fillPageObjectPre(translateToJava(pageObject).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pageObject).getCombElements, pageId);
         fillPageInfo(pageObject, pageId);
 
         scroll(0, 0);

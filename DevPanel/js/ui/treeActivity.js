@@ -213,7 +213,7 @@ function addJDIBeanEvents(index) {
         $('#modal-' + ind).modal("hide");
         $('#main-div-' + ind).remove();
 
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     })
 
     $('#modal-btn-up-{0}'.format(index)).on('click', function () {
@@ -234,7 +234,7 @@ function addJDIBeanEvents(index) {
 
         $('#main-div-' + ind).remove();
 
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     })
 
     $('#btn-remove-{0}'.format(index)).on('click', function () {
@@ -249,7 +249,7 @@ function addJDIBeanEvents(index) {
             pages.removeBean(pageId, elPath);
             $('#main-div-' + ind).remove();
 
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
         }
 
 
@@ -286,7 +286,7 @@ function addNewBeanEvent_DataEdit(index) {
 
         pages.addBean(pageId, elPath, getBeanAsJDIObject(beanID));
 
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     })
 }
 function editBeanTxtFieldEvent_DataEdit(index) {
@@ -297,7 +297,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {locator: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     });
     $('#PO-name-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
@@ -308,7 +308,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         $('#jdi-name-col-{0}'.format(index)).text($(this).val()).removeClass("warningText");
 
         pages.updateBeanData(pageId, elPath, {name: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     });
     $('#PO-type-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
@@ -316,7 +316,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {type: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     });
     $('#PO-gen-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
@@ -324,7 +324,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {gen: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     });
     $('#PO-section-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
@@ -332,7 +332,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {section: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
     });
 }
 
@@ -396,7 +396,7 @@ function fillPOTypeDropDown(dropDown, index) {
             var pageId = getCurrentPageId();
 
             pages.updateBeanData(pageId, elPath, {type: $(this).text()});
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
 
             $('#tr-PO-section-{0}, #tr-PO-gen-{0}'.format(index)).css("display", "table-row");
         })
@@ -419,7 +419,7 @@ function fillPOTypeDropDown(dropDown, index) {
             var pageId = getCurrentPageId();
 
             pages.updateBeanData(pageId, elPath, {type: $(this).text()});
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
 
             $('#tr-PO-section-{0}, #tr-PO-gen-{0}'.format(index)).css("display", "none");
         })

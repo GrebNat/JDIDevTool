@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
                 editPageData(ind, changed.jdi_object.newValue.data);
 
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
             }
         }
     });
