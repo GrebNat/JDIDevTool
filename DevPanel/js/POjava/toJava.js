@@ -5,10 +5,10 @@ var result = new Array;
 var pname;
 
 var fileTypes = {
-    page:"IPage",
-    form:"Form",
+    page: "IPage",
+    form: "Form",
     pagination: "IPagination",
-    pClass:"parameterClass",
+    pClass: "parameterClass",
 }
 
 var Templates = {
@@ -56,8 +56,8 @@ var ElemTemplates = {
     },
     IPagination: function (data) {
         //if (JSON.parse(data.own) === true){
-            filesTemplate.IPagination(data);
-            return moduleSimple(data);
+        filesTemplate.IPagination(data);
+        return moduleSimple(data);
         //}
         //return new Pagination(data).print();
     },
@@ -85,7 +85,7 @@ var filesTemplate = {
         c.type = fileTypes.pagination;
         result.push(createRecord(c));
     },
-    Section: function(data) {
+    Section: function (data) {
         data.extendz = "{0}".format(data.type);
         FieldTemplates[data.type] = function (elem) {
             return "\n\tpublic {0} {1};\n".format(elem.section, elem.name);
@@ -202,8 +202,8 @@ var processJSON = function (data) {
 var getCombElements = function () {
     var ress = [];
     var baseRes = deepCopy(result);
-    $.each(baseRes, function(i, e){
-        switch (e.type){
+    $.each(baseRes, function (i, e) {
+        switch (e.type) {
             case fileTypes.pagination:
             case fileTypes.page:
                 ress.push(e);
@@ -211,7 +211,9 @@ var getCombElements = function () {
             case fileTypes.form:
                 e.elements = e.elements === undefined ? [] : e.elements;
                 var name = e.classParam;
-                e.elements.push(jQuery.grep(result, function(e, i){ return e.name === name} ));
+                e.elements.push(jQuery.grep(result, function (e, i) {
+                    return e.name === name
+                }));
                 ress.push(e);
                 break;
             case fileTypes.pClass:
@@ -222,10 +224,15 @@ var getCombElements = function () {
 }
 
 function translateToJava(rawData) {
-    var data = JSON.parse(JSON.stringify(rawData));
-    pname = data.packageName;
-    result = new Array;
-    processJSON(data);
-    result.getCombElements = getCombElements;
-    return result;
+    try {
+        //var data = JSON.parse(JSON.stringify(rawData));
+        var data = deepCopy(rawData);
+        pname = data.packageName;
+        result = new Array;
+        processJSON(data);
+        result.getCombElements = getCombElements;
+        return result;
+    } catch (e) {
+        console.log("toJava error: " + e)
+    }
 }
