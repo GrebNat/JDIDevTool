@@ -5,10 +5,11 @@ var result = new Array;
 var pname;
 
 var fileTypes = {
-    page:"IPage",
-    form:"Form",
+    page: "IPage",
+    form: "Form",
+    section: "Section",
     pagination: "IPagination",
-    pClass:"parameterClass",
+    pClass: "parameterClass",
 }
 
 var Templates = {
@@ -83,7 +84,7 @@ var filesTemplate = {
         var c = new JavaClass(genClass);
         result.push(createRecord(c));
     },
-    Section: function(data) {
+    Section: function (data) {
         data.extendz = "{0}".format(data.type);
         FieldTemplates[data.type] = function (elem) {
             return "\n\tpublic {0} {1};\n".format(elem.section, elem.name);
@@ -93,7 +94,7 @@ var filesTemplate = {
         c.includes.push(IncludesDictionary.fundBy);
         c.includes.push(IncludesDictionary.Section);
         c.classParam = data.gen;
-        c.type = fileTypes.form;
+        c.type = fileTypes.section;
         result.push(createRecord(c));
 
     },
@@ -165,7 +166,8 @@ var JavaClass = function (src) {
     this.getIncludes = function () {
         var total = "";
         $.each(this.includes, function (i, val) {
-            total += val.length > 0 ? Templates.imports(val) : "";
+            if (val !== undefined)
+                total += val.length > 0 ? Templates.imports(val) : "";
         });
         return total;
     }
@@ -200,8 +202,8 @@ var processJSON = function (data) {
 var getCombElements = function () {
     var ress = [];
     var baseRes = deepCopy(result);
-    $.each(baseRes, function(i, e){
-        switch (e.type){
+    $.each(baseRes, function (i, e) {
+        switch (e.type) {
             case fileTypes.pagination:
             case fileTypes.page:
                 ress.push(e);
@@ -209,7 +211,9 @@ var getCombElements = function () {
             case fileTypes.form:
                 e.elements = e.elements === undefined ? [] : e.elements;
                 var name = e.classParam;
-                e.elements.push(jQuery.grep(result, function(e, i){ return e.name === name} ));
+                e.elements.push(jQuery.grep(result, function (e, i) {
+                    return e.name === name
+                }));
                 ress.push(e);
                 break;
             case fileTypes.pClass:
@@ -217,13 +221,19 @@ var getCombElements = function () {
         }
     });
     return ress;
+
 }
 
 function translateToJava(rawData) {
-    var data = JSON.parse(JSON.stringify(rawData));
-    pname = data.packageName;
-    result = new Array;
-    processJSON(data);
-    result.getCombElements = getCombElements();
-    return result;
+    try {
+        var data = JSON.parse(JSON.stringify(rawData));
+        pname = data.packageName;
+        result = new Array;
+        processJSON(data);
+        result.getCombElements = getCombElements();
+        return result;
+    }
+    catch (e) {
+        return 'nothing to return';
+    }
 }

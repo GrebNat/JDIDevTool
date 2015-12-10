@@ -30,6 +30,7 @@ function fillJDIBean(index, jdiObj) {
             $('#PO-section-{0}'.format(index)).val(jdiObj.section === undefined ? "" : jdiObj.section);
 
             $('#tr-PO-section-{0}, #tr-PO-gen-{0}'.format(index)).css("display", "table-row");
+            fillSectionTypeDropDown($("#PO-section-{0}".format(index)).parent(), index);
         }
 
         if (jdiObj.name === "" | jdiObj.name === null | jdiObj.name === undefined) {
@@ -374,7 +375,6 @@ function getJSONFromTree(parentID, json, pageIndex) {
 }
 
 //populate
-
 function fillPOTypeDropDown(dropDown, index) {
     var ul = $(dropDown).find('ul');
 
@@ -399,6 +399,7 @@ function fillPOTypeDropDown(dropDown, index) {
             fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
 
             $('#tr-PO-section-{0}, #tr-PO-gen-{0}'.format(index)).css("display", "table-row");
+            fillSectionTypeDropDown($("#PO-section-{0}".format(index)).parent(), index);
         })
     }
 
@@ -425,3 +426,39 @@ function fillPOTypeDropDown(dropDown, index) {
         })
     }
 }
+
+function fillSectionTypeDropDown(dropDown, index) {
+    var beanType = $(dropDown).parents('table').find("[id^='PO-type-']").val();
+    var ul = $(dropDown).find('ul');
+
+    ul.empty();
+
+    for (var i = 0, len = sections.sectionsArray.length; i < len; i++) {
+
+        if (beanType === sections.getSectionByIndex(i).data.type) {
+            var a = '<li><a id="a-PO-section-name-{0}-{1}">{2}</a></li>'.format(index, i, sections.getSectionByIndex(i).sectionName);
+
+            ul.append(a)
+
+            $('#a-PO-section-name-{0}-{1}'.format(index, i)).on('click', function () {
+
+                var pageId = getCurrentPageId();
+                var pageIndex = pageId.split("-").pop();
+                var i = $(this).attr('id').split('-').pop();
+
+                $(this).parents('.dropdown').find('input').val(sections.getSectionByIndex(i).sectionName);
+
+                var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+              /* pages.updateBeanData(pageId, elPath, {section: $(this).text()});*/
+
+                pages.linkSection(pageId, elPath, $(this).text());
+
+                cleanTree(pageId);
+                drawJDITree(pages.getPageByID(pageId).data, "#tree-{0}".format(pageIndex));
+                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
+            })
+        }
+    }
+
+}
+

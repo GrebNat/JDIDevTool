@@ -41,6 +41,10 @@ var Sections = function () {
         return getIndex(this.sectionsArray, "sectionName", sectionName);
     };
 
+    this.getSectionIndexByData = function (sectionData) {
+        return getIndex(this.sectionsArray, "data", sectionData);
+    }
+
     this.getSection = function (sectionName) {
         var ind = this.getSectionIndex(sectionName)
         return this.sectionsArray[ind];
@@ -53,10 +57,13 @@ var Sections = function () {
 };
 
 function section(sectionName, data) {
-    return{
-        sectionName: sectionName,
-        data: data
-    };
+    var obj = new Object();
+
+    obj.data = data;
+    obj.data.section = sectionName;
+    obj.sectionName = obj.data.section;
+
+    return obj;
 }
 
 

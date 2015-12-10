@@ -3,7 +3,7 @@ function drawSectionPage() {
     cleanSectionPage();
     $.each(sections.sectionsArray, function (ind, val) {
 
-        if ($.inArray(val.data.type, sectionTypes) > -1) {
+        if ($.inArray(val.data.type, sectionTypes) > -1 && val.data.elements !== undefined) {
             if (val.data.type === 'Form') {
                 var data = translateToJava(val.data);
 
@@ -19,8 +19,8 @@ function drawSectionPage() {
                 fillSection(ind, 1, data[1]);
                 fillSection(ind, 2, data[0]);
 
+                downloadAction(ind, 0);
                 downloadAction(ind, 1);
-                downloadAction(ind, 2);
             }
             else {
                 var data = translateToJava(val.data);
@@ -31,7 +31,7 @@ function drawSectionPage() {
                     .text(data[0].name)
                     .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind))
 
-                var template = $('#template-sect-nav-cont-nonForm').html().replace(/{section}/g, ind);
+                template = $('#template-sect-nav-cont-nonForm').html().replace(/{section}/g, ind);
                 $('#section-nav-content').append(template);
 
                 $('#section-content-{0}'.format(ind))
@@ -40,8 +40,7 @@ function drawSectionPage() {
                     .each(function (i, block) {
                         hljs.highlightBlock(block);
                     });
-                ;
-
+                downloadAction(ind, 0);
             }
             $($("[id^='a-section-']")[1]).tab('show');
 
@@ -70,11 +69,10 @@ function cleanSectionPage() {
     $('#section-nav-tab, #section-nav-content').empty();
 }
 function downloadAction(sectionInd, collapseInd) {
-    $('#btn-coll{1}-{0}'.format(sectionInd, collapseInd)).on('click', function () {
+    $('#btn-coll{1}-{0}'.format(sectionInd, collapseInd+1)).on('click', function () {
 
-        var collPanelId = $(this).parent().find('a').attr('href').substr(1);
-        var data = $('#{0} pre'.format(collPanelId)).text();
-        var fileName = $(this).parent().find('a').text();
+        var data = $($(this).parents('[id^=section-content-]').find('pre')[collapseInd]).text()
+        var fileName = $($(this).parents('[id=section-nav-content]')).parent().find('ul #a-section-{0}'.format(sectionInd)).text();
 
         (new saveFile).asJava([data], fileName)
     })

@@ -46,7 +46,7 @@ function PageBuilder(pageId) {
 
             for (var i in sections.sectionsArray) {
                 var data = translateToJava(sections.sectionsArray[i]);
-                for (var j= 0;j < data.length; j++)
+                for (var j = 0; j < data.length; j++)
                     sectionData.push({
                         data: data[j].data,
                         name: 'sections/' + data[j].name
@@ -61,9 +61,8 @@ function PageBuilder(pageId) {
 
             var beanID = $(addNewJDIBeanToTree('#tree-{0}'.format(pageIndex))).attr('id');
 
-            var elSequence = getBeanIndexSequenceOnPage(beanID);
+            var elSequence = getBeanIndexSequenceOnPage('tree');
             pages.addBean(pageId, elSequence, getBeanAsJDIObject(beanID));
-
             pages.addSectionObjects("page-{0}".format(pageIndex), sections);
 
             fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
@@ -95,13 +94,14 @@ function fillPage(pageId) {
 
 //Page Object`s tabs
 function fillPageObjectPre(data, pageId) {
-
+    if (data === undefined)
+        return;
     for (var i = 0; i < data.length; i++) {
         var pageIndex = pageId.split("-").pop();
 
         if (data[i].type === "IPage") {
 
-            renameTab(data[i].name,'a-page-{0}'.format(pageIndex));
+            renameTab(data[i].name, 'a-page-{0}'.format(pageIndex));
 
             $('#PO-pre-{0}'.format(pageIndex))
                 .text(data[i].data)
@@ -146,14 +146,15 @@ function getCurrentPageId() {
 
 function getBeanIndexSequenceOnPage(beanId) {
     var sequence = [];
+    if (beanId !== 'tree') {
+        var bean = beanId;
 
-    var bean = beanId;
+        sequence.push($('#' + beanId).index());
 
-    sequence.push($('#' + beanId).index());
-
-    while ($("#" + bean).parent().parent().attr('class') !== 'treeDiv') {
-        bean = $("#" + bean).parent().parent().attr('id');
-        sequence.unshift($('#' + bean).index());
+        while ($("#" + bean).parent().parent().attr('class') !== 'treeDiv') {
+            bean = $("#" + bean).parent().parent().attr('id');
+            sequence.unshift($('#' + bean).index());
+        }
     }
 
     return sequence;
@@ -165,16 +166,21 @@ function cleanAll(pageId) {
     var pageIndex = pageId.split("-").pop();
     chrome.storage.local.remove('jdi_page');
     chrome.storage.local.clear();
-    $('#tree-{0}'.format(pageIndex)).empty();
+
+    cleanTree(pageId);
     clearPOPreview(pageIndex);
     clearPageInfo(pageIndex);
 }
 
+function  cleanTree(pageId){
+    var pageIndex = pageId.split("-").pop();
+    $('#tree-{0}'.format(pageIndex)).empty();
+}
 function clearPOPreview(pageIndex) {
     $('#btn-download-page-{0}'.format(pageIndex)).off('click');
     $('#PO-pre-{0}'.format(pageIndex)).text("");
 
-    renameTab('Page','a-page-{0}'.format(pageIndex));
+    renameTab('Page', 'a-page-{0}'.format(pageIndex));
 }
 
 function clearPageInfo(pageIndex) {

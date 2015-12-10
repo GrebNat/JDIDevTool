@@ -77,7 +77,12 @@
                     <tr id="tr-PO-section-{i}" style="display: none">
                         <td class="borderRight">SectionClass</td>
                         <td colspan="2">
-                            <input id="PO-section-{i}" type="text" class="POTextArea">
+                            <div class="dropdown">
+                            <input id="PO-section-{i}" class="dropdown-toggle POTextArea" type="text"
+                                   data-toggle="dropdown">
+                            <ul class="dropdown-menu" style="font-size: inherit">
+                            </ul>
+                        </div>
                         </td>
                     </tr>
                 </table>
@@ -168,8 +173,13 @@
 </div>
 
 <div id="template-sect-nav-cont-nonForm" style="display: none">
-    <div id="section-content-{section}" class="panel panel-default">
-        <div class="panel-body">
+    <div id="section-content-{section}" class="panel panel-default tab-pane fade container-fluid" style=>
+        <div class="row">
+            <button id="btn-coll1-{section}" class="btn-success btn-sm btn" style="float: right"><span
+                    class="glyphicon glyphicon-download-alt"></span>
+            </button>
+        </div>
+        <div class="panel-body row">
             <pre></pre>
         </div>
     </div>

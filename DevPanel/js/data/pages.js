@@ -11,11 +11,16 @@ var Pages = function () {
     this.addBean = function (pageId, elSequence, bean) {
         var page = this.getPageByID(pageId).data;
 
-        for (ind in elSequence)
-            page = page.elements[elSequence[ind]];
-
-        if (page.elements === undefined)
-            page.elements = [];
+        if (page === undefined) {
+            this.getPageByID(pageId).data = {elements: []};
+            page = this.getPageByID(pageId).data;
+        }
+        else {
+            for (var ind in elSequence)
+                page = page.elements[elSequence[ind]];
+            if (page.elements === undefined)
+                page.elements = [];
+        }
 
         page.elements.push(bean);
     }
@@ -48,6 +53,16 @@ var Pages = function () {
             }
         }
     }
+    this.linkSection = function (pageId, elSequence, sectionName){
+        var sectionIndex = sections.getSectionIndex(sectionName);
+        var elT = this.getPageByID(pageId).data.elements;
+
+        for (var i = 0; i < elSequence.length; i++)
+            if (i === elSequence.length - 1)
+                elT.splice(elSequence[i], 1, sections.getSectionByIndex(sectionIndex).data);
+            else
+                elT = elT[elSequence[i]].elements;
+    }
 
 
     this.updatePageData = function (data) {
@@ -79,6 +94,18 @@ var Pages = function () {
         }
         if ('section' in newValue) {
             el.section = newValue.section;
+            var sectionIndex = sections.getSectionIndexByData(el);
+
+            sections.sectionsArray[sectionIndex].sectionName = el.section;
+            if (sectionIndex !== -1){
+                var elT = this.getPageByID(pageId).data.elements;
+
+                for (var i = 0; i < elSequence.length; i++)
+                    if (i === elSequence.length - 1)
+                        elT.splice(elSequence[i], 1, sections.getSectionByIndex(sectionIndex).data);
+                    else
+                        elT = elT[elSequence[i]].elements;
+            }
         }
         if ('type' in newValue) {
             if ($.inArray(newValue.type, sectionTypes) > -1) {
@@ -101,9 +128,11 @@ var Pages = function () {
             }
             else {
                 el.type = newValue.type;
-                return
+                return;
             }
         }
+
+        this.removeBlankChildrenReference(pageId);
     }
 
     this.removeBean = function (pageId, elSequence) {
@@ -117,6 +146,7 @@ var Pages = function () {
                 el = el[elSequence[i]].elements;
             }
         }
+        this.removeBlankChildrenReference(pageId);
     }
 
     this.upChildren = function (pageId, elSequence) {
@@ -142,8 +172,15 @@ var Pages = function () {
     this.removePage = function (pageId) {
         var index = this.getPageIndexById(pageId);
 
-        this.pagesArray[index].url = "";
-        this.pagesArray[index].data = {};
+        this.pagesArray[index].url = undefined;
+        this.pagesArray[index].data = undefined;
+    }
+
+    this.removeBlankChildrenReference = function (pageId) {
+
+        var page = this.getPageByID(pageId);
+        if (page.data.elements === undefined | page.data.elements.length === 0)
+            this.removePage(pageId)
     }
 
 
@@ -179,6 +216,7 @@ var Pages = function () {
         }
         return -1;
     }
+
 
 };
 
