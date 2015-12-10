@@ -6,7 +6,10 @@ var requestName = {
     releaseElementLocationState: 4,
     jdiFromContentSaveClicked: 5,
     getPageJSONByJDIElements: 6,
-    savePageJSONByJDIElementsToStorage: 7
+    savePageJSONByJDIElementsToStorage: 7,
+    highlightElementOnWeb: 8,
+    restoreAllElementBackgroundColorOnWeb: 9,
+    releaseMouseMoveKeyPressEvent: 10
 }
 
 var storageSegment = {
