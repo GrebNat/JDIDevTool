@@ -20,18 +20,23 @@ var Pages = function () {
                 page = page.elements[elSequence[ind]];
             if (page.elements === undefined)
                 page.elements = [];
+            if ($.inArray(bean.type, sectionTypes) !== -1) {
+                var sectionIndex = sections.getSectionIndex(bean.section);
+                if (sectionIndex === -1)
+                    sectionIndex = sections.addNewSection(section(bean.section, bean));
+                bean = sections.getSectionByIndex(sectionIndex).data;
+            }
         }
 
         page.elements.push(bean);
     }
-
 
     this.addSectionObjects = function (pageId, sections) {
 
         for (var ind in this.getPageByID(pageId).data.elements) {
             var val = this.getPageByID(pageId).data.elements[ind];
 
-            if (sectionTypes.indexOf(val.type) !== -1) {
+            if (sectionTypes.indexOf(val.type) > -1) {
                 var sectionIndex = sections.getSectionIndex(val.section);
                 if (sectionIndex === -1)
                     sectionIndex = sections.addNewSection(section(val.section, val));
@@ -40,20 +45,40 @@ var Pages = function () {
             }
 
         }
-        ;
+    }
+
+    this.addSectionObjects2 = function (bean, sections) {
+
+        for (var ind in bean.elements) {
+            var val = bean.elements[ind];
+
+            if (sectionTypes.indexOf(val.type) > -1) {
+                var sectionIndex = sections.getSectionIndex(val.section);
+                if (sectionIndex === -1)
+                    sectionIndex = sections.addNewSection(section(val.section, val));
+
+                bean.elements[ind] = sections.getSectionByIndex(sectionIndex).data;
+            }
+
+            if (val.elements !== undefined && val.elements.length > 0)
+                this.addSectionObjects2(bean.elements[ind], sections);
+
+        }
     }
     this.updatePagesAfterSectionDelete = function (sectionIndex) {
 
         var section = sections.getSectionByIndex(sectionIndex).data;
 
         for (var pageInd in this.pagesArray) {
-            for (var elInd in this.pagesArray[pageInd].data.elements) {
-                if (this.pagesArray[pageInd].data.elements[elInd] === section)
-                    this.pagesArray[pageInd].data.elements.splice(elInd, 1);
+            if (this.pagesArray[pageInd].data !== undefined) {
+                for (var elInd in this.pagesArray[pageInd].data.elements) {
+                    if (this.pagesArray[pageInd].data.elements[elInd] === section)
+                        this.pagesArray[pageInd].data.elements.splice(elInd, 1);
+                }
             }
         }
     }
-    this.linkSection = function (pageId, elSequence, sectionName){
+    this.linkSection = function (pageId, elSequence, sectionName) {
         var sectionIndex = sections.getSectionIndex(sectionName);
         var elT = this.getPageByID(pageId).data.elements;
 
@@ -73,7 +98,6 @@ var Pages = function () {
 
         return this.pagesArray[ind];
     }
-
     this.updateBeanData = function (pageId, elSequence, newValue) {
 
         var el = new Object();
@@ -97,7 +121,7 @@ var Pages = function () {
             var sectionIndex = sections.getSectionIndexByData(el);
 
             sections.sectionsArray[sectionIndex].sectionName = el.section;
-            if (sectionIndex !== -1){
+            if (sectionIndex !== -1) {
                 var elT = this.getPageByID(pageId).data.elements;
 
                 for (var i = 0; i < elSequence.length; i++)
@@ -148,7 +172,6 @@ var Pages = function () {
         }
         this.removeBlankChildrenReference(pageId);
     }
-
     this.upChildren = function (pageId, elSequence) {
         var el = new Object();
         el = this.getPageByID(pageId).data.elements;
@@ -168,7 +191,6 @@ var Pages = function () {
                 el = el[elSequence[i]].elements;
         }
     }
-
     this.removePage = function (pageId) {
         var index = this.getPageIndexById(pageId);
 
@@ -183,15 +205,12 @@ var Pages = function () {
             this.removePage(pageId)
     }
 
-
     this.getPageByID = function (id) {
         return this.pagesArray[getIndex(this.pagesArray, "id", id)];
     }
-
     this.getPageByURL = function (url) {
         return this.pagesArray[getIndex(this.pagesArray, "url", url)];
     }
-
     this.getPageIndex = function (url, id) {
         if (id !== undefined)
             return getIndex(this.pagesArray, "id", id)
@@ -200,13 +219,11 @@ var Pages = function () {
         else
             return -1;
     }
-
     this.getPageIndexById = function (id) {
         if (id !== undefined)
             return getIndex(this.pagesArray, "id", id);
         return -1;
     }
-
     this.getPageIndexByURLandID = function (url, id) {
 
         indByID = getIndex(this.pagesArray, "id", id);

@@ -3,9 +3,15 @@ function drawSectionPage() {
     cleanSectionPage();
     $.each(sections.sectionsArray, function (ind, val) {
 
-        if ($.inArray(val.data.type, sectionTypes) > -1 && val.data.elements !== undefined) {
+        if ($.inArray(val.data.type, sectionTypes) > -1 && val.data.elements !== undefined && val.data.elements.length > 0) {
             if (val.data.type === 'Form') {
-                var data = translateToJava(val.data);
+                var data = $.extend(false,{},val.data);
+
+                for (var i in data.elements)
+                    if ($.inArray(data.elements[i].type, sectionTypes) > -1)
+                        data.elements[i].elements = undefined;
+
+                data = translateToJava(data);
 
                 var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
                 $('#section-nav-tab').append(template);

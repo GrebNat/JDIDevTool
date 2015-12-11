@@ -1,5 +1,4 @@
 var treeElementCount = 0;
-var draggingStarted = false;
 var sections = new Sections();
 var pages = new Pages();
 
@@ -37,12 +36,13 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     jsonObject.url,
                     jsonObject));
 
-                pages.addSectionObjects("page-{0}".format(pageIndex), sections);
+              /*  pages.addSectionObjects("page-{0}".format(pageIndex), sections);*/
+                pages.addSectionObjects2(pages.getPageByID("page-{0}".format(pageIndex)).data, sections);
 
                 drawJDITree(jsonObject, "#tree-{0}".format(pageIndex));
                 fillPageInfo(jsonObject, pageId);
 
-                fillPageObjectPre(pageObjectsFiles.getCombElements, pageId);
+                fillPageObjectPre(pageObjectsFiles.getCombElements(), pageId);
 
                 chrome.storage.local.remove('jdi_page');
             }
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
                 editPageData(ind, changed.jdi_object.newValue.data);
 
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
+                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
             }
         }
     });

@@ -45,7 +45,7 @@ function PageBuilder(pageId) {
             }
 
             for (var i in sections.sectionsArray) {
-                var data = translateToJava(sections.sectionsArray[i]);
+                var data = translateToJava(sections.sectionsArray[i].data);
                 for (var j = 0; j < data.length; j++)
                     sectionData.push({
                         data: data[j].data,
@@ -65,7 +65,7 @@ function PageBuilder(pageId) {
             pages.addBean(pageId, elSequence, getBeanAsJDIObject(beanID));
             pages.addSectionObjects("page-{0}".format(pageIndex), sections);
 
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements, pageId);
+            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
         })
 
         addNavBarEvents();
@@ -85,7 +85,7 @@ function fillPage(pageId) {
         cleanAll(pageId);
 
         drawJDITree(pageObject, "#tree-{0}".format(pageIndex));
-        fillPageObjectPre(translateToJava(pageObject).getCombElements, pageId);
+        fillPageObjectPre(translateToJava(pageObject).getCombElements(), pageId);
         fillPageInfo(pageObject, pageId);
 
         scroll(0, 0);
@@ -111,10 +111,12 @@ function fillPageObjectPre(data, pageId) {
 
             $('#btn-download-page-{0}'.format(pageIndex)).off('click').on('click', function (e) {
                 var pageIndex = this.getAttribute("id").split("-").pop();
+                var html = $('#a-page-{0}'.format(pageIndex)).html();
+                html = html.substring(0, html.indexOf("<"));
 
                 (new saveFile).asJava(
                     [$('#PO-pre-{0}'.format(pageIndex)).text()],
-                    $('#a-page-{0}'.format(pageIndex)).text());
+                    html);
             })
         }
     }
@@ -172,7 +174,7 @@ function cleanAll(pageId) {
     clearPageInfo(pageIndex);
 }
 
-function  cleanTree(pageId){
+function cleanTree(pageId) {
     var pageIndex = pageId.split("-").pop();
     $('#tree-{0}'.format(pageIndex)).empty();
 }
@@ -182,7 +184,6 @@ function clearPOPreview(pageIndex) {
 
     renameTab('Page', 'a-page-{0}'.format(pageIndex));
 }
-
 function clearPageInfo(pageIndex) {
     $('#txt-name-{0}'.format(pageIndex)).val("");
     $('#txt-title-{0}'.format(pageIndex)).val("");
