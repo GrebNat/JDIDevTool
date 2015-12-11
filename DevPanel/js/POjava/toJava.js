@@ -74,14 +74,16 @@ var ElemTemplates = {
 
 var filesTemplate = {
     IPagination: function (rawData) {
-        var data = jQuery.extend(true, {}, rawData)
+        //var data = jQuery.extend(true, {}, rawData)
         //var data = JSON.parse(JSON.stringify(rawData));
+        var data = deepCopy(rawData);
         data.name = data.name.capitalizeFirstLetter();
         FieldTemplates[data.type] = function (elem) {
             return "\n\tpublic {0} {1};\n".format(data.name, elem.name.downFirstLetter());
         };
-        var genClass = JSON.parse(JSON.stringify(data));
+        var genClass = deepCopy(data);
         var c = new JavaClass(genClass);
+        c.type = fileTypes.pagination;
         result.push(createRecord(c));
     },
     Section: function (data) {
@@ -101,7 +103,7 @@ var filesTemplate = {
     Form: function (data) {
         //data.name = data.name.capitalizeFirstLetter();
         //data.name = data.section;
-        var genClass = JSON.parse(JSON.stringify(data));
+        var genClass = deepCopy(data);
         var classParam = genClass.name = data.gen;
         genClass.type = undefined;
         genClass.extendz = undefined;
@@ -226,14 +228,14 @@ var getCombElements = function () {
 
 function translateToJava(rawData) {
     try {
-        var data = JSON.parse(JSON.stringify(rawData));
+        //var data = JSON.parse(JSON.stringify(rawData));
+        var data = deepCopy(rawData);
         pname = data.packageName;
         result = new Array;
         processJSON(data);
-        result.getCombElements = getCombElements();
+        result.getCombElements = getCombElements;
         return result;
-    }
-    catch (e) {
-        return 'nothing to return';
+    } catch (e) {
+        console.log("toJava error: " + e)
     }
 }
