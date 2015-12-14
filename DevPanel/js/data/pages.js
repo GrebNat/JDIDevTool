@@ -76,7 +76,7 @@ var Pages = function () {
                 for (var elInd = SubElements.elements.length - 1; elInd > -1; elInd--) {
                     if (SubElements.elements[elInd] === section)
                         SubElements.elements.splice(elInd, 1);
-                    if (SubElements.elements[elInd]!== undefined &&
+                    if (SubElements.elements[elInd] !== undefined &&
                         SubElements.elements[elInd].elements !== undefined &&
                         SubElements.elements[elInd].elements.length > 0)
                         this.updateSubElementAfterSectionDelete(sectionIndex, SubElements.elements[elInd]);
@@ -117,10 +117,15 @@ var Pages = function () {
             if ('gen' in newValue)
                 el.gen = newValue.gen;
             if ('section' in newValue) {
-                el.section = newValue.section;
                 var sectionIndex = sections.getSectionIndexByData(el);
 
                 if (sectionIndex !== -1) {
+                    el.section = newValue.section;
+                    sections.getSectionByIndex(sectionIndex).sectionName = el.section;
+                }
+                else {
+                    el.section = newValue.section;
+                    var sectionIndex = sections.addNewSection(section(el.section, el));
                     var elT = this.getPageByID(pageId).data.elements;
 
                     for (var i = 0; i < elSequence.length; i++)
@@ -129,34 +134,10 @@ var Pages = function () {
                         else
                             elT = elT[elSequence[i]].elements;
                 }
-                else {
-                    //To DO - add new section
-                }
+
             }
             if ('type' in newValue)
-            
-                /*if ($.inArray(newValue.type, sectionTypes) > -1) {
-                    if ($.inArray(el.type, sectionTypes) > -1) {
-                        el.type = newValue.type;
-                        return;
-                    }
-                    else {
-                        el.type = newValue.type;
-                        var sectionIndex = sections.addNewSection(section(el.section, el));
-
-                        var elT = this.getPageByID(pageId).data.elements;
-
-                        for (var i = 0; i < elSequence.length; i++)
-                            if (i === elSequence.length - 1)
-                                elT.splice(elSequence[i], 1, sections.getSectionByIndex(sectionIndex).data);
-                            else
-                                elT = elT[elSequence[i]].elements;
-                    }
-                }
-                else {
-                    el.type = newValue.type;
-                    return;
-                }*/
+                el.type = newValue.type;
 
             this.removeBlankChildrenReference(pageId);
         }
