@@ -106,6 +106,7 @@ var filesTemplate = {
         var classParam = genClass.name = data.gen;
         genClass.type = undefined;
         genClass.extendz = undefined;
+        genClass.section = undefined;
         $.each(genClass.elements, function (i, val) {
             if (ConvertToJavaType[val.type] !== undefined) {
                 val.type = ConvertToJavaType[val.type];
