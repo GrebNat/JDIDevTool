@@ -21,6 +21,18 @@ chrome.runtime.onMessage.addListener(
                 releaseMouseMoveAndKeyPressEvent();
                 break;
             }
+            case requestName.checkBoxLocationActive:{
+                releaseMouseMoveAndKeyPressEvent();
+                restoreAllElementsBackground();
+                highlightElement(request.message.cssLocator);
+                addMouseMoveAndKeyPressEvent();
+                break;
+            }
+            case requestName.checkBoxLocationInactive:{
+                restoreAllElementsBackground();
+                releaseMouseMoveAndKeyPressEvent();
+                break;
+            }
             default:
                 alert("wrong response");
         }

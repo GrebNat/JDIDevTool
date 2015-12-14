@@ -5,12 +5,16 @@
 function getBeanAsJDIObject(beanID) {
     var ind = beanID.split("-").pop();
 
-    return jdiObject(
+    var jdi  = jdiObject(
         $('#PO-name-' + ind).val(),
         $('#PO-type-' + ind).val(),
         $('#PO-gen-' + ind).val(),
         [],
         $('#PO-locator-' + ind).val());
+
+    jdi.section = $('#PO-section-' + ind).val();
+
+    return jdi;
 }
 function getJSONFromTree(parentID, json, pageIndex) {
 

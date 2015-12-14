@@ -20,9 +20,10 @@ function addMouseMoveAndKeyPressEvent() {
             var jdi = jdiObject(
                 $actualElementFromPoint.getAttribute("jdi-name"),
                 $actualElementFromPoint.getAttribute("jdi-type"),
-                undefined,
+                $actualElementFromPoint.getAttribute("jdi-gen"),
                 undefined,
                 "[jdi-name=" + $actualElementFromPoint.getAttribute("jdi-name") + ']');
+            jdi.section = undefined;
 
             chrome.runtime.sendMessage({
                 name: requestName.jdiFromContentSaveClicked,
@@ -37,7 +38,9 @@ function releaseMouseMoveAndKeyPressEvent() {
 
     restoreActualElementColor();
 
-    $(document).off(["mouseout", "mouseover", "keypress"]);
+    $(document).off("mouseout");
+    $(document).off("mouseover");
+    $(document).off("keypress");
 }
 
 function restoreActualElementColor() {

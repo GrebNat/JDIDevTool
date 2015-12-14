@@ -26,6 +26,13 @@ chrome.runtime.onMessage.addListener(
             case requestName.restoreAllElementBackgroundColorOnWeb:
                 sendMessageToContent(request);
                 break;
+            case requestName.checkBoxLocationActive:{
+                sendMessageToContent(request);
+                break;
+            }case requestName.checkBoxLocationInactive:{
+                sendMessageToContent(request);
+                break;
+            }
             default :
                 alert("request "+request.name+" not supported in background")
         }

@@ -1,4 +1,4 @@
-var highlightColor = 'rgba(219, 104, 68, 0.1)';
+var highlightColor = 'rgba(219, 104, 68, 0.7)';
 var originColors = [];
 function originalColor (_locator, _color){
     return{
@@ -6,8 +6,6 @@ function originalColor (_locator, _color){
         color: _color
     };
 }
-
-
 
 function highlightElement(locator){
     restoreAllElementsBackground();
@@ -22,13 +20,13 @@ function highlightElement(locator){
 
 function restoreAllElementsBackground(){
     $.each(originColors, function(ind, val){
-        $(val.sectionName).css("background-color", val.color);
+        $(val.locator).css("background-color", val.color);
     })
     originColors = [];
 }
 
 function  restoreAllElementsHighlighting(elements){
     $.each(elements, function(ind, val){
-        $(val.sectionName).css("background-color", highlightColor);
+        $(val.locator).css("background-color", highlightColor);
     })
 }

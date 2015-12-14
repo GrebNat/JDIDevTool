@@ -8,6 +8,7 @@ function PageBuilder(pageId) {
 
         $('#btn-all-{0}'.format(this.pageIndex)).on('click', function (e) {
 
+
             chrome.devtools.inspectedWindow.eval(
                 "window.location.href",
                 function (url) {
@@ -19,6 +20,7 @@ function PageBuilder(pageId) {
                         cleanAll(newPageId);
                         $('#a-{0}'.format(newPageId)).tab('show');
                     } else if (pages.getPageByURL(url) === undefined) {
+                        cleanAll(pageId);
                         pages.getPageByID(pageId).url = url;
                     }
 

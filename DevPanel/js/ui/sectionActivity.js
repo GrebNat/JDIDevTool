@@ -5,7 +5,7 @@ function drawSectionPage() {
 
         if ($.inArray(val.data.type, sectionTypes) > -1 && val.data.elements !== undefined && val.data.elements.length > 0) {
             if (val.data.type === 'Form') {
-                var data = $.extend(false,{},val.data);
+                var data = deepCopy(val.data);
 
                 for (var i in data.elements)
                     if ($.inArray(data.elements[i].type, sectionTypes) > -1)
@@ -60,7 +60,8 @@ function drawSectionPage() {
                 $('#{0}'.format(sectionId)).parent().remove();
                 $('#section-content-{0}'.format($(this).attr('id').split("-").pop())).remove();
 
-                pages.updatePagesAfterSectionDelete(sectionIndex)
+                sections.updateSectionsAfterSectionDelete(sectionIndex);
+                pages.updatePagesAfterSectionDelete(sectionIndex);
                 sections.removeSection(sectionIndex);
 
                 $($('#page-sections ul').children()[0]).tab('show');

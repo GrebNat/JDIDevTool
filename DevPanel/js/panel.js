@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                     jsonObject.url,
                     jsonObject));
 
-              /*  pages.addSectionObjects("page-{0}".format(pageIndex), sections);*/
-                pages.addSectionObjects2(pages.getPageByID("page-{0}".format(pageIndex)).data, sections);
+                pages.addSectionObjects(pages.getPageByID("page-{0}".format(pageIndex)).data, sections);
 
                 drawJDITree(jsonObject, "#tree-{0}".format(pageIndex));
                 fillPageInfo(jsonObject, pageId);
@@ -50,10 +49,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
         if ('jdi_object' in changed) {
             if (changed.jdi_object.newValue.tabId == chrome.devtools.inspectedWindow.tabId) {
                 var ind = $(".staticHighlight [id^='PO-name-']")[0].getAttribute("id").split("-").pop();
+                var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(ind));
                 var pageId = getCurrentPageId();
 
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
-                editPageData(ind, changed.jdi_object.newValue.data);
+                pages.updateBeanData(pageId, elPath, changed.jdi_object.newValue.data);
 
                 fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
             }

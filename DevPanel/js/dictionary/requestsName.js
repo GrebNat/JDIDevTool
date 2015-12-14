@@ -9,7 +9,9 @@ var requestName = {
     savePageJSONByJDIElementsToStorage: 7,
     highlightElementOnWeb: 8,
     restoreAllElementBackgroundColorOnWeb: 9,
-    releaseMouseMoveKeyPressEvent: 10
+    releaseMouseMoveKeyPressEvent: 10,
+    checkBoxLocationActive: 11,
+    checkBoxLocationInactive: 12
 }
 
 var storageSegment = {

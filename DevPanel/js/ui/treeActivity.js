@@ -16,12 +16,6 @@ function drawJDITree(jsonElements, parentID) {
 }
 
 //JDI Bean
-function editPageData(index, jdiObj) {
-
-    var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
-
-    pages.updateBeanData(getCurrentPageId(), elPath, jdiObj);
-}
 function addNewJDIBeanToTree(parentCSS, jdiElement) {
 
     var template = $("#template").html().replace(/{i}/g, treeElementCount);
@@ -157,37 +151,19 @@ function addEventToBeansCheckBox(ind) {
         });
 
         chrome.runtime.sendMessage({
-            name: requestName.releaseMouseMoveKeyPressEvent,
-            tabId: chrome.devtools.inspectedWindow.tabId
-        })
-        chrome.runtime.sendMessage({
-            name: requestName.restoreAllElementBackgroundColorOnWeb,
-            tabId: chrome.devtools.inspectedWindow.tabId
-        })
-
-        chrome.runtime.sendMessage({
-            name: requestName.highlightElementOnWeb,
+            name: requestName.checkBoxLocationActive,
             tabId: chrome.devtools.inspectedWindow.tabId,
             cssLocator: $("#PO-locator-" + ind).val()
-        })
-        chrome.runtime.sendMessage({
-            name: requestName.addMouseMoveKeyPressEvent,
-            tabId: chrome.devtools.inspectedWindow.tabId
-        })
+        });
 
         $('#div-col-none-{0}, #div-col-{0}'.format(ind)).addClass("staticHighlight");
     } else {
         $('#div-col-none-{0}, #div-col-{0}'.format(ind)).removeClass("staticHighlight");
 
         chrome.runtime.sendMessage({
-            name: requestName.releaseMouseMoveKeyPressEvent,
+            name: requestName.checkBoxLocationInactive,
             tabId: chrome.devtools.inspectedWindow.tabId
-        })
-        chrome.runtime.sendMessage({
-            name: requestName.restoreAllElementBackgroundColorOnWeb,
-            tabId: chrome.devtools.inspectedWindow.tabId
-        })
-
+        });
     }
 }
 
@@ -346,7 +322,6 @@ function fillJDIBean(index, jdiObj) {
         }
     }
 }
-
 function fillPOTypeDropDown(dropDown, index) {
     var ul = $(dropDown).find('ul');
 
@@ -370,7 +345,9 @@ function fillPOTypeDropDown(dropDown, index) {
             pages.updateBeanData(pageId, elPath, {type: $(this).text()});
             try {
                 fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
-            } catch (e){console.log("could not display java Class: {0}".format(e))}
+            } catch (e) {
+                console.log("could not display java Class: {0}".format(e))
+            }
 
             $('#tr-PO-section-{0}, #tr-PO-gen-{0}'.format(index)).css("display", "table-row");
             fillSectionTypeDropDown($("#PO-section-{0}".format(index)).parent(), index);
@@ -395,8 +372,10 @@ function fillPOTypeDropDown(dropDown, index) {
 
             pages.updateBeanData(pageId, elPath, {type: $(this).text()});
             try {
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
-            } catch (e){console.log("could not display java Class: {0}".format(e))}
+                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            } catch (e) {
+                console.log("could not display java Class: {0}".format(e))
+            }
 
             $('#tr-PO-section-{0}, #tr-PO-gen-{0}'.format(index)).css("display", "none");
         })
