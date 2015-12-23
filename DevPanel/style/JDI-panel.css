@@ -1,56 +1,46 @@
-.warningText{
+.warningText {
     color: red;
     font-weight: bolder;
     font-size: larger;
 }
-.selectedToDrop{
+
+.selectedToDrop {
     color: #6db982;
     font-weight: bolder;
     font-size: larger;
 }
-.normalText{
-    color: inherit;
-    font-weight: inherit;
-    font-size: inherit;
-}
-.POTextArea{
+
+.POTextArea {
     width: 95%;
     background-color: inherit;
     border: inherit;
     position: relative;
 }
-.button{
+
+.button {
     hight: 25px;
 }
-.leftButton{
-    float: left;
-    position: relative;
-}
-.treeButtons{
+
+.treeButtons {
     position: relative;
     float: right;
 }
-.collapseButton{
+
+.collapseButton {
     float: left;
     margin: 0%;
     position: relative;
 }
-.rightButton{
-    top: 0%;
-    float: right;
-    position: relative;
+
+.borderBottom {
+    border-bottom: 1px solid cadetblue;
 }
-.textArea{
-    float: left;
-    margin-top: 10%;
+
+.borderRight {
+    border-right: 1px solid cadetblue;
 }
-.borderBottom{
-  border-bottom: 1px solid cadetblue;
-}
-.borderRight{
-  border-right: 1px solid cadetblue;
-}
-.tableDiv{
+
+.tableDiv {
     position: relative;
     margin-left: 5%;
     width: 90%;
@@ -58,23 +48,28 @@
     font-family: monospace;
     border-radius: 6px;
 }
+
 li {
     list-style-type: none;
 }
-.highlight{
+
+.highlight {
     background-color: rgba(147, 219, 213, 0.4);
 }
-.staticHighlight{
+
+.staticHighlight {
     background-color: rgba(57, 219, 136, 0.6);
 }
-.collapsedDiv{
+
+.collapsedDiv {
     width: 350px;
     height: 120px;
     font-family: monospace;
     border: 1px solid transparent;
     height: auto;
 }
-.collapsedTable{
+
+.collapsedTable {
     position: relative;
     border: inherit;
     font-size: smaller;
@@ -84,34 +79,33 @@ li {
     width: 80%;
     table-layout: auto;
 }
-.jDIButtons{
-    border: 1px solid #0a3c59;
-    background: #3e779d;
-    background: -webkit-gradient(linear, left top, left bottom, from(#65a9d7), to(#3e779d));
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
-    -webkit-box-shadow: rgba(255,255,255,0.4) 0 1px 0, inset rgba(255,255,255,0.4) 0 1px 0;
-    -moz-box-shadow: rgba(255,255,255,0.4) 0 1px 0, inset rgba(255,255,255,0.4) 0 1px 0;
-    box-shadow: rgba(255,255,255,0.4) 0 1px 0, inset rgba(255,255,255,0.4) 0 1px 0;
-    text-shadow: #7ea4bd 0 1px 0;
-    color: #eff1f2;
-    width: 15px;
-    height: 15px;
-}
-.textEditor{
-    position: relative;
-    float: right;
-    margin-right: 8%;
-    width: 60%;
-}
+
 .glyphicon-minus-sign {
     color: red;
 }
-.glyphicon-plus-sign{
+
+.glyphicon-plus-sign {
     color: green;
 }
+
 .glyphicon-sign-lg {
     color: forestgreen;
     font-size: 2em;
+}
+
+.treeDiv {
+    position: relative;
+}
+
+.socialLinks {
+    color: rgba(164, 164, 164, 0.64);
+}
+
+.socialLinks:hover {
+    color: rgba(72, 72, 72, 0.64);
+}
+
+.socialButtons{
+    margin-right: 2%;
+    color: inherit;
 }

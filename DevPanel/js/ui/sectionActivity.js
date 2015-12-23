@@ -4,17 +4,19 @@ function drawSectionPage() {
     $.each(sections.sectionsArray, function (ind, val) {
 
         if ($.inArray(val.data.type, sectionTypes) > -1 && val.data.elements !== undefined && val.data.elements.length > 0) {
+
+            var data = deepCopy(val.data);
+
+            for (var i in data.elements)
+                if ($.inArray(data.elements[i].type, sectionTypes) > -1)
+                    data.elements[i].elements = undefined;
+
+            data = translateToJava(data);
+
+            var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
+            $('#section-nav-tab').append(template);
+
             if (val.data.type === 'Form') {
-                var data = deepCopy(val.data);
-
-                for (var i in data.elements)
-                    if ($.inArray(data.elements[i].type, sectionTypes) > -1)
-                        data.elements[i].elements = undefined;
-
-                data = translateToJava(data);
-
-                var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
-                $('#section-nav-tab').append(template);
                 $('#a-section-{0}'.format(ind))
                     .text(data[1].name)
                     .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind));
@@ -29,10 +31,6 @@ function drawSectionPage() {
                 downloadAction(ind, 1);
             }
             else {
-                var data = translateToJava(val.data);
-
-                var template = $('#template-section-nav-tab-link').html().replace(/{section}/g, ind);
-                $('#section-nav-tab').append(template);
                 $('#a-section-{0}'.format(ind))
                     .text(data[0].name)
                     .append("<span id='a-close-section-{0}' class='close fa fa-times'></span>".format(ind))
@@ -46,8 +44,10 @@ function drawSectionPage() {
                     .each(function (i, block) {
                         hljs.highlightBlock(block);
                     });
+
                 downloadAction(ind, 0);
             }
+
             $($("[id^='a-section-']")[1]).tab('show');
 
             addNavBarEvents();
@@ -76,7 +76,7 @@ function cleanSectionPage() {
     $('#section-nav-tab, #section-nav-content').empty();
 }
 function downloadAction(sectionInd, collapseInd) {
-    $('#btn-coll{1}-{0}'.format(sectionInd, collapseInd+1)).on('click', function () {
+    $('#btn-coll{1}-{0}'.format(sectionInd, collapseInd + 1)).on('click', function () {
 
         var data = $($(this).parents('[id^=section-content-]').find('pre')[collapseInd]).text()
         var fileName = $($(this).parents('[id=section-nav-content]')).parent().find('ul #a-section-{0}'.format(sectionInd)).text();

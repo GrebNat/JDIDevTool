@@ -25,10 +25,10 @@ function getJSONFromTree(parentID, json, pageIndex) {
     }
 
     $.each($('#' + parentID).children('ul').children('li'), function (ind, val) {
-        id = val.getAttribute("id");
+        var id = val.getAttribute("id");
         json.elements.push(getBeanAsJDIObject(id))
         if ($(val).children('ul').length !== 0)
-            json[ind].elements = getJSONFromTree(id, json[ind].elements, pageIndex)
+            json.elements[ind] = getJSONFromTree(id, json, pageIndex)
     });
 
     if (parentID === 'tree-{0}'.format(pageIndex))

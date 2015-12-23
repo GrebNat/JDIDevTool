@@ -171,10 +171,24 @@ function makeJDIBeanDraggableDroppable(index) {
 
     $('#main-div-' + index).draggable({
             stop: function (event, index) {
+
+                var pageId = getCurrentPageId();
+                var bean = getJSONFromTree($(event.target).attr('id'), undefined, pageId.split("-").pop());
+
                 if (draggingStarted) {
-                    $('#tree > ul').append(event.target);
+                    $('[id^="tree-"] > ul').append(event.target);
                     $(event.target).css({left: 0, top: "auto"});
+
+                    pages.getPageByID(pageId).data.elements.push(bean);
                 }
+                else {
+                    var elPath = getBeanIndexSequenceOnPage($(event.target).attr('id'));
+                    elPath.splice(elPath.length - 1, 1);
+
+                    pages.addBean(pageId, elPath, bean);
+                }
+
+                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
                 draggingStarted = false;
             },
             start: function (event, index) {
@@ -195,15 +209,6 @@ function makeJDIBeanDraggableDroppable(index) {
 
             $($(event.target).children('ul')[0]).append(ui.draggable);
             $(ui.draggable).css({left: "auto", top: "auto"});
-
-            var elPath = getBeanIndexSequenceOnPage($(ui.draggable).attr('id'));
-            elPath.splice(elPath.length - 1, 1);
-            var pageId = getCurrentPageId();
-            var bean = getJSONFromTree($(ui.draggable).attr('id'), undefined, pageId.split("-").pop())
-
-            pages.addBean(pageId, elPath, bean);
-
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
 
             draggingStarted = false;
         },

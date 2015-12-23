@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="libs/jquery-2.1.4.js"></script>
     <script src="libs/jquery-ui-1.11.4/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="libs/bootstrap-3.3.5-dist/css/bootstrap.min.css">
+    <script src="libs/bootstrap-3.3.5-dist/css/bootstrap.css"></script>
+    <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+    <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
     <script src="js/utils/arrayUtils.js"></script>
     <script src="js/data/sections.js"></script>
     <script src="js/data/pages.js"></script>
@@ -21,13 +25,7 @@
     <script src="js/POjava/toJava.js"></script>
     <link rel="stylesheet" href="libs/highlight/styles/default.css">
     <script src="libs/highlight/highlight.pack.js"></script>
-    <link rel="stylesheet" href="style/tabbedPanel.css">
-    <link rel="stylesheet" href="style/divComponents.css">
     <link rel="stylesheet" href="style/JDI-panel.css">
-    <link rel="stylesheet" href="libs/bootstrap-3.3.5-dist/css/bootstrap.min.css">
-    <script src="libs/bootstrap-3.3.5-dist/css/bootstrap.css"></script>
-    <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
-    <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
     <link rel="stylesheet" href="style/bootstrap_ext.css">
     <script src="js/utils/saveFiles.js"></script>
     <script src="libs/FileSaver.js"></script>
@@ -79,11 +77,11 @@
                         <td class="borderRight">SectionClass</td>
                         <td colspan="2">
                             <div class="dropdown">
-                            <input id="PO-section-{i}" class="dropdown-toggle POTextArea" type="text"
-                                   data-toggle="dropdown">
-                            <ul class="dropdown-menu" style="font-size: inherit">
-                            </ul>
-                        </div>
+                                <input id="PO-section-{i}" class="dropdown-toggle POTextArea" type="text"
+                                       data-toggle="dropdown">
+                                <ul class="dropdown-menu" style="font-size: inherit">
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                 </table>
@@ -176,7 +174,7 @@
 <div id="template-sect-nav-cont-nonForm" style="display: none">
     <div id="section-content-{section}" class="panel panel-default tab-pane fade container-fluid" style=>
         <div class="row">
-            <button id="btn-coll1-{section}" class="btn-success btn-sm btn" style="float: right"><span
+            <button id="btn-coll1-{section}" class="btn-success btn-sm btn" style="float: right; margin-right: 15px; margin-top: 10px"><span
                     class="glyphicon glyphicon-download-alt"></span>
             </button>
         </div>
@@ -269,9 +267,9 @@
         <div class="row">
             <div class="col-xs-12">
                 <span class="glyphicon glyphicon-plus-sign fa-2x" id="span-add-new-bean-{page}"></span>
-                <span id="btn-download-page-{page}" class="glyphicon glyphicon-download-alt fa-2x hidden-xxs"
-                      style="float: right">
-                </span>
+                <button id="btn-download-page-{page}" class="btn-success btn-sm btn" style="float: right"><span
+                        class="glyphicon glyphicon-download-alt"></span>
+                </button>
                 <br>
                 <br>
             </div>
@@ -325,10 +323,13 @@
     <div class="row">
         <div class="col-sm-offset-5 col-sm-7 col-md-offset-5 col-md-7 col-xs-offset-5 col-xs-7"
              style="color: darkgrey; margin-top: 7%">
-            <span class="fa fa-github-square fa-2x" style="margin-right: 2%"></span>
-            <span class="fa fa-vk fa-2x" style="margin-right: 2%"></span>
-            <span class="fa fa-facebook fa-2x" style="margin-right: 2%"></span>
-            <span class="fa fa-twitter-square fa-2x"></span>
+            <a class="socialLinks" href-1="https://github.com/grebnat/gga-selenium-framework"><span
+                    class="fa fa-github-square fa-2x socialButtons"></span></a>
+            <a class="socialLinks" href-1="http://vk.com/"><span class="fa fa-vk fa-2x socialButtons"></span></a>
+            <a class="socialLinks" href-1="https://www.facebook.com/"><span
+                    class="fa fa-facebook fa-2x socialButtons"></span></a>
+            <a class="socialLinks" href-1="https://twitter.com/"><span
+                    class="fa fa-twitter-square fa-2x socialButtons"></span></a>
         </div>
 
         <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.js"></script>

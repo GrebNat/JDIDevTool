@@ -48,18 +48,6 @@ var Pages = function () {
             }
         }
 
-        /*this.updatePagesAfterSectionDelete = function (sectionIndex) {
-
-         var section = sections.getSectionByIndex(sectionIndex).data;
-
-         for (var pageInd in this.pagesArray) {
-         if (pages[pageInd].data !== undefined) {
-         for (var elInd = pages[pageInd].data.elements.length - 1; elInd > -1; elInd--) {
-         if (this.pagesArray[pageInd].data.elements[elInd] === section)
-         this.pagesArray[pageInd].data.elements.splice(elInd, 1);
-         }
-         }
-         } */
         this.updatePagesAfterSectionDelete = function (sectionIndex) {
 
             for (var pageInd in this.pagesArray) {
