@@ -33,8 +33,8 @@ var structElement = function (rawElement, spec) {
             name: this.name,
             gen: this.gen,
             locator: this.locator,
-            elements: this.elements.length === 0 ? undefined : this.elements,
             section: this.section,
+            elements: this.elements.length === 0 ? undefined : this.elements,
         }
     }
     return temp;
@@ -54,9 +54,9 @@ var structPage = function (packageName) {
             url: this.url,
             type: this.type,
             packageName: this.packageName,
-            elements: this.elements,
             title: this.title,
             section: this.section,
+            elements: this.elements,
         }
     }
 }
