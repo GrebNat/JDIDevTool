@@ -352,7 +352,7 @@
     </div>
     <!--test 8-->
     <div>
-        <h3>names test</h3>
+        <h3>names</h3>
         <main>
             <pre>
             {
@@ -385,6 +385,56 @@
                         "name":"next",
                         "locator":"[jdi-name=next]",
                         "section":"Next"
+                    }
+                ]
+            }
+            </pre>
+        </main>
+        <pre>
+
+        </pre>
+    </div>
+    <!--test 9-->
+    <div>
+        <h3>search</h3>
+        <main>
+            <pre>
+            {
+                "name": "name",
+                "url": "url",
+                "type": "IPage",
+                "packageName": "com.my.test",
+                "title": "title",
+                "section": "section",
+                "elements": [
+                    {
+                        "type": "Form",
+                        "name": "form",
+                        "gen": "formContent",
+                        "locator": "[jdi-name=form]",
+                        "section": "Form",
+                        "elements": [
+                            {
+                                "type": "ISearch",
+                                "name": "search_f1",
+                                "locator": "[jdi-name=search_f1]",
+                                "section": "Search_f1",
+                                "elements": [
+                                    {
+                                        "type": "ITextField",
+                                        "name": "search_input",
+                                        "locator": "[jdi-name=search_input]",
+                                        "section": "Search_input"
+                                    },
+                                    {
+                                        "type": "IButton",
+                                        "name": "search_button",
+                                        "locator": "[jdi-name=search_button]",
+                                        "section": "Search_button"
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             }
