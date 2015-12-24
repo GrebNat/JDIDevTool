@@ -20,14 +20,12 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
     navigateToWebPageEvent("#a-page-0");
 
-
     chrome.storage.onChanged.addListener(function (changed, e1) {
         if ('jdi_page' in changed) {
             if (changed.jdi_page.newValue.tabId === chrome.devtools.inspectedWindow.tabId) {
 
                 var jdi_page_json = changed.jdi_page.newValue.data;
                 var jsonObject = $.parseJSON(jdi_page_json);
-                var pageObjectsFiles = translateToJava(jsonObject);
 
                 var pageId = pages.getPageByURL(jsonObject.url).id;
                 var pageIndex = pageId.split("-").pop();
@@ -40,8 +38,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 
                 drawJDITree(jsonObject, "#tree-{0}".format(pageIndex));
                 fillPageInfo(jsonObject, pageId);
-
-                fillPageObjectPre(pageObjectsFiles.getCombElements(), pageId);
+                fillPageObjectPre(jsonObject, pageId);
 
                 chrome.storage.local.remove('jdi_page');
             }
@@ -55,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
                 fillJDIBean(ind, changed.jdi_object.newValue.data);
                 pages.updateBeanData(pageId, elPath, changed.jdi_object.newValue.data);
 
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+                fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
             }
         }
     });

@@ -71,7 +71,7 @@ function addJDIBeanEvents(index) {
         $('#modal-' + ind).modal("hide");
         $('#main-div-' + ind).remove();
 
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     })
 
     $('#modal-btn-up-{0}'.format(index)).on('click', function () {
@@ -92,7 +92,7 @@ function addJDIBeanEvents(index) {
 
         $('#main-div-' + ind).remove();
 
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     })
 
     $('#btn-remove-{0}'.format(index)).on('click', function () {
@@ -107,7 +107,7 @@ function addJDIBeanEvents(index) {
             pages.removeBean(pageId, elPath);
             $('#main-div-' + ind).remove();
 
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
         }
 
 
@@ -188,7 +188,8 @@ function makeJDIBeanDraggableDroppable(index) {
                     pages.addBean(pageId, elPath, bean);
                 }
 
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+                pages.addSectionObjects(pages.getPageByID(pageId).data, sections);
+                fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
                 draggingStarted = false;
             },
             start: function (event, index) {
@@ -241,7 +242,7 @@ function addNewBeanEvent_DataEdit(index) {
 
         pages.addBean(pageId, elPath, getBeanAsJDIObject(beanID));
 
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     })
 }
 function editBeanTxtFieldEvent_DataEdit(index) {
@@ -252,7 +253,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {locator: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     });
     $('#PO-name-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
@@ -263,7 +264,7 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         $('#jdi-name-col-{0}'.format(index)).text($(this).val()).removeClass("warningText");
 
         pages.updateBeanData(pageId, elPath, {name: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     });
     $('#PO-type-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
@@ -271,23 +272,27 @@ function editBeanTxtFieldEvent_DataEdit(index) {
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {type: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     });
     $('#PO-gen-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
         var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
         var pageId = getCurrentPageId();
+        var str = (new strPattern).className($(this).val());
+        $(this).val(str);
 
-        pages.updateBeanData(pageId, elPath, {gen: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        pages.updateBeanData(pageId, elPath, {gen: str});
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     });
     $('#PO-section-{0}'.format(index)).on('input', function () {
         var index = $(this).attr('id').split("-").pop();
         var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
         var pageId = getCurrentPageId();
+        var str = (new strPattern).className($(this).val());
+        $(this).val(str);
 
-        pages.updateBeanData(pageId, elPath, {section: $(this).val()});
-        fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+        pages.updateBeanData(pageId, elPath, {section: str});
+        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     });
 }
 
@@ -349,7 +354,7 @@ function fillPOTypeDropDown(dropDown, index) {
 
             pages.updateBeanData(pageId, elPath, {type: $(this).text()});
             try {
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+                fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
             } catch (e) {
                 console.log("could not display java Class: {0}".format(e))
             }
@@ -377,7 +382,7 @@ function fillPOTypeDropDown(dropDown, index) {
 
             pages.updateBeanData(pageId, elPath, {type: $(this).text()});
             try {
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+                fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
             } catch (e) {
                 console.log("could not display java Class: {0}".format(e))
             }
@@ -413,7 +418,7 @@ function fillSectionTypeDropDown(dropDown, index) {
 
                 cleanTree(pageId);
                 drawJDITree(pages.getPageByID(pageId).data, "#tree-{0}".format(pageIndex));
-                fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+                fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
             })
         }
     }

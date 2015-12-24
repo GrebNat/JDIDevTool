@@ -204,7 +204,6 @@ var Pages = function () {
             return -1;
         }
     }
-    ;
 
 function page(id, url, data) {
     return {

@@ -65,12 +65,13 @@ function PageBuilder(pageId) {
             pages.addBean(pageId, elSequence, getBeanAsJDIObject(beanID));
             pages.addSectionObjects("page-{0}".format(pageIndex), sections);
 
-            fillPageObjectPre(translateToJava(pages.getPageByID(pageId).data).getCombElements(), pageId);
+            fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
         })
 
         addNavBarEvents();
-        pages.addNewPage(page(pageId));
+        pages.addNewPage(page(pageId, undefined, {type: "IPage"}));
         fillPage(this.pageId);
+        fillPageInfo(pages.getPageByID(pageId).data, pageId);
 
         addSocialButtonsEvent();
     }
@@ -87,7 +88,7 @@ function fillPage(pageId) {
         cleanAll(pageId);
 
         drawJDITree(pageObject, "#tree-{0}".format(pageIndex));
-        fillPageObjectPre(translateToJava(pageObject).getCombElements(), pageId);
+        fillPageObjectPre(pageObject, pageId);
         fillPageInfo(pageObject, pageId);
 
         scroll(0, 0);
@@ -96,8 +97,11 @@ function fillPage(pageId) {
 
 //Page Object`s tabs
 function fillPageObjectPre(data, pageId) {
-    if (data === undefined)
+    if (data === undefined | data.elements === undefined)
         return;
+
+    data = translateToJava(data).getCombElements();
+
     for (var i = 0; i < data.length; i++) {
         var pageIndex = pageId.split("-").pop();
 
@@ -134,12 +138,15 @@ function addNavBarEvents() {
 function fillPageInfo(jsonElements, pageId) {
 
     var pageIndex = pageId.split("-").pop();
-    $('#txt-name-{0}'.format(pageIndex)).val(jsonElements.name);
-    $('#txt-title-{0}'.format(pageIndex)).val(jsonElements.title);
-    $('#txt-type-{0}'.format(pageIndex)).val(jsonElements.type);
+    $('#txt-name-{0}'.format(pageIndex)).val(jsonElements.section).on('input', function (e) {
+        (new inputAction).filter(e.target, pages.getPageByID(pageId).data, 'class');
+    });
     $('#txt-URL-{0}'.format(pageIndex)).val(jsonElements.url);
     if (jsonElements.packageName !== undefined)
         $('#txt-package-{0}'.format(pageIndex)).val(jsonElements.packageName);
+    $('#txt-package-{0}'.format(pageIndex)).on('input', function (e) {
+        (new inputAction).filter(e.target, pages.getPageByID(pageId).data, 'package');
+    })
 }
 function getCurrentPageId() {
     return $('#main-tab-content > .active').attr('id');
@@ -163,8 +170,8 @@ function getBeanIndexSequenceOnPage(beanId) {
 //social buttons
 function addSocialButtonsEvent() {
 
-    $.each($('.socialLinks'), function(ind, val){
-        $(val).on('click',  function (e) {
+    $.each($('.socialLinks'), function (ind, val) {
+        $(val).on('click', function (e) {
             var href = $(e.target.parentElement).attr('href-1');
 
             chrome.devtools.inspectedWindow.eval(
@@ -196,8 +203,6 @@ function clearPOPreview(pageIndex) {
 }
 function clearPageInfo(pageIndex) {
     $('#txt-name-{0}'.format(pageIndex)).val("");
-    $('#txt-title-{0}'.format(pageIndex)).val("");
-    $('#txt-type-{0}'.format(pageIndex)).val("");
     $('#txt-URL-{0}'.format(pageIndex)).val("");
     $('#txt-package-{0}'.format(pageIndex)).val("");
 }

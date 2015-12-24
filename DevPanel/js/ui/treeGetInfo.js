@@ -28,14 +28,12 @@ function getJSONFromTree(parentID, json, pageIndex) {
         var id = val.getAttribute("id");
         json.elements.push(getBeanAsJDIObject(id))
         if ($(val).children('ul').length !== 0)
-            json.elements[ind] = getJSONFromTree(id, json, pageIndex)
+            json.elements[ind] = getJSONFromTree(id, json.elements[ind], pageIndex)
     });
 
     if (parentID === 'tree-{0}'.format(pageIndex))
         return {
             name: $('#txt-name-{0}'.format(pageIndex)).val(),
-            title: $('#txt-title-{0}'.format(pageIndex)).val(),
-            type: $('#txt-type-{0}'.format(pageIndex)).val(),
             url: $('#txt-URL-{0}'.format(pageIndex)).val(),
             packageName: $('#txt-package-{0}'.format(pageIndex)).val(),
             elements: json

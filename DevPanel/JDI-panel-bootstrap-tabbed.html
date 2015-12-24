@@ -11,6 +11,7 @@
     <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
     <script src="libs/bootstrap-3.3.5-dist/js/bootstrap.js"></script>
     <script src="js/utils/arrayUtils.js"></script>
+    <script src="js/utils/stringPatterns.js"></script>
     <script src="js/data/sections.js"></script>
     <script src="js/data/pages.js"></script>
     <script src="js/panel.js"></script>
@@ -174,7 +175,8 @@
 <div id="template-sect-nav-cont-nonForm" style="display: none">
     <div id="section-content-{section}" class="panel panel-default tab-pane fade container-fluid" style=>
         <div class="row">
-            <button id="btn-coll1-{section}" class="btn-success btn-sm btn" style="float: right; margin-right: 15px; margin-top: 10px"><span
+            <button id="btn-coll1-{section}" class="btn-success btn-sm btn"
+                    style="float: right; margin-right: 15px; margin-top: 10px"><span
                     class="glyphicon glyphicon-download-alt"></span>
             </button>
         </div>
@@ -209,59 +211,39 @@
                 <form class="form-horizontal" role="form">
                     <div class="form-group">
                         <label id="lbl" for="txt-name-{page}" class="col-xs-2 col-sm-2 col-md-2 control-label">
-                            Name:
+                            Class Name:
                         </label>
 
                         <div class="col-xs-10">
                             <input type="text" class="form-control" id="txt-name-{page}">
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="txt-title-{page}" class="col-xs-2 col-sm-2 col-md-2 control-label">
-                            Title:
-                        </label>
-
-                        <div class="col-xs-10">
-                            <input type="text" class="form-control" id="txt-title-{page}">
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="col-xs-6">
                 <form class="form-horizontal" role="form">
-                    <div class="form-group">
-                        <label for="txt-type-{page}" class="col-xs-2 col-sm-2 col-md-2 control-label">
-                            Type:
-                        </label>
+                    <label for="txt-package-{page}" class="col-xs-2 control-label">
+                        Package Name:
+                    </label>
 
-                        <div class="col-xs-10">
-                            <input type="text" class="form-control" id="txt-type-{page}">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="txt-URL-{page}" class="col-xs-2 col-sm-2 col-md-2 control-label">
-                            URL:
-                        </label>
-
-                        <div class="col-xs-10">
-                            <input type="text" class="form-control" id="txt-URL-{page}">
-                        </div>
+                    <div class="col-xs-10">
+                        <input type="text" class="form-control" id="txt-package-{page}"
+                               placeholder="enter your package name here">
                     </div>
                 </form>
             </div>
         </div>
-        <!--package text field-->
+        <!--url text field-->
         <div class="row">
-            <form class="form-horizontal" role="form">
-                <label for="txt-package-{page}" class="col-xs-2 control-label">
-                    Package Name:
+            <div class="form-group">
+                <label for="txt-URL-{page}" class="col-xs-2 col-sm-2 col-md-2 control-label">
+                    URL:
                 </label>
 
                 <div class="col-xs-10">
-                    <input type="text" class="form-control" id="txt-package-{page}"
-                           placeholder="enter your package name here">
+                    <input type="text" class="form-control" id="txt-URL-{page}" readonly>
                 </div>
-            </form>
+            </div>
         </div>
         <hr>
         <div class="row">
