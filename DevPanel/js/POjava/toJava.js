@@ -43,6 +43,10 @@ var moduleSimple = function (elem) {
 }
 
 var ElemTemplates = {
+    ISearch: function(data) {
+        filesTemplate.ISearch(data);
+        return moduleSimple(data);
+    },
     String: moduleSimple,
     ITextArea: moduleSimple,
     IButton: moduleSimple,
@@ -72,9 +76,19 @@ var ElemTemplates = {
 }
 
 var filesTemplate = {
+    ISearch: function(rawData){
+        var data = deepCopy(rawData);
+        data.name = data.name.capitalizeFirstLetter();
+        FieldTemplates[data.type] = function (elem) {
+            return "\n\tpublic {0} {1};\n".format(data.name, elem.name.downFirstLetter());
+        };
+        var genClass = deepCopy(data);
+        genClass.extendz = "ISearch";
+        var c = new JavaClass(genClass);
+        c.type = fileTypes.pagination;
+        result.push(createRecord(c));
+    },
     IPagination: function (rawData) {
-        //var data = jQuery.extend(true, {}, rawData)
-        //var data = JSON.parse(JSON.stringify(rawData));
         var data = deepCopy(rawData);
         data.name = data.name.capitalizeFirstLetter();
         FieldTemplates[data.type] = function (elem) {
@@ -100,8 +114,6 @@ var filesTemplate = {
 
     },
     Form: function (data) {
-        //data.name = data.name.capitalizeFirstLetter();
-        //data.name = data.section;
         var genClass = deepCopy(data);
         var classParam = genClass.name = data.gen;
         genClass.type = undefined;

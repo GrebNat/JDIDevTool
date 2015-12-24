@@ -24,7 +24,8 @@ var IncludesDictionary = {
     IImage:         "com.ggasoftware.jdiuitest.core.interfaces.common.IImage",
     ILink:          "com.ggasoftware.jdiuitest.core.interfaces.common.ILink",
     ILabel:         "com.ggasoftware.jdiuitest.core.interfaces.common.ILabel",
-    IText:          "com.ggasoftware.jdiuitest.core.interfaces.common.IText"
+    IText:          "com.ggasoftware.jdiuitest.core.interfaces.common.IText",
+    ISearch:        "com.SEARCH"
 }
 
 var ConvertToJavaType = {
@@ -64,11 +65,11 @@ var FieldTemplates = {
     },
     IFileInput: simpleFileld,
     ICheckBox: simpleFileld,
-    ICheckBox: simpleFileld,
     IImage:    simpleFileld,
     ILink:     simpleFileld,
     ILabel:    simpleFileld,
     IText:     simpleFileld,
+    ISearch:   simpleFileld,
 }
 
 var Pagination = function (element) {
