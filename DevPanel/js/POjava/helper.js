@@ -25,7 +25,8 @@ var IncludesDictionary = {
     ILink:          "com.ggasoftware.jdiuitest.core.interfaces.common.ILink",
     ILabel:         "com.ggasoftware.jdiuitest.core.interfaces.common.ILabel",
     IText:          "com.ggasoftware.jdiuitest.core.interfaces.common.IText",
-    ISearch:        "com.SEARCH"
+    ISearch:        "com.epam.jdi.uitests.core.interfaces.complex.ISearch",
+    IClickable:     "com.epam.jdi.uitests.core.interfaces.base.IClickable",
 }
 
 var ConvertToJavaType = {
@@ -70,6 +71,7 @@ var FieldTemplates = {
     ILabel:    simpleFileld,
     IText:     simpleFileld,
     ISearch:   simpleFileld,
+    IClickable : simpleFileld,
 }
 
 var Pagination = function (element) {

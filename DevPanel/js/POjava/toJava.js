@@ -73,15 +73,19 @@ var ElemTemplates = {
     RFileInput: moduleSimple,
     IRange: moduleSimple,
     ITable: moduleSimple,
+    IClickable: moduleSimple,
 }
 
+function extracted() {
+    return function (elem) {
+        return "\n\tpublic {0} {1};\n".format(elem.section, elem.name.downFirstLetter());
+    };
+}
 var filesTemplate = {
     ISearch: function(rawData){
         var data = deepCopy(rawData);
         data.name = data.name.capitalizeFirstLetter();
-        FieldTemplates[data.type] = function (elem) {
-            return "\n\tpublic {0} {1};\n".format(data.name, elem.name.downFirstLetter());
-        };
+        FieldTemplates[data.type] = extracted();
         var genClass = deepCopy(data);
         genClass.extendz = "ISearch";
         var c = new JavaClass(genClass);
@@ -91,19 +95,16 @@ var filesTemplate = {
     IPagination: function (rawData) {
         var data = deepCopy(rawData);
         data.name = data.name.capitalizeFirstLetter();
-        FieldTemplates[data.type] = function (elem) {
-            return "\n\tpublic {0} {1};\n".format(data.name, elem.name.downFirstLetter());
-        };
+        FieldTemplates[data.type] = extracted();
         var genClass = deepCopy(data);
+        genClass.extendz = "Pagination";
         var c = new JavaClass(genClass);
         c.type = fileTypes.pagination;
         result.push(createRecord(c));
     },
     Section: function (data) {
         data.extendz = "{0}".format(data.type);
-        FieldTemplates[data.type] = function (elem) {
-            return "\n\tpublic {0} {1};\n".format(elem.section, elem.name);
-        };
+        FieldTemplates[data.type] = extracted();
         var c = new JavaClass(data);
         c.includes.push(IncludesDictionary.by);
         c.includes.push(IncludesDictionary.fundBy);
@@ -238,7 +239,6 @@ var getCombElements = function () {
 
 function translateToJava(rawData) {
     try {
-        //var data = JSON.parse(JSON.stringify(rawData));
         var data = deepCopy(rawData);
         pname = data.packageName;
         result = new Array;
