@@ -128,18 +128,12 @@ function addJDIBeanEvents(index) {
     $('#cb-locate-{0}'.format(index)).on('change', function () {
         addEventToBeansCheckBox(this.getAttribute("id").split("-").pop());
     })
-}
-function addEventToBeanLocator(ind) {
-    if ($('#cb-locate-' + ind).is(':checked')) {
-        chrome.runtime.sendMessage({
-            name: requestName.highlightElementOnWeb,
-            tabId: chrome.devtools.inspectedWindow.tabId,
-            cssLocator: $("#PO-locator-" + ind).val()
-        })
-    }
+
+    $("#PO-section-{0}, #PO-gen-{0}, #PO-name-{0}, #PO-type-{0}, #PO-locator-{0}".format(index)).keypress(function (e) {
+        (new inputAction).lostFocus(e);
+    })
 }
 function addEventToBeansCheckBox(ind) {
-
     if ($('#cb-locate-' + ind).is(':checked')) {
 
         $.each($('[id^=tree]  .staticHighlight'), function (i, val) {
@@ -170,36 +164,35 @@ function addEventToBeansCheckBox(ind) {
 function makeJDIBeanDraggableDroppable(index) {
 
     $('#main-div-' + index).draggable({
-            stop: function (event, index) {
+        stop: function (event, index) {
 
-                var pageId = getCurrentPageId();
-                var bean = getJSONFromTree($(event.target).attr('id'), undefined, pageId.split("-").pop());
+            var pageId = getCurrentPageId();
+            var bean = getJSONFromTree($(event.target).attr('id'), undefined, pageId.split("-").pop());
 
-                if (draggingStarted) {
-                    $('[id^="tree-"] > ul').append(event.target);
-                    $(event.target).css({left: 0, top: "auto"});
+            if (draggingStarted) {
+                $('[id^="tree-"] > ul').append(event.target);
+                $(event.target).css({left: 0, top: "auto"});
 
-                    pages.getPageByID(pageId).data.elements.push(bean);
-                }
-                else {
-                    var elPath = getBeanIndexSequenceOnPage($(event.target).attr('id'));
-                    elPath.splice(elPath.length - 1, 1);
-
-                    pages.addBean(pageId, elPath, bean);
-                }
-
-                pages.addSectionObjects(pages.getPageByID(pageId).data, sections);
-                fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
-                draggingStarted = false;
-            },
-            start: function (event, index) {
-                var elPath = getBeanIndexSequenceOnPage($(event.target).attr('id'));
-                pages.removeBean(getCurrentPageId(), elPath);
-
-                draggingStarted = true;
+                pages.getPageByID(pageId).data.elements.push(bean);
             }
+            else {
+                var elPath = getBeanIndexSequenceOnPage($(event.target).attr('id'));
+                elPath.splice(elPath.length - 1, 1);
+
+                pages.addBean(pageId, elPath, bean);
+            }
+
+            pages.addSectionObjects(pages.getPageByID(pageId).data, sections);
+            fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
+            draggingStarted = false;
+        },
+        start: function (event, index) {
+            var elPath = getBeanIndexSequenceOnPage($(event.target).attr('id'));
+            pages.removeBean(getCurrentPageId(), elPath);
+
+            draggingStarted = true;
         }
-    );
+    });
     $('#main-div-' + index).droppable({
         drop: function (event, ui) {
 
@@ -248,52 +241,37 @@ function addNewBeanEvent_DataEdit(index) {
 function editBeanTxtFieldEvent_DataEdit(index) {
 
     $('#PO-locator-{0}'.format(index)).on('input', function () {
-        var index = $(this).attr('id').split("-").pop();
-        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(getInd(this)));
         var pageId = getCurrentPageId();
 
         pages.updateBeanData(pageId, elPath, {locator: $(this).val()});
         fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
     });
     $('#PO-name-{0}'.format(index)).on('input', function () {
-        var index = $(this).attr('id').split("-").pop();
-        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
-        var pageId = getCurrentPageId();
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(getInd(this)));
 
         $(this).removeClass("warningText");
-        $('#jdi-name-col-{0}'.format(index)).text($(this).val()).removeClass("warningText");
+        $('#jdi-name-col-{0}'.format(getInd(this))).text($(this).val()).removeClass("warningText");
 
-        pages.updateBeanData(pageId, elPath, {name: $(this).val()});
-        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
-    });
-    $('#PO-type-{0}'.format(index)).on('input', function () {
-        var index = $(this).attr('id').split("-").pop();
-        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
-        var pageId = getCurrentPageId();
+        (new inputAction).filter(this, {}, 'variable');
+        pages.updateBeanData(getCurrentPageId(), elPath, {name: $(this).val()});
 
-        pages.updateBeanData(pageId, elPath, {type: $(this).val()});
-        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
+        fillPageObjectPre(pages.getPageByID(getCurrentPageId()).data, getCurrentPageId());
     });
-    $('#PO-gen-{0}'.format(index)).on('input', function () {
-        var index = $(this).attr('id').split("-").pop();
-        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
-        var pageId = getCurrentPageId();
-        var str = (new strPattern).className($(this).val());
-        $(this).val(str);
+    $('#PO-type-{0}, #PO-gen-{0}, #PO-section-{0}'.format(index)).on('input', function () {
+        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(getInd(this)));
 
-        pages.updateBeanData(pageId, elPath, {gen: str});
-        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
-    });
-    $('#PO-section-{0}'.format(index)).on('input', function () {
-        var index = $(this).attr('id').split("-").pop();
-        var elPath = getBeanIndexSequenceOnPage("main-div-{0}".format(index));
-        var pageId = getCurrentPageId();
-        var str = (new strPattern).className($(this).val());
-        $(this).val(str);
+        (new inputAction).filter(this, {}, 'class');
 
-        pages.updateBeanData(pageId, elPath, {section: str});
-        fillPageObjectPre(pages.getPageByID(pageId).data, pageId);
-    });
+        if ($(this).attr('id').match('PO-type-[0-9]*'))
+            pages.updateBeanData(getCurrentPageId(), elPath, {type: $(this).val()});
+        else if ($(this).attr('id').match('PO-section-[0-9]*'))
+            pages.updateBeanData(getCurrentPageId(), elPath, {section: $(this).val()});
+        else if ($(this).attr('id').match('PO-gen-[0-9]*'))
+            pages.updateBeanData(getCurrentPageId(), elPath, {gen: $(this).val()});
+
+        fillPageObjectPre(pages.getPageByID(getCurrentPageId()).data, getCurrentPageId());
+    })
 }
 
 //populate
@@ -328,7 +306,7 @@ function fillJDIBean(index, jdiObj) {
             $('#PO-locator-{0}'.format(index)).val("no locator").addClass("warningText");
         } else {
             $('#PO-locator-{0}'.format(index)).val(jdiObj.locator).removeClass("warningText");
-            addEventToBeanLocator(index);
+            addEventToBeansCheckBox(index);
         }
     }
 }

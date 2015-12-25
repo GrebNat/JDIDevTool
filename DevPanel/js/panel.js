@@ -58,6 +58,10 @@ document.addEventListener('DOMContentLoaded', function (e) {
     });
 });
 
+document.addEventListener('unload', function(){
+    console.log("Closed");
+})
+
 function addNewTabLinkEvent() {
 
     var pageIndex = pages.pagesArray.length;

@@ -138,15 +138,27 @@ function addNavBarEvents() {
 function fillPageInfo(jsonElements, pageId) {
 
     var pageIndex = pageId.split("-").pop();
-    $('#txt-name-{0}'.format(pageIndex)).val(jsonElements.section).on('input', function (e) {
-        (new inputAction).filter(e.target, pages.getPageByID(pageId).data, 'class');
-    });
-    $('#txt-URL-{0}'.format(pageIndex)).val(jsonElements.url);
-    if (jsonElements.packageName !== undefined)
-        $('#txt-package-{0}'.format(pageIndex)).val(jsonElements.packageName);
-    $('#txt-package-{0}'.format(pageIndex)).on('input', function (e) {
-        (new inputAction).filter(e.target, pages.getPageByID(pageId).data, 'package');
-    })
+    $('#txt-name-{0}'.format(pageIndex))
+        .val(jsonElements.section)
+        .on('input', function (e) {
+            (new inputAction).filter(e.target, pages.getPageByID(pageId).data, 'class');
+        })
+        .keypress(function (e) {
+            (new inputAction).lostFocus(e);
+        });
+    $('#txt-URL-{0}'.format(pageIndex))
+        .val(jsonElements.url)
+        .keypress(function (e) {
+            (new inputAction).lostFocus(e);
+        });
+    $('#txt-package-{0}'.format(pageIndex))
+        .val(jsonElements.packageName)
+        .on('input', function (e) {
+            (new inputAction).filter(e.target, pages.getPageByID(pageId).data, 'package');
+        })
+        .keypress(function (e) {
+            (new inputAction).lostFocus(e);
+        });
 }
 function getCurrentPageId() {
     return $('#main-tab-content > .active').attr('id');
