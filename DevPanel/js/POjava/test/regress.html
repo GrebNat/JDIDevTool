@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jsonGenerator smoke test 1</title>
+    <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.20.0.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//code.jquery.com/qunit/qunit-1.20.0.js"></script>
+    <script src="../../../libs/string.format-1.0.packed.js"></script>
+    <script src="../../dictionary/jdiObject.js"></script>
+    <script src="../helper.js"></script>
+    <script src="../toJava.js"></script>
+    <script src="smoke.js"></script>
+</head>
+<body>
+<div id="testData" style="display: block">
+    <!--test 1-->
+    <div>
+        <h3>test 1</h3>
+        <main>
+            <pre>
+            {
+                "type": "Form",
+                "name": "form1",
+                "gen": "fomr1Content",
+                "locator": "[jdi-name=form1]",
+                "elements": [{
+                    "type": "ITextField",
+                    "name": "t1_form",
+                    "locator": "[jdi-name=t1_form]",
+                    "section": "T1_form"
+                },
+                {
+                    "type": "ITextArea",
+                    "name": "t1_form",
+                    "locator": "[jdi-name=t1_form]",
+                    "section": "T1_form"
+                },
+                {
+                    "type": "IButton",
+                    "name": "b1_form",
+                    "locator": "[jdi-name=b1_form]",
+                    "section": "B1_form"
+                },
+                {
+                    "type": "Form",
+                    "name": "form2name",
+                    "gen": "fomr2Content",
+                    "locator": "[jdi-name=form2]",
+                    "section": "Form2"
+                }],
+                "section": "Form1"
+            }
+            </pre>
+        </main>
+        <pre>
+
+        </pre>
+    </div>
+</div>
+<div>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+</div>
+</body>
+</html>

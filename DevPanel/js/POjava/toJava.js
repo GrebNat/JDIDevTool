@@ -43,7 +43,7 @@ var moduleSimple = function (elem) {
 }
 
 var ElemTemplates = {
-    ISearch: function(data) {
+    ISearch: function (data) {
         filesTemplate.ISearch(data);
         return moduleSimple(data);
     },
@@ -55,6 +55,7 @@ var ElemTemplates = {
         return moduleSimple(data);
     },
     Form: function (data) {
+        data.elements = data.elements === undefined ? [] : data.elements;
         filesTemplate.Form(data);
         return moduleSimple(data);
     },
@@ -76,7 +77,7 @@ var ElemTemplates = {
 }
 
 var filesTemplate = {
-    ISearch: function(rawData){
+    ISearch: function (rawData) {
         var data = deepCopy(rawData);
         data.name = data.name.capitalizeFirstLetter();
         FieldTemplates[data.type] = function (elem) {
@@ -119,13 +120,16 @@ var filesTemplate = {
         genClass.type = undefined;
         genClass.extendz = undefined;
         genClass.section = undefined;
-        $.each(genClass.elements, function (i, val) {
-            if (ConvertToJavaType[val.type] !== undefined) {
-                val.type = ConvertToJavaType[val.type];
-            } else {
-                val.type += " ";
-            }
-        });
+        if (genClass.elements !== undefined) {
+            $.each(genClass.elements, function (i, val) {
+                if (ConvertToJavaType[val.type] !== undefined) {
+                    val.type = ConvertToJavaType[val.type];
+                } else {
+                    val.type += " ";
+                }
+            });
+        }
+
         var cc = new JavaClass(genClass);
         cc.type = fileTypes.pClass;
         var fP = createRecord(cc);
